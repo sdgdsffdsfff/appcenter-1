@@ -33,8 +33,8 @@ def index_apps(app_search, apps):
                 ipa_version_jb = 'unknown'
                 ipa_version_signed = 'unknown'
             else:
-                ipa_version_jb = app_version['ipaVersion']['signed']
-                ipa_version_signed = app_version['ipaVersion']['jb']
+                ipa_version_jb = app_version['ipaVersion']['jb']
+                ipa_version_signed = app_version['ipaVersion']['signed']
 
             app_search.add_index(
                 ID = str(app['_id']),
