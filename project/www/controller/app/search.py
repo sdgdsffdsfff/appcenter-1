@@ -51,10 +51,11 @@ class AppSearch(object):
         except Exception, ex:
             print ex
 
-    def add_index(self, track_name, support_iphone, support_ipad, bundle_id, icon, rating):
+    def add_index(self, ID, track_name, support_iphone, support_ipad, bundle_id, icon, rating, size, sign, download_version):
         self.es.index(
-            {'trackName': track_name, 'supportIphone': support_iphone, 'supportIpad': support_ipad,
-             'bundleId': bundle_id, 'icon': icon, 'averageUserRating': rating},
+            {'ID': ID, 'trackName': track_name, 'supportIphone': support_iphone, 'supportIpad': support_ipad,
+             'bundleId': bundle_id, 'icon': icon, 'averageUserRating': rating, 'size': size, 'sign': sign,
+             'downloadVersion': download_version},
             "appcenter", "apps")
 
     def query(self, words, device, page=1, page_size=12):
