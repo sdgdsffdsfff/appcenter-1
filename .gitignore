@@ -19,4 +19,6 @@
 !*.json
 !*.gitignore
 !*.swf
+!*.doc
+!*.docx
 project/conf/settings_local.py
