@@ -86,3 +86,5 @@ def index_app():
     p.start()
     p.join()
     app_search.refresh()
+
+index_app()
