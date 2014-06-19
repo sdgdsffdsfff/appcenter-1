@@ -16,7 +16,7 @@ mongo_db = mongo.get_database('appcenter')
 
 def index_apps(app_search, apps):
     
-    app = AppController()
+    appc = AppController()
 
     for index, app in enumerate(apps):
         support_iphone, support_ipad = 0, 0
@@ -27,7 +27,7 @@ def index_apps(app_search, apps):
         try:
             icon = artworkUrl512_to_114_icon(app['artworkUrl512'])
             sign = app.get('sign', 0)         
-            app_version = app.get_app_version_cache(app['bundleId'])
+            app_version = appc.get_app_version_cache(app['bundleId'])
             
             if not app_version:
                 ipa_version_jb = 'unknown'
