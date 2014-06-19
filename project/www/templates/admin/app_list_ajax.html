@@ -1,0 +1,146 @@
+{% if use == 'default' %}
+<form action="#"  id="app_form" name="app_form">
+<table class="table table-striped table-hover table-bordered">
+	<thead>
+		<tr>
+			<td>ICON</td>
+			<td>推荐排序</td>
+			<th>名称</th>
+			<th>trackId | BundleId</th>
+			<th>主分类</th>
+			<th>版本</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for app in app_list %}
+		<tr>
+			<td><img style="width:40px; height:40px" src="{{ icon(app['artworkUrl512']) }}" /></td>
+			<td><input type="text" name="sort_{{ app['_id'] }}" value="{{ app['sort'] }}" style="width:50px"/></td>
+			<td><strong>{{ app['trackName'] }}</strong></td>
+			<td>{{ app['trackId'] }} | {{ app['bundleId'] }}</td>
+			<td>{{ app['primaryGenreName'] }}</td>
+			<td>{{ app['version'] }} | {{ app['downloadVersion'] }}</td>
+			<td>
+				<a href="{{ url_for('admin_app_edit') }}?_id={{app['_id']}}&{{current_page_params}}" class="btn red icn-only" title="编辑"><i class="icon-edit icon-white"></i></a>
+				<a href="{{ url_for('admin_app_download_list') }}?bundleId={{app['bundleId']}}&{{current_page_params}}" class="btn green icn-only" title="下载地址"><i class="icon-download icon-white"></i></a>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+</form>
+{% elif use == 'collection' %}
+<table class="table table-striped table-hover table-bordered">
+	<thead>
+		<tr>
+			<td>ICON</td>
+			<th>名称(BundleId)</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for app in app_list %}
+		<tr>
+			<td><img style="width:40px; height:40px" src="{{ icon(app['artworkUrl512']) }}" /></td>
+			<td><strong>{{ app['trackName'] }}</strong><br/>{{ app['bundleId'] }}</td>
+			<td>
+				<a data-toggle="modal" href="#confirm_box_{{app['_id']}}" class="btn blue icn-only" title="添加">
+					<i class="m-icon-swapright m-icon-white"></i>
+				</a>
+				<div id="confirm_box_{{app['_id']}}" class="modal container hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+					<div class="modal-header">
+						<h3>添加到应用集合</h3>
+					</div>
+					<div class="modal-body form">
+						<form action="#"  id="{{app['_id']}}_form" name="{{app['_id']}}_form" class="form-horizontal">
+							<div class="control-group">
+								<label class="control-label">排序</label>
+								<div class="controls">
+									<input type="text" placeholder="small" name="{{app['_id']}}_sort" value="0" class="m-wrap small" />
+									<span class="help-inline"></span>
+								</div>
+								<div class="control-group">
+									<label class="control-label">语言 (不限语言不选)</label>
+									<div class="controls">
+										{% for lang in lang_options %}
+										<label class="checkbox">
+											<input type="checkbox" name="{{app['_id']}}_language" value="{{ lang['code'] }}" /> {{ lang['name'] }}
+										</label>
+										{% endfor %}
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">国家 (不限国家不选)</label>
+									<div class="controls">
+										{% for country in country_options %}
+										<label class="checkbox">
+											<input type="checkbox" name="{{app['_id']}}_country" value="{{ country['code'] }}" /> {{ country['name'] }}
+										</label>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" data-dismiss="modal" class="btn">取消</button>
+						<button type="button" data-dismiss="modal" class="btn red" onclick="addToCollection('{{app['_id']}}')">确定添加</button>
+					</div>
+				</div>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+<table class="table table-striped table-hover table-bordered">
+	<thead>
+		<tr>
+			<td>ICON</td>
+			<th>名称(BundleId)</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for app in app_list %}
+		<tr>
+			<td><img style="width:40px; height:40px" src="{{ icon(app['artworkUrl512']) }}" /></td>
+			<td><strong>{{ app['trackName'] }}</strong><br/>{{ app['bundleId'] }}</td>
+			<td>
+				<a data-toggle="modal" href="#confirm_box_{{app['_id']}}" class="btn blue icn-only" title="添加">
+					<i class="m-icon-swapright m-icon-white"></i>
+				</a>
+				<div id="confirm_box_{{app['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+					<div class="modal-header">
+						<h3>添加到应用集合</h3>
+					</div>
+					<div class="modal-body form">
+						<form action="#"  id="{{app['_id']}}_form" name="{{app['_id']}}_form" class="form-horizontal">
+							<div class="control-group">
+								<label class="control-label">排序</label>
+								<div class="controls">
+									<input type="text" placeholder="small" name="{{app['_id']}}_sort" value="0" class="m-wrap small" />
+									<span class="help-inline"></span>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" data-dismiss="modal" class="btn">取消</button>
+						<button type="button" data-dismiss="modal" class="btn red" onclick="addToTopic('{{app['_id']}}')">确定添加</button>
+					</div>
+				</div>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endif %}
+<div class="pagination">
+  <ul>
+  	<li><a href="javascript:;">总计{{ page_info['count']}}条记录, 当前{{page_info['page']}} / {{ page_info['total_page']}}页</a></li>
+    <li><a href="javascript:;" onclick="ajaxAppListLoad('{{ url_for('admin_app_ajaxlist') }}?{{prev_page_params}}')">上一页</a></li>
+    <li><a href="javascript:;" onclick="ajaxAppListLoad('{{ url_for('admin_app_ajaxlist') }}?{{next_page_params}}')">下一页</a></li>
+  </ul>
+</div>

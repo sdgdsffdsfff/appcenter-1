@@ -1,0 +1,45 @@
+<div class="modal fade  hide in" data-width="700" id="search_modal">		
+	<div class="modal-header">
+		<a class="close" href="#" data-dismiss="modal"></a>
+		<h3>应用搜索</h3>
+	</div>
+	<div class="modal-body inner">
+		<div class="alert"><strong>注意！</strong>只能选填一项</div>
+		<form action="" id="app-search-form" class="form-horizontal">
+			<input type="hidden" name="use" value="{{ search_use }}"/>
+			<div class="control-group">
+				<label class="control-label">bundleId</label>
+				<div class="controls">
+					<input type="text" name="bundleId"  class="m-wrap large" />
+					<span class="help-inline">应用的位置标识符</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">trackId</label>
+				<div class="controls">
+					<input type="text" name="trackId" class="m-wrap small" />
+					<span class="help-inline">苹果官方id</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">名称</label>
+				<div class="controls">
+					<input type="text" name="trackName" class="m-wrap large" />
+					<span class="help-inline">应用的名称</span>
+				</div>
+			</div>
+		</form>
+	</div>		
+	<div class="modal-footer">
+		<button type="button" data-dismiss="modal" class="btn">取消</button>
+		<button  class="btn red" onclick="searchApp()">搜索</button>
+	</div>
+</div>
+<script type="text/javascript">
+function searchApp(){
+	var url = '{{ url_for("admin_app_ajaxlist") }}';
+	var data = $('#app-search-form').serialize();
+	ajaxAppListLoad(url + '?' + data)
+	$('#search_modal').modal('hide');
+}
+</script>

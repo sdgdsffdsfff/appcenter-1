@@ -1,0 +1,68 @@
+{% extends "admin/_layout.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block page_title %} 应用 {% endblock %}
+{% block title %} 应用编辑 <small>应用基本信息编辑</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+	<li>
+		<i class="icon-home"></i>
+		<a href="{{ url_for('admin_index_dashboard') }}">首页</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>
+		<a href="{{ url_for('admin_app_list') }}?{{ list_params }}">应用列表</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>编辑</li>
+</ul> 
+{% endblock %}
+
+{% block menuName %}应用列表{% endblock %}
+{% block titleType %}a{% endblock %}
+
+{% block content %}
+<!-- BEGIN  FORM-->
+<div class="tabbable tabbable-custom tabbable-full-width">
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#">基本属性</a></li>
+		<li><a href="{{ url_for('admin_app_download_list') }}?bundleId={{app['bundleId']}}">下载地址</a></li>
+		<li><a href="{{ url_for('admin_app_screenshot') }}?bundleId={{app['bundleId']}}">应用截图</a></li>
+	</ul>
+	<div class="tab-content form form-horizontal">
+		{{ form.message() | safe }}
+		{{ form.begin_form() | safe }}
+		<div class="control-group">
+			<label class="control-label">图标</label>
+			<div class="controls">
+				{% if icon['apple'] %}
+				<img src="{{ icon['apple'] }}" />
+				{% endif %}
+				{% if icon['local'] %}
+				<img src="{{ icon['local'] }}" />
+				{% endif %}
+				<span class="help-inline"></span>
+			</div>
+		</div>
+		 {% for field in form.field_list() %}
+		<div class="control-group {% if field.is_error() %}error{% endif %}">
+			<label class="control-label">{{ field.label() | safe }}</label>
+			<div class="controls">
+				{{ field.field() | safe }}
+				<span class="help-inline">
+					{% if field.is_error() %}{{ field.error() | safe }}{% endif %}
+				</span>
+			</div>
+		</div>
+		{% endfor %}
+		<div class="form-actions">
+			<button type="submit" class="btn blue"><i class="icon-ok"></i> Save</button>
+		</div>
+		{{ form.end_form() | safe }}		
+	</div>
+</div>
+<!-- END  FORM-->
+{% endblock %}

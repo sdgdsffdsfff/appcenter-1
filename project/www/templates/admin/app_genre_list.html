@@ -1,0 +1,88 @@
+{% extends "admin/_layout.html" %}
+
+{% block head %}
+    
+{% endblock %}
+
+{% block page_title %} 分类 {% endblock %}
+{% block title %} 分类 <small>管理应用分类</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+	<li>
+		<i class="icon-home"></i>
+		<a href="/dashboard">首页</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>分类</li>
+	
+</ul>  
+{% endblock %}
+
+{% block content %}
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+	<div class="portlet-title">
+		<div class="caption"><i class="icon-edit"></i>分类列表</div>
+		<div class="tools">
+			<a href="javascript:;" class="collapse"></a>
+			<a href="#portlet-config" data-toggle="modal" class="config"></a>
+			<a href="javascript:;" class="reload"></a>
+			<a href="javascript:;" class="remove"></a>
+		</div>
+	</div>
+	<div class="portlet-body">
+		<div class="table-toolbar">
+			<div class="btn-group">
+				<button id="sync_genre" class="btn green">
+				同步官方分类 <i class="icon-cloud"></i>
+				</button>
+			</div>
+			
+		</div>
+		<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+			<thead>
+				<tr>
+					<th>Icon</th>
+					<th>genreId</th>
+					<th>名称</th>
+					<td>操作</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for genre in genre_list %}
+				<tr >
+					<td>
+						<img src="{{ create_pic_url_by_path(genre.get('icon_file', '')) }}" alt="{{ genre['genreId'] }}" style="width: 60px; height: 60px" /></td>
+					<td>{{ genre['genreId'] }}</td>
+					<td>
+						{% for name in genre['genreName'].items() %}
+						{{ name[1] }}({{ name[0] }}) <br />
+						{% endfor %}
+					</td>
+					<td>
+						<a class="btn green" href="{{ url_for('admin_genre_icon', genre_id=genre['genreId']) }}">添加/编辑Icon<i class="icon-edit"></i></a>		
+                    </td>
+
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block menuName %}应用分类{% endblock %}
+
+{% block scripts %}
+<script>
+$('#sync_genre').click(function(){
+	var ajax = NG.Ajax();
+	ajax.Get('{{ url_for('admin_genre_sync') }}', function(res){
+		location.reload();
+	});
+});
+</script>
+{% endblock %}
+

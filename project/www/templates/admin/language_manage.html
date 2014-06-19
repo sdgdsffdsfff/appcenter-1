@@ -1,0 +1,135 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %} 语言管理 {% endblock %}
+{% block title %} 语言 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+    <i class="icon-home"></i>
+    <a href="dashboard">首页</a>
+    <i class="icon-angle-right"></i>
+  </li>
+  <li>语言列表</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade  hide in" data-width="700" id="add_modal">
+  <div class="modal-header">
+    <a class="close" href="#" data-dismiss="modal"></a>
+    <h3>语言添加</h3>
+  </div>
+  <div class="modal-body inner">
+    <div class="alert hide" id="form-alert"></div>
+    <form action="" id="language-add-form" class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label">语言名称</label>
+        <div class="controls">
+          <input type="text" name="name" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Code</label>
+        <div class="controls">
+          <input type="text" name="code" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">名称本地语言</label>
+        <div class="controls">
+          <input type="text" name="nameoflanguage" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">取消</button>
+    <button  class="btn red" onclick="addLanguage()">确定添加</button>
+  </div>
+</div>
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+  <div class="portlet-title">
+    <div class="caption"><i class="icon-edit"></i>语言列表</div>
+    <div class="tools"></div>
+  </div>
+  <div class="portlet-body">
+    <div class="table-toolbar">
+      <div class="btn-group">
+        <a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
+      </div>
+    </div>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>名称</th>
+          <th>Code</th>
+          <th>名称本地语言</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for language in language_list %}
+        <tr>
+          <td><strong>{{ language['name'] }}</strong></td>
+          <td>{{ language['code'] }}</td>
+          <td>{{ language['nameoflanguage'] }}</td>
+          <td>
+            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{language['_id']}}">删除</a>
+            <div id="confirm_box_{{language['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+              <div class="modal-body">
+                <p>确定要删除吗?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">取消</button>
+                <button type="button" data-dismiss="modal" class="btn red" onclick="deleteLanguage('{{language['_id']}}')">确定</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var ajax = NG.Ajax();
+
+function deleteLanguage(_id){
+        var url = "{{url_for('admin_language_delete')}}?_id="+_id;
+        ajax.Get(url, function(res){
+                if(res.status == 'success'){
+                        location.reload();
+                } else{
+                        alert(res)
+                }
+        });
+}
+
+function addLanguage(){
+        var url = '{{ url_for("admin_language_add") }}';
+        var data = $('#language-add-form').serialize();
+        ajax.Post(url, data, function(res){
+                if(res.status == 'success'){
+                        $('#add_modal').modal('hide');
+                        location.reload();
+                }else{
+                        $('#form-alert').html(res.message);
+                        $('#form-alert').show();
+                }
+        });
+}
+</script>
+{% endblock %}
+
+{% block menuName %}语言管理{% endblock %}

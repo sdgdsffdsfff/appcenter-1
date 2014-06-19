@@ -1,0 +1,61 @@
+{% if layout == 'default' %}
+    {% extends "admin/_layout.html" %}
+
+    {% block head %}
+
+    {% endblock %}
+
+    {% block page_title %} 分类 {% endblock %}
+    {% block title %} 广告 <small>广告展示</small> {% endblock %}
+
+    {% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+            <i class="icon-angle-right"></i>
+        </li>
+        <li>
+            <a href="{{ url_for('admin_advertising_item_list', identifier=identifier) }}">广告列表</a>
+            <i class="icon-angle-right"></i>
+        </li>
+        <li>添加</li>
+    </ul>
+    {% endblock %}
+{% else %}
+    {% extends "admin/_tiny_layout.html" %}
+{% endif %}
+
+{% block content %}
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+	<div class="portlet-title">
+		<div class="caption"><i class="icon-edit"></i>添加广告</div>
+		<div class="tools">
+		</div>
+	</div>
+	<div class="portlet-body form form-horizontal">
+		{{ form.message() | safe }}
+		{{ form.begin_form() | safe }}
+		 {% for field in form.field_list() %}
+		<div class="control-group {% if field.is_error() %}error{% endif %}">
+			<label class="control-label">{{ field.label() | safe }}</label>
+			<div class="controls">
+				{{ field.field() | safe }}
+				<span class="help-inline">
+					{% if field.is_error() %}{{ field.error() | safe }}{% endif %}
+				</span>
+			</div>
+		</div>
+		{% endfor %}
+		<div class="form-actions">
+			<button type="submit" class="btn blue"><i class="icon-ok"></i> Save</button>
+		</div>
+		{{ form.end_form() | safe }}
+	</div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+
+{% block menuName %}广告位置{% endblock %}

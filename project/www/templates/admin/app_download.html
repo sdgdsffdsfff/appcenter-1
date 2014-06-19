@@ -1,0 +1,146 @@
+{% extends "admin/_layout.html" %}
+
+{% block head %}
+<link href="/static/uploadify/uploadify.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block page_title %} 分类 {% endblock %}
+{% block title %} 应用 <small>管理应用</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+	<li>
+		<i class="icon-home"></i>
+		<a href="{{ url_for('admin_index_dashboard') }}">首页</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>
+		<a href="{{ url_for('admin_app_list') }}">应用列表</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>{{app['trackName']}}</li>
+</ul>  
+{% endblock %}
+
+{% block content %}
+<div class="tabbable tabbable-custom tabbable-full-width">
+	<ul class="nav nav-tabs">
+		<li><a href="{{ url_for('admin_app_edit') }}?bundleId={{app['bundleId']}}">基本属性</a></li>
+		<li class="active"><a href="#">下载地址</a></li>
+		<li><a href="{{ url_for('admin_app_screenshot') }}?bundleId={{app['bundleId']}}">应用截图</a></li>
+	</ul>
+    
+	<div class="tab-content">
+        <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption"><i class="icon-download"></i>下载列表</div>
+            <div class="tools">
+            </div>
+         </div>
+            <div class="portlet-body">
+            <div class="btn-group">
+                <a class="btn green" data-toggle="modal" href="#ipa_upload_modal">上传文件 <i class="icon-upload"></i></a>
+            </div>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>version</th>
+                            <th>sha1</th>
+                            <th>BundleId</th>
+                            <th>包类型</th>
+                            <th>添加时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for down in download_list %}
+                        <tr>
+                            <td>{{ down['version'] }}</td>
+                            <td>{{ down['hash'] }}</td>
+                            <td>{{ down['bundleId'] }}</td>
+                            <td>{% if down['jb'] == 0 %}正版签名包{% else %}越狱包{% endif %}</td>
+                            <td>{{ down['addTime'] }}</td>
+                            <td>
+                                <a class="btn red" data-toggle="modal" href="#confirm_box_{{down['_id']}}">删除</a>
+                                <div id="confirm_box_{{down['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-body">
+                                        <p>确定要删除吗?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" data-dismiss="modal" class="btn">取消</button>
+                                        <button type="button" data-dismiss="modal" class="btn red" onclick="deleteDownload('{{down['_id']}}')">确定</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+	</div>
+</div>
+
+<div class="modal fade  hide in" data-width="700" id="ipa_upload_modal">
+	<div class="modal-header">
+		<a class="close" href="#" data-dismiss="modal"></a>
+		<h3>文件上传</h3>
+	</div>
+	<div class="modal-body inner">
+		<div class="alert hide"></div>
+		<form action="" id="ipa-upload-form" class="form-horizontal">
+           <div class="control-group">
+				<label class="control-label">ipa文件</label>
+				<div class="controls">
+					<input type="file" name="ipa" id="ipa"  class="m-wrap large" />
+					<span class="help-inline" id="upload_info">选择上传的ipa包文件</span>
+				</div>
+			</div>
+		</form>
+	</div>		
+	<div class="modal-footer">
+		<button type="button" data-dismiss="modal" class="btn">取消</button>
+		<button  class="btn red" onclick="IPAUpload()">开始上传</button>
+	</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="/static/uploadify/jquery.uploadify.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $('#ipa').uploadify({
+            'auto'     : false,
+            'uploadLimit' : 1,
+            'buttonText' : '选择文件',
+            'multi'    : false,
+            'formData'      : {'bundleId': '{{app['bundleId']}}'},
+            'fileTypeExts' : '*.ipa',
+            'swf'      : '/static/uploadify/uploadify.swf',
+            'uploader' : '{{url_for('admin_app_download_upload')}}',
+            'onUploadSuccess' : function(file, data, response) {
+                var res = $.parseJSON(data);
+                $('#upload_info').html(res.message);
+                if(res.status == 'success'){
+                    //setTimeout(function(){ location.reload(); }, 2000);
+                }
+            },
+            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+                $('#upload_info').html('上传失败');
+            }
+        });
+    });
+    function IPAUpload(){
+        $('#ipa').uploadify('upload');
+    }
+    function deleteDownload(_id){
+        var url = '{{ url_for('admin_app_download_delete') }}?_id='+_id
+        $.getJSON(url, {}, function(res){
+            if (res.status == 'success'){
+                location.reload();
+            }else{
+                alert(res.message);
+            }
+        });
+    }
+</script>
+{% endblock %}

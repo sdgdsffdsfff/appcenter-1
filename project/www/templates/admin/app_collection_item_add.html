@@ -1,0 +1,144 @@
+{% if layout == 'default' %}
+    {% extends "admin/_layout.html" %}
+
+    {% block head %}
+
+    {% endblock %}
+
+    {% block page_title %} 分类 {% endblock %}
+    {% block title %} 应用集合 <small>自定义应用集合</small> {% endblock %}
+
+    {% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+            <i class="icon-angle-right"></i>
+        </li>
+        <li>
+            <a href="{{ url_for('admin_app_collection_list') }}">应用集合</a>
+            <i class="icon-angle-right"></i>
+        </li>
+        <li>{{ app_collection['name'] }}</li>
+    </ul>
+    {% endblock %}
+{% else %}
+    {% extends "admin/_tiny_layout.html" %}
+{% endif %}
+
+{% block content %}
+{% include 'admin/_search_app_modal.html' %}
+<!-- BEGIN  TABLE PORTLET-->
+<div class="row-fluid">
+	<div class="span5">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption"><i class="icon-edit"></i>应用列表</div>
+				<div class="tools"></div>
+			</div>
+			<div class="portlet-body">
+				<div class="table-toolbar">
+					<div class="btn-group">
+						<a class="btn red" data-toggle="modal" href="#search_modal">搜索 <i class="icon-search"></i></a>
+					</div>
+					<div class="btn-group pull-right">
+						<div id="loading" style="visibility:hidden;"><img src="/static/metronic1.4/assets/img/loading.gif" /></div>
+					</div>
+				</div>
+				<div id="app_data_grad"></div>
+			</div>
+		</div>
+	</div>
+	<div class="span7">
+		<!-- BEGIN  TABLE PORTLET-->
+		<div class="portlet box red">
+			<div class="portlet-title">
+				<div class="caption"><i class="icon-edit"></i>应用列表-{{ app_collection['name'] }}</div>
+				<div class="tools"></div>
+			</div>
+			<div class="portlet-body">
+				<div class="row-fluid">
+					<div class="span12">
+						<form action="" id="app-collection-filter-form">
+						<div class="form-horizontal">
+							<label>
+								投放语言
+								<select size="1" onchange="changeForm()" name="language" aria-controls="language" class="m-wrap small">
+									<option value="" selected="selected">全部</option>
+									{% for lang in lang_options %}
+									<option value="{{ lang['code'] }}">{{ lang['name'] }}</option>
+									{% endfor %}
+								</select> 
+								投放国家
+								<select size="1" onchange="changeForm()" name="country" aria-controls="country" class="m-wrap small">
+									<option value="" selected="selected">全部</option>
+									{% for country in country_options %}
+									<option value="{{ country['code'] }}">{{ country['name'] }}</option>
+									{% endfor %}
+								</select> 
+							</label>
+						</div>
+						</form>
+					</div>
+					<div id="collection_data_grad"></div>
+					<div class="table-toolbar">
+						<div class="btn-group">
+							<a class="btn red" href="javascript:;" onclick="updateSort()">更新排序</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script>
+var ajax = NG.Ajax();
+function loadCollection() {
+	var data = $('#app-collection-filter-form').serialize();
+	ajax.Post("{{url_for('admin_app_collection_item_list', identifier=app_collection['identifier'])}}", data, function(res){
+		if(res.data){
+			$('#collection_data_grad').html(res.data);
+			//重新渲染
+			App.initUniform();
+		}
+	});
+}
+function addToCollection(_id) {
+	var form = $('#'+_id+"_form");
+	var data = form.serialize().replace(new RegExp(_id+'_', 'g'), '');
+	data += '&_id='+_id;
+	ajax.Post("{{url_for('admin_app_collection_item_add', identifier=app_collection['identifier'])}}", data, function(res){
+		if(res.status == 'success'){
+			loadCollection();
+		}
+	});
+}
+function deleteCollectionItem(identifier, id){
+	var url = "{{url_for('admin_app_collection_item_delete')}}?identifier="+identifier+"&id="+id;
+	ajax.Get(url, function(res){
+		loadCollection();
+	});
+}
+function changeForm(){
+	loadCollection();
+}
+function updateSort(){
+	var url = '{{ url_for("admin_app_collection_item_sort", identifier=app_collection["identifier"]) }}';
+	var data = $('#app-collection-form').serialize();
+	ajax.Post(url, data, function(res){
+		if(res.status == 'success'){
+			loadCollection();
+		}
+	});
+}
+//加载可选应用列表
+ajaxAppListLoad("{{url_for('admin_app_ajaxlist', use='collection')}}");
+//加载集合应用列表
+loadCollection();
+
+</script>
+{% endblock %}

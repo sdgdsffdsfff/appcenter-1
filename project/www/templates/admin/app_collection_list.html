@@ -1,0 +1,137 @@
+{% extends "admin/_layout.html" %}
+
+{% block head %}
+    
+{% endblock %}
+
+{% block page_title %} 分类 {% endblock %}
+{% block title %} 应用集 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+	<li>
+		<i class="icon-home"></i>
+		<a href="/dashboard">首页</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>应用列表</li>
+	
+</ul>  
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade  hide in" data-width="700" id="add_modal">		
+	<div class="modal-header">
+		<a class="close" href="#" data-dismiss="modal"></a>
+		<h3>应用集添加</h3>
+	</div>
+	<div class="modal-body inner">
+		<div class="alert hide" id="form-alert"></div>
+		<form action="" id="collection-add-form" class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label">名称</label>
+				<div class="controls">
+					<input type="text" name="name" class="m-wrap large" />
+					<span class="help-inline"></span>
+				</div>
+			</div>
+			{% for language in languages %}
+			<div class="control-group">
+				<label class="control-label">标题 ({{language.name}})</label>
+				<div class="controls">
+					<input type="text" name="title_{{language.code}}" class="m-wrap" />
+					<span class="help-inline"></span>
+				</div>
+			</div>
+			{% endfor %}
+			<div class="control-group">
+				<label class="control-label">唯一标识符</label>
+				<div class="controls">
+					<input type="text" name="identifier" class="m-wrap large" />
+					<span class="help-inline"></span>
+				</div>
+			</div>
+		</form>
+	</div>		
+	<div class="modal-footer">
+		<button type="button" data-dismiss="modal" class="btn">取消</button>
+		<button  class="btn red" onclick="addCollection()">确定添加</button>
+	</div>
+</div>
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+	<div class="portlet-title">
+		<div class="caption"><i class="icon-edit"></i>应用集列表</div>
+		<div class="tools"></div>
+	</div>
+	<div class="portlet-body">
+		<div class="table-toolbar">
+			<div class="btn-group">
+				<a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
+			</div>
+		</div>
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>名称</th>
+					<th>标识</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for collection in app_collection_list %}
+				<tr>
+					<td><strong>{{ collection['name'] }}</strong></td>
+					<td>{{ collection['identifier'] }}</td>
+					<td>
+						<a class=" btn green" data-toggle="modal" href="{{ url_for('admin_app_collection_item_add') }}?identifier={{collection['identifier']}}">管理</a>
+						<a class=" btn red" data-toggle="modal" href="#confirm_box_{{collection['_id']}}">删除</a>
+						<div id="confirm_box_{{collection['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+							<div class="modal-body">
+								<p>确定要删除吗?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn">取消</button>
+								<button type="button" data-dismiss="modal" class="btn red" onclick="deleteCollection('{{collection['_id']}}')">确定</button>
+							</div>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script>
+var ajax = NG.Ajax();
+
+function deleteCollection(_id){
+	var url = "{{url_for('admin_app_collection_delete')}}?_id="+_id;
+	ajax.Get(url, function(res){
+		location.reload();
+	});
+}
+
+function addCollection(){
+	var url = '{{ url_for("admin_app_collection_add") }}';
+	var data = $('#collection-add-form').serialize();
+	ajax.Post(url, data, function(res){
+		if(res.status == 'success'){
+			$('#add_modal').modal('hide');
+			location.reload();
+		}else{
+			$('#form-alert').html(res.message);
+			$('#form-alert').show();
+		}
+	});	
+}
+</script>
+{% endblock %}
+
+{% block menuName %}应用集合{% endblock %}

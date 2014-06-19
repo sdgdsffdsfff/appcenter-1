@@ -1,0 +1,57 @@
+{% extends "admin/_layout.html" %}
+
+{% block head %}
+    <style>
+	.tab1 > .radio, .tab1 > .checkbox{width:125px;}
+	</style>
+{% endblock %}
+
+{% block page_title %} 应用 {% endblock %}
+{% block title %} 应用添加 <small>应用基本信息添加</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+	<li>
+		<i class="icon-home"></i>
+		<a href="{{ url_for('admin_index_dashboard') }}">首页</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>
+		<a href="{{ url_for('admin_app_list') }}">应用列表</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>添加</li>
+</ul> 
+{% endblock %}
+
+{% block content %}
+<!-- BEGIN  FORM-->
+<div class="tabbable tabbable-custom tabbable-full-width">
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#">基本属性</a></li>
+	</ul>
+	<div class="tab-content form form-horizontal">
+		{{ form.message() | safe }}
+		{{ form.begin_form() | safe }}
+		 {% for field in form.field_list() %}
+		<div class="control-group {% if field.is_error() %}error{% endif %}">
+			<label class="control-label">{{ field.label() | safe }}</label>
+			<div class="controls tab1">
+				{{ field.field() | safe }}
+				<span class="help-inline">
+					{% if field.is_error() %}{{ field.error() | safe }}{% endif %}
+				</span>
+			</div>
+		</div>
+		{% endfor %}
+		<div class="form-actions">
+			<button type="submit" class="btn blue"><i class="icon-ok"></i> Save</button>
+		</div>
+		{{ form.end_form() | safe }}
+	</div>
+</div>
+<!-- END  FORM-->
+{% endblock %}
+
+{% block menuName %}添加新应用{% endblock %}
+{% block titleType %}a{% endblock %}

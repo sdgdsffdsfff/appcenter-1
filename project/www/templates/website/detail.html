@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{{ data['trackName'] }}</title>
+</head>
+<body>
+<div style="width: 1000px; margin: auto">
+    <div style="width: 175px; height: 175px; float: left"><img src="{{ data['icon'] }}" ></div>
+    <div style=" width: 800px; margin-left: 10px; height: 175px; float: left">
+        <h1>{{ data['trackName'] }}</h1>
+        <p>分类 <small><a href="{{ create_url('.app.list?a=1') }}">{{ data['primaryGenreName'] }}</a></small></p>
+        <p>版本 <small><a href="{{ create_url('admin.app.list?a=1') }}">{{ data['version'] }}</a></small></p>
+        <p>开发商 <small><a href="{{ create_url('list') }}">{{ data['sellerName'] }}</a></small></p>
+    </div>
+    <div style="clear: both"></div>
+    <h2>简介</h2>
+    <p>{{ data['description'] }}</p>
+    <h2>更新说明</h2>
+    <p>{{ data['releaseNotes'] }}</p>
+    <h2>截图</h2>
+    <div style="overflow-x: scroll">
+       <div style="width: 2000px">
+        {% for pic in data['screenshotUrls'] %}
+        <img src="{{ pic }}" style="float: left; width: 240px; height: 320px; margin: 5px; border: 1px solid #CCCCCC; padding: 1px">
+        {% endfor %}
+       </div>
+    </div>
+</div>
+</body>
+</html>

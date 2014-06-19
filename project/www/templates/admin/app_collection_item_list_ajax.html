@@ -1,0 +1,37 @@
+<form id="app-collection-form">
+	<table class="table table-striped table-hover table-bordered">
+		<thead>
+			<tr>
+				<th>ICON</th>
+				<th>排序</th>
+				<td>名称(BundleId)</td>
+				<th>国家</th>
+				<th>语言</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for a in collection_list %}
+			<tr>
+				<td><img style="width:40px; height:40px" src="{{ a['icon'] }}" /></td>
+				<td><input type="text" value="{{ a['sort'] }}" name="sort_{{ a['id'] }}" style="width:30px" /></td>
+				<td><strong>{{ a['trackName'] }}</strong><br />{{ a['ID'] }}</td>
+				<td>{% for lang in a['language'] %} {{lang}}  {% endfor %}</td>
+				<td>{% for country in a['country'] %} {{country}} {% endfor %}</td>
+				<td>
+					<a class="btn red" data-toggle="modal" href="#confirm_box_{{a['id']}}">删除</a>
+					<div id="confirm_box_{{a['id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+						<div class="modal-body">
+							<p>确定要删除吗?</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" data-dismiss="modal" class="btn">取消</button>
+							<button type="button" data-dismiss="modal" class="btn red" onclick="deleteCollectionItem('{{identifier}}', '{{a['id']}}')">确定</button>
+						</div>
+					</div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</form>

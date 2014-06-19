@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>应用列表</title>
+    <style>
+        ul{list-style: none}
+        a{ text-decoration: none; color: #333333}
+        body{ font-size: 14px}
+        .focus{ background: #CCCCCC; padding: 2px 5px}
+    </style>
+</head>
+<body>
+<div style="width: 1000px; margin: 10 auto">
+    <div>
+        <form action="" method="get">
+            <input type="text" name="q" value="{{data['q']}}">
+            <input type="submit" value="search">
+        </form>
+    </div>
+    <div style="margin: 10px 0">
+        <a {% if data['device'] == 'iphone' %}class="focus"{% endif %} href="{{ create_url('.search', {'q':data['q'],  'device': 'iphone', 'page':1}) }}">iphone</a>
+        <a {% if data['device'] == 'ipad' %}class="focus"{% endif %} href="{{ create_url('.search', {'q':data['q'],  'device': 'ipad', 'page':1}) }}">ipad</a>
+    </div>
+    <ul style="width: 100%; height: 600px; padding: 10px; border: 10px solid #CCCCCC; background: #EFEFEF">
+    {% for app in data['results'] %}
+        <li style="float: left; width: 45%; height: 75px; margin: 10px 0">
+            <img src="{{app['icon']}}" style="width: 75px; height: 75px; float: left; margin-right: 10px" />
+            <ul style=" width: 300px; height: 75px; line-height: 25px; float: left">
+                <li><strong><a href="{{ create_url('.app') }}/{{app['bundleId']}}">{{ app['trackName'] }}</a></strong></li>
+                <li><small>评分：{{ app['rating'] }}</small></li>
+            </ul>
+        </li>
+    {% endfor%}
+    </ul>
+    <div>
+        <a href="{{ create_url('.search', {'q':data['q'], 'device':data['device'], 'page':data['pageinfo']['prev_page']}) }}">Prev</a>
+        <a href="{{ create_url('.search', {'q':data['q'], 'device':data['device'], 'page':data['pageinfo']['next_page']}) }}">Next</a>
+        ({{data['pageinfo']['page']}} / {{data['pageinfo']['total_page']}})
+    </div>
+</div>
+</body>
+</html>
+

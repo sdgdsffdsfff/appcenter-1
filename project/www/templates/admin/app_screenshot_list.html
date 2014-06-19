@@ -1,0 +1,15 @@
+{% for pic in screenshot %}
+<div class="span2">
+    <div class="item">
+        <a class="fancybox-button" data-rel="fancybox-button" title="Photo" href="{{create_pic_url(pic)}}">
+            <div class="zoom">
+                <img src="{{create_pic_url(pic)}}" alt="Photo" />
+                <div class="zoom-icon"></div>
+            </div>
+        </a>
+        <div class="details">
+            <a href="javascript:;" onclick="removePic('{{pic}}','{{device}}')" class="icon"><i class="icon-remove"></i></a>    
+        </div>
+    </div>
+</div>
+{% endfor %}

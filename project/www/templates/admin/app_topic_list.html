@@ -1,0 +1,113 @@
+{% if layout == 'default' %}
+    {% extends "admin/_layout.html" %}
+
+    {% block head %}
+
+    {% endblock %}
+
+    {% block page_title %} 专题 {% endblock %}
+    {% block title %} 专题 <small>列表</small> {% endblock %}
+
+    {% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="/dashboard">首页</a>
+            <i class="icon-angle-right"></i>
+        </li>
+        <li>专题列表</li>
+    </ul>
+    {% endblock %}
+{% else %}
+    {% extends "admin/_tiny_layout.html" %}
+{% endif %}
+
+
+{% block content %}
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+	<div class="portlet-title">
+		<div class="caption"><i class="icon-edit"></i>专题列表</div>
+		<div class="tools"></div>
+	</div>
+	<div class="portlet-body">
+		<div class="table-toolbar">
+			<div class="btn-group">
+				<a class="btn green" data-toggle="modal" href="{{ url_for('admin_app_topic_add', layout=layout) }}">添加新专题 <i class="icon-plus"></i></a>
+			</div>
+		</div>
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+                    <th style="width: 8%">ICON</th>
+					<th style="width: 36%">专题名称</th>
+					<th style="width: 15%">语言</th>
+					<th style="width: 15%">国家</th>
+					<th style="width: 5%">状态</th>
+					<th style="width: 21%">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for app_topic in topic_list %}
+				<tr>
+                    <td><img src="{{ create_pic_url(app_topic['icon_store_path']) }}" alt="{{ app_topic['name'] }}" style="width: 60px; height: 60px" /></td>
+					<td><strong>{{ app_topic['name'] }}</strong></td>
+					<td>
+						{% set langs=language_code_to_name(app_topic['language']) %}
+						{% for lang in  langs %}
+						<span class="label label-info">{{ lang }}</span>
+						{% endfor %}
+					</td>
+					<td>
+						{% set counties=country_code_to_name(app_topic['country']) %}
+						{% for country in  counties %}
+						<span class="label label-info">{{ country }}</span>
+						{% endfor %}
+					</td>
+					<td>{% if app_topic['status'] == 1 %}
+						<span class="label label-success">已发布</span>
+						{% else %}
+						<span class="label label-danger">未发布</span>
+						{% endif %}
+					</td>
+					<td>
+						<a class="btn yellow" href="{{ url_for('admin_app_topic_edit', _id=app_topic['_id'], layout=layout) }}">编辑</a>
+						<a class="btn green" href="{{ url_for('admin_app_topic_item_add', _id=app_topic['_id'], layout=layout) }}">管理应用</a>
+						<a class="btn red" data-toggle="modal" href="#confirm_box_{{app_topic['_id']}}">删除</a>
+						<div id="confirm_box_{{app_topic['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+							<div class="modal-body">
+								<p>确定要删除吗?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn">取消</button>
+								<button type="button" data-dismiss="modal" class="btn red" onclick="deleteAppTopic('{{app_topic['_id']}}')">确定</button>
+							</div>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script>
+var ajax = NG.Ajax();
+
+function deleteAppTopic(_id){
+	var url = "{{url_for('admin_app_topic_delete')}}?_id="+_id;
+	ajax.Get(url, function(res){
+		if(res.status == 'success'){
+			location.reload();
+		}else{
+			alert(res)
+		}
+	});
+}
+</script>
+{% endblock %}
+
+{% block menuName %}应用专题{% endblock %}

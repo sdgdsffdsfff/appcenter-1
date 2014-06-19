@@ -1,0 +1,60 @@
+{% extends "admin/_layout.html" %}
+
+{% block head %}
+    
+{% endblock %}
+
+{% block page_title %} 分类 {% endblock %}
+{% block title %} 分类 <small>管理应用分类图标</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+	<li>
+		<i class="icon-home"></i>
+		<a href="/dashboard">首页</a> 
+		<i class="icon-angle-right"></i>
+	</li>
+	<li>分类</li>
+	
+</ul>  
+{% endblock %}
+
+{% block menuName %}应用分类{% endblock %}
+
+{% block content %}
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+	<div class="portlet-title">
+		<div class="caption"><i class="icon-edit"></i>分类图标</div>
+		<div class="tools">
+			<a href="javascript:;" class="collapse"></a>
+			<a href="#portlet-config" data-toggle="modal" class="config"></a>
+			<a href="javascript:;" class="reload"></a>
+			<a href="javascript:;" class="remove"></a>
+		</div>
+	</div>
+	<div class="portlet-body">
+		<form action="{{ url_for('ListView:post') }}" name="genre_icon_form" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="genre_id" value="{{genre_id}}" />
+		 
+		<div class="control-group ">
+			<label class="control-label">Icon</label>
+			<div class="controls tab1">
+				<input type="file" name="icon" class="m-wrap large" />
+				<span class="help-inline">
+					
+				</span>
+			</div>
+		</div>
+		
+		<div class="form-actions">
+			<button type="submit" class="btn blue"><i class="icon-ok"></i> Save</button>
+		</div>
+		
+
+</form>
+	</div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+

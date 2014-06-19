@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+  <!-- BEGIN HEAD -->
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block page_title %}{% endblock %} | 维维网管理系统</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="/static/metronic1.4/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/metronic1.4/assets/plugins/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/metronic1.4/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/metronic1.4/assets/css/style-metro.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/metronic1.4/assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/metronic1.4/assets/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/metronic1.4/assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+    <link href="/static/metronic1.4/assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/metronic1.4/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/static/metronic1.4/assets/plugins/bootstrap-tag/css/bootstrap-tag.css" rel="stylesheet" type="text/css" />
+    <link href="/static/metronic1.4/assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" rel="stylesheet" type="text/css" />
+    <link href="/static/metronic1.4/assets/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
+    <!-- BEGIN:File Upload Plugin CSS files-->
+    <link href="/static/metronic1.4/assets/plugins/jquery-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet" type="text/css" >
+    <!-- END:File Upload Plugin CSS files-->     
+    <link href="/static/metronic1.4/assets/css/pages/error.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL STYLES -->
+    <link rel="shortcut icon" href="favicon.ico" />
+    {% block head %}{% endblock %}
+  </head>
+  <!-- END HEAD -->
+  <!-- BEGIN BODY -->
+  <body class="page-header-fixed">
+    <!-- BEGIN HEADER -->   
+    <div class="header navbar navbar-inverse navbar-fixed-top">
+      <!-- BEGIN TOP NAVIGATION BAR -->
+      <div class="navbar-inner">
+	<div class="container-fluid">
+	  <!-- BEGIN LOGO -->
+	  <a class="brand" href="index.html">
+	    <img src="/static/metronic1.4/assets/img/logo.png" alt="logo" />
+	  </a>
+	  <!-- END LOGO -->
+	  <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+	  <a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+	    <img src="/static/metronic1.4/assets/img/menu-toggler.png" alt="" />
+	  </a>          
+	  <!-- END RESPONSIVE MENU TOGGLER -->            
+	  <!-- BEGIN TOP NAVIGATION MENU -->              
+	  <ul class="nav pull-right">
+	    <li class="dropdown user">
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+		<img alt="" src="/static/metronic1.4/assets/img/avatar1_small.jpg" />
+		<span class="username">{{current_user.username}}</span>
+		<i class="icon-angle-down"></i>
+	      </a>
+	      <ul class="dropdown-menu">
+		<li><a href="{{url_for("admin_logout")}}"><i class="icon-key"></i> 登出</a></li>
+	      </ul>
+	    </li>
+	    <!-- END USER LOGIN DROPDOWN -->
+	    <!-- END USER LOGIN DROPDOWN -->
+	  </ul>
+	  <!-- END TOP NAVIGATION MENU --> 
+	</div>
+      </div>
+      <!-- END TOP NAVIGATION BAR -->
+    </div>
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+    <div class="page-container row-fluid">
+      <!-- BEGIN SIDEBAR -->
+      <div class="page-sidebar nav-collapse collapse">
+	<!-- BEGIN SIDEBAR MENU -->        
+	<ul id="page_base_menu" class="page-sidebar-menu">
+	  <li>
+	    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+	    <div class="sidebar-toggler hidden-phone"></div>
+	    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+	  </li>
+	  <li>
+	    <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+	    <form class="sidebar-search">
+	      <div class="input-box">
+		<a href="javascript:;" class="remove"></a>
+		<input type="text" placeholder="Search..." />
+		<input type="button" class="submit" value=" " />
+	      </div>
+	    </form>
+	    <!-- END RESPONSIVE QUICK SEARCH FORM -->
+	  </li>
+	  <li class="start">
+	    <a href="{{ url_for('admin_index_dashboard') }}">
+	      <i class="icon-home"></i> 
+	      <span class="title">首页</span>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="{{ url_for('admin_genre_list') }}">
+	      <i class="icon-sitemap"></i> 
+	      <span class="title">应用分类</span>
+	    </a>
+	  </li>
+
+	  <li>
+	    <a href="javascript:;">
+	      <i class="icon-apple"></i> 
+	      <span class="title">应用管理</span>
+	      <span class="arrow "></span>
+	    </a>
+	    <ul class="sub-menu">
+              <li >
+		<a href="{{ url_for('admin_visual_editor_simulator') }}" target="_blank">
+		  可视化编辑</a>
+	      </li>
+	      <li >
+		<a href="{{ url_for('admin_app_add') }}">
+		  添加新应用</a>
+	      </li>
+	      <li >
+		<a href="{{ url_for('admin_app_list') }}">
+		  应用列表</a>
+	      </li>
+	    </ul>
+	  </li>
+	  <li>
+	    <a class="active" href="{{ url_for("admin_advertising_list") }}">
+	      <i class="icon-adn"></i> 
+	      <span class="title">广告位置</span>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="{{ url_for('admin_app_collection_list') }}">
+	      <i class="icon-th"></i>
+	      <span class="title">应用集合</span>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="{{ url_for('admin_app_topic_list') }}">
+	      <i class="icon-copy"></i>
+	      <span class="title">应用专题</span>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="{{ url_for('admin_clienttype_list') }}">
+	      <i class="icon-copy"></i>
+	      <span class="title">包类型管理</span>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="{{ url_for('admin_client_list') }}">
+	      <i class="icon-copy"></i>
+	      <span class="title">客户端管理</span>
+	    </a>
+	  </li>
+          <li>
+	    <a href="{{ url_for('admin_language_list') }}">
+	      <i class="icon-asterisk"></i>
+	      <span class="title">语言管理</span>
+	    </a>
+	  </li>
+          <li>
+	    <a href="{{ url_for('admin_country_list') }}">
+	      <i class="icon-map-marker"></i>
+	      <span class="title">国家管理</span>
+	    </a>
+	  </li>
+      <li>
+	    <a href="{{ url_for('admin_dirty_word_list') }}">
+	      <i class="icon-cny"></i>
+	      <span class="title">黑名单管理</span>
+	    </a>
+	  </li>
+
+
+      {% if current_user.role.role == "Admin" %}
+       <li>
+	    <a href="{{ url_for('admin_cache_app_info') }}">
+	      <i class="icon-cny"></i>
+	      <span class="title">缓存状态</span>
+	    </a>
+	  </li>
+          <li>
+	    <a href="{{ url_for('admin_user_list') }}">
+	      <i class="icon-group"></i>
+	      <span class="title">用户管理</span>
+	    </a>
+	  </li>
+          {% endif %}
+	</ul>
+	<!-- END SIDEBAR MENU -->
+      </div>
+      <!-- END SIDEBAR -->
+      <!-- BEGIN PAGE -->
+      <div class="page-content">
+	<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div id="portlet-config" class="modal hide">
+	  <div class="modal-header">
+	    <button data-dismiss="modal" class="close" type="button"></button>
+	    <h3>Widget Settings</h3>
+	  </div>
+	  <div class="modal-body">
+	    Widget Settings form goes here
+	  </div>
+	</div>
+	<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<!-- BEGIN PAGE CONTAINER-->
+	<div class="container-fluid">
+	  <!-- BEGIN PAGE HEADER-->
+	  <div class="row-fluid">
+	    <div class="span12">
+	      <!-- BEGIN STYLE CUSTOMIZER -->
+	      <div class="color-panel hidden-phone">
+		<div class="color-mode-icons icon-color"></div>
+		<div class="color-mode-icons icon-color-close"></div>
+		<div class="color-mode">
+		  <p>THEME COLOR</p>
+		  <ul class="inline">
+		    <li class="color-black current color-default" data-style="default"></li>
+		    <li class="color-blue" data-style="blue"></li>
+		    <li class="color-brown" data-style="brown"></li>
+		    <li class="color-purple" data-style="purple"></li>
+		    <li class="color-grey" data-style="grey"></li>
+		    <li class="color-white color-light" data-style="light"></li>
+		  </ul>
+		  <label>
+		    <span>Layout</span>
+		    <select class="layout-option m-wrap small">
+		      <option value="fluid" selected>Fluid</option>
+		      <option value="boxed">Boxed</option>
+		    </select>
+		  </label>
+		  <label>
+		    <span>Header</span>
+		    <select class="header-option m-wrap small">
+		      <option value="fixed" selected>Fixed</option>
+		      <option value="default">Default</option>
+		    </select>
+		  </label>
+		  <label>
+		    <span>Sidebar</span>
+		    <select class="sidebar-option m-wrap small">
+		      <option value="fixed">Fixed</option>
+		      <option value="default" selected>Default</option>
+		    </select>
+		  </label>
+		  <label>
+		    <span>Footer</span>
+		    <select class="footer-option m-wrap small">
+		      <option value="fixed">Fixed</option>
+		      <option value="default" selected>Default</option>
+		    </select>
+		  </label>
+		</div>
+	      </div>
+	      <!-- END BEGIN STYLE CUSTOMIZER -->    
+	      <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+	      <h3 class="page-title">
+		{% block title %}{% endblock %}
+	      </h3>
+	      {% block breadcrumb %}{% endblock %}
+	      <!-- END PAGE TITLE & BREADCRUMB-->
+	    </div>
+	  </div>
+	  <div class="row-fluid">
+	    <div class="span12">
+	      {% block content %}{% endblock %}
+	    </div>
+	  </div>
+	</div>
+	<!-- END PAGE CONTAINER-->    
+      </div>
+      <!-- END PAGE -->
+    </div>
+    <!-- END CONTAINER -->
+    <!-- BEGIN FOOTER -->
+    <div class="footer">
+      <div class="footer-inner">
+	2013 &copy; Metronic by keenthemes.
+      </div>
+      <div class="footer-tools">
+	<span class="go-top">
+	  <i class="icon-angle-up"></i>
+	</span>
+      </div>
+    </div>
+    <!-- END FOOTER -->
+
+    <div class="modal fade hide confirm_modal in" id="NG_Confirm_Modal">
+      <div class="modal-body inner"></div>
+      <div class="modal-footer">
+	<button id="NG_Confirm_Cancel_Btn" class="btn cancel" data-dismiss="modal">取消</button> 
+	<button id="NG_Confirm_Ok_Btn" class="btn red">确定</button>
+      </div>
+    </div>
+
+    <div class="modal fade hide in" id="NG_Modal">
+      <div class="modal-header">
+	<a class="close" href="#" data-dismiss="modal"></a>
+	<h3>提示</h3>
+      </div>
+      <div class="modal-body inner">
+      </div>
+      <div class="modal-footer">
+	<button id="NG_Modal_Ok_Btn" class="btn red">确定</button>
+      </div>
+    </div>
+
+    <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+    <!-- BEGIN CORE PLUGINS -->   
+    <script src="/static/metronic1.4/assets/plugins/jquery-1.10.1.min.js" type="text/javascript"></script>
+    <script src="/static/metronic1.4/assets/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+    <!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-ui/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>      
+    <script src="/static/metronic1.4/assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/static/metronic1.4/assets/plugins/bootstrap-hover-dropdown/twitter-bootstrap-hover-dropdown.min.js" type="text/javascript" ></script>
+    <!--[if lt IE 9]>
+	<script src="/static/metronic1.4/assets/plugins/excanvas.min.js"></script>
+	<script src="/static/metronic1.4/assets/plugins/respond.min.js"></script>  
+	<![endif]-->   
+    <script src="/static/metronic1.4/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="/static/metronic1.4/assets/plugins/jquery.blockui.min.js" type="text/javascript"></script>  
+    <script src="/static/metronic1.4/assets/plugins/jquery.cookie.min.js" type="text/javascript"></script>
+    <script src="/static/metronic1.4/assets/plugins/uniform/jquery.uniform.min.js" type="text/javascript" ></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="/static/metronic1.4/assets/plugins/bootstrap-tag/js/bootstrap-tag.js" type="text/javascript" ></script> 
+    <script src="/static/metronic1.4/assets/plugins/fancybox/source/jquery.fancybox.pack.js" type="text/javascript" ></script>
+    <script src="/static/metronic1.4/assets/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.js" type="text/javascript" ></script> 
+    <script src="/static/metronic1.4/assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.js" type="text/javascript" ></script>
+    <!-- BEGIN:File Upload Plugin JS files-->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <!-- The Templates plugin is included to render the upload/download listings -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/vendor/tmpl.min.js"></script>
+    <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/vendor/load-image.min.js"></script>
+    <!-- The Canvas to Blob plugin is included for image resizing functionality -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/vendor/canvas-to-blob.min.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/jquery.fileupload.js"></script>
+    <!-- The File Upload file processing plugin -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/jquery.fileupload-fp.js"></script>
+    <!-- The File Upload user interface plugin -->
+    <script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/jquery.fileupload-ui.js"></script>
+    
+    <script src="/static/metronic1.4/assets/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+    <script src="/static/metronic1.4/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+    <script src="/static/metronic1.4/assets/plugins/fancybox/source/jquery.fancybox.pack.js"></script> 
+    <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->
+    <!--[if gte IE 8]><script src="/static/metronic1.4/assets/plugins/jquery-file-upload/js/cors/jquery.xdr-transport.js"></script><![endif]-->
+
+    <!-- END:File Upload Plugin JS files-->
+
+    <!-- END PAGE LEVEL PLUGINS -->
+    <script src="/static/metronic1.4/assets/scripts/app.js"></script>      
+    <script>
+  jQuery(document).ready(function() {       
+    // initiate layout and plugins
+    App.init();
+    App.initFancybox();
+    
+
+      <!-- 处理分类高亮 start -->
+      //该分类的名称
+      var getTitle = '{% block menuName %}{% endblock %}';
+    /**
+			* var titleType = 'a';   有子分类的情况下使用这个
+			* var titleType = '.title';   没有子分类的大分类则使用这个
+			*/
+			var titleType = '{% block titleType %}.title{% endblock %}';
+			if (document.documentElement.webkitRequestFullscreen) {
+				document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
+			//处理分类高亮的方法
+			$.each($('#page_base_menu>li>').find(titleType), function(){
+				var data = $(this);
+				var t = $.trim( $(this).html() );
+				$.each(data, function(){
+					if( getTitle == t ){
+						$(this).parents('li').addClass('active');
+					}
+				});
+			});
+
+			<!-- 处理分类高亮 end -->
+		   
+		});
+
+		var NG = {
+
+			Confirm: function (msg,  okFunc, cancelFunc){
+				var modalObj = $('#NG_Confirm_Modal');
+				modalObj.find('.inner').html(msg);
+				$('#NG_Confirm_Ok_Btn').click(function(){
+					okFunc(modalObj);
+				});
+				$('#NG_Confirm_Cancel_Btn').click(function(){
+					cancelFunc(modalObj);
+					modalObj.hide();
+				});
+				modalObj.show();
+			},
+
+			Message: function(msg, title){
+				var modalObj = $('#NG_Modal');
+				modalObj.find('.inner').html(msg);
+				modalObj.find('h3').html(title==undefined ? '提示' : title);
+				modalObj.find('.close').click(function(){
+					modalObj.hide();
+				});
+				$('#NG_Modal_Ok_Btn').click(function(){
+					modalObj.hide();
+				});
+				modalObj.show();
+			},
+
+			Ajax: function(){
+				var ajax = {};
+				ajax.Request = function (type, url, data, func, async){
+					$.ajax({
+	                    type: type, 
+	                    url: url, 
+	                    data: data,      
+	                    dataType: 'json',
+	                    async: async == undefined ? false : async,
+	                    success: function(result) { 
+	                        func(result);
+	                    }
+	                });
+				}
+				ajax.Post = function(url, data, func, async){
+					ajax.Request('POST', url, data, func, async);
+				}
+				ajax.Get = function(url, func, async){
+					ajax.Request('GET', url, null, func, async);
+				}
+				return ajax;
+			}
+		};
+
+		function ajaxAppListLoad(url) {
+			var p = url.split('?');
+			if(p[1]){
+				location.hash = '#' + p[1];
+			}
+			$('#loading').css({"visibility":"visible"});
+			var ajax = NG.Ajax();
+			ajax.Get(url, function(res){
+				if(res.data){
+					$('#app_data_grad').html(res.data);
+				}
+				$('#loading').css({"visibility":"hidden"});
+				//重新渲染
+				App.initUniform();
+			});
+		}
+		
+	</script>
+	{% block scripts %}{% endblock %}
+	<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

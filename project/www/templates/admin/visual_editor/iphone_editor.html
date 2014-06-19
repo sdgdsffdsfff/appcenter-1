@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>iphone编辑器</title>
+
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js"></script>
+    <style type="text/css">
+        *{ margin: 0; padding: 0}
+        body{ margin: 0; padding: 0}
+        img{border:0;}
+        ul{list-style: none; margin: 0; padding: 0}
+        ul li{ margin: 0; padding: 0}
+        a{ text-decoration: none; color: #333333}
+        .tab_focus{ background: #0000FF; color: #FFFFFF}
+        #vshare{width: 320px;height: 568px; overflow: hidden}
+        #nav_bar{ height: 50px; overflow: hidden; background: #003bb3}
+        #search_btn{ display: block; float: right; margin:15px 25px; width: 20px; height: 20px;}
+        #tab_bar{ height: 30px; background: #cccccc}
+        #tab_bar li{ width: 49.9%; float: left; text-align: center}
+        #tab_bar li a{ padding: 3px 30px; line-height: 30px}
+        #flash_view{ height: 130px; background: #efefef; position: relative}
+        #home_app_list{height: 320px; overflow-y:scroll; background: #FFFFFF; position: relative}
+        #menu_bar{ position: absolute; bottom: 0; left: 0; width: 320px; height: 50px}
+        #menu_bar li{width: 20%; float: left; height: 50px; background: #333333; text-align: center}
+        #menu_bar li a{ color: #FFFFFF; line-height: 50px}
+        #menu_bar .focus{ background: #666666}
+
+        .wrapper{width:320px;margin:0 auto;padding-bottom:50px;}
+        /* focus */
+        #focus{width:320px;height:130px;overflow:hidden;position:relative;}
+        #focus ul{height:380px;position:absolute;}
+        #focus ul li{float:left;width:320px;height:130px;overflow:hidden;position:relative;background:#000;}
+        #focus ul li div{position:absolute;overflow:hidden;}
+        #focus ul li a img{ width: 320px; height: 130px}
+        #focus .btnBg{position:absolute;width:320px;height:20px;left:0;bottom:0;background:#000;}
+        #focus .btn{position:absolute;width:300px;height:10px;padding:5px 10px;right:0;bottom:0;text-align:right;}
+        #focus .btn span{display:inline-block;_display:inline;_zoom:1;width:10px;height:10px;_font-size:0;margin-left:5px;cursor:pointer;background:#fff; border-radius: 10px}
+        #focus .btn span.on{background:#fff;}
+
+        .app_list li { height: 60px; padding: 5px; border-bottom: 1px solid #EFEFEF}
+        .app_list li .icon{ width: 60px; height: 60px; float: left}
+        .app_list li .icon img{width: 60px; height: 60px}
+        .app_list li .info{ width: 220px; height: 60px; float: left; margin-left: 10px}
+        .app_list li .info h1{ font-size: 14px; font-weight: bold; color: #000000; line-height: 30px}
+        .app_list li .info h2{font-size: 10px; color: #666666; line-height: 20px; position: relative}
+        .star{width: 92px; height: 18px; display: block; position: absolute; left: 35px; top:0}
+        .star .bright{width: 92px; height: 16px; display: block; background: url(/static/star.png) 0 0; position: absolute; top: 0; left: 0}
+        .star .dark{width: 92px; height: 16px; display: block; background: url(/static/star.png) 0 -16px}
+
+        .editor_btn{position:absolute; right: 10px;top: 10px; width: 60px; padding: 0 5px; line-height: 25px; height: 25px; border-radius: 5px; background: #ffcc00; z-index: 10000}
+        .editor_btn a{ font-size: 12px; color: #FFFFFF}
+
+        #home_topic_screen{ display: none}
+        #topic_list{height: 450px; overflow-y:scroll; background: #FFFFFF; position: relative}
+    </style>
+
+</head>
+<body>
+
+<div id="vshare">
+    <div id="screen"></div>
+    <ul id="menu_bar">
+        <li id="home" class="focus"><a href="#">首页</a></li>
+        <li id="category"><a href="#">分类</a></li>
+        <li id="download"><a href="#">下载</a></li>
+        <li id="manage"><a href="#">管理</a></li>
+        <li id="more"><a href="#">更多</a></li>
+    </ul>
+</div>
+
+</body>
+</html>
+<script type="text/javascript">
+function load_home_screen()
+{
+    $.getJSON('{{ url_for('admin_visual_editor_iphone_home_screen', lang=lang, country=country) }}', {}, function(res){
+        $('#screen').html(res.data);
+        $('#home_screen_tab').addClass('tab_focus');
+        $.post('{{ url_for('admin_visual_editor_iphone_home_screen', lang=lang, country=country) }}', {}, function(r){
+            var res = eval('(' + r + ')');
+            for(var i in res.data.slider){
+                var emt = '<li><a href="'+res.data.slider[i].link+'" target="_blank"><img src="'+res.data.slider[i].picURL+'" alt="'+res.data.slider[i].title+'" /></a></li>';
+                $('#flash_pic_box').append(emt);
+            }
+            flash_run();
+            var list = res.data.apps.data
+            for(var i in list){
+                var per = (list[i].averageUserRating * 2)*10 + '%';
+                var emt = '<li><div class="icon"><img src="'+list[i].icon+'" /></div><div class="info"><h1><a href="#">'+list[i].trackName+'</a></h1><h2>评分：<span class="star"><span class="dark"></span><span class="bright" style="width: '+per+'"></span></span> </h2></div></li>'
+                $('#home_app_list_box').append(emt);
+            }
+        });
+    });
+}
+function load_topic_screen()
+{
+    $.getJSON('{{ url_for('admin_visual_editor_iphone_topic_screen', lang=lang, country=country) }}', {}, function(res){
+        $('#screen').html(res.data);
+        $('#topic_screen_tab').addClass('tab_focus');
+        $.post('{{ url_for('admin_visual_editor_iphone_topic_screen', lang=lang, country=country) }}', {}, function(r){
+            var res = eval('(' + r + ')');
+            var list = res.data
+            for(i in list){
+                var emt = '<li><div class="icon"><img src="'+list[i].icon+'" /></div><div class="info"><h1><a href="javascript:;">'+list[i].name+'</a></h1><h2>应用数量：'+list[i].appCount+'</h2></div></li>'
+                $('#topic_list_box').append(emt);
+            }
+        });
+    });
+}
+function load_search_screen()
+{
+
+}
+function editor(id)
+{
+    window.parent.editor(id);
+}
+$(function(){
+    load_home_screen();
+    $("#vshare").hover(function() {
+        $('.editor_btn').show();
+	}).mouseleave(function(){
+        $('.editor_btn').hide();
+    });
+});
+</script>

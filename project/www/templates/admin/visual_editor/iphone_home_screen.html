@@ -1,0 +1,71 @@
+ <!--首页-->
+<div id="home_screen">
+    <div id="nav_bar">
+        <a href="javascript:;" id="search_btn" onclick="load_search_screen()"><img src="/static/search.png" /></a>
+    </div>
+    <ul id="tab_bar">
+        <li><a href="javascript:;" onclick="load_home_screen()" id="home_screen_tab">推荐</a> </li>
+        <li><a href="javascript:;" onclick="load_topic_screen()" id="topic_screen_tab">特色专题</a> </li>
+    </ul>
+    <div class="content_wraper">
+        <div id="flash_view">
+            <div class="editor_btn"><a href="javascript:;" onclick="editor('iphone_index_flash')">编辑此区域</a></div>
+            <div class="wrapper">
+                <div id="focus">
+                    <ul id="flash_pic_box"></ul>
+                </div><!--focus end-->
+            </div><!-- wrapper end -->
+        </div>
+        <div id="home_app_list">
+            <div class="editor_btn"><a href="javascript:;" onclick="editor('iphone_index_app_list')">编辑此区域</a></div>
+            <ul class="app_list" id="home_app_list_box"></ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+function flash_run()
+{
+    var sWidth = $("#focus").width(); //获取焦点图的宽度（显示面积）
+	var len = $("#focus ul li").length; //获取焦点图个数
+	var index = 0;
+	var picTimer;
+
+	//以下代码添加数字按钮和按钮后的半透明条，还有上一页、下一页两个按钮
+	var btn = "<div class='btnBg'></div><div class='btn'>";
+	for(var i=0; i < len; i++) {
+		btn += "<span></span>";
+	}
+	btn += "</div></div>";
+	$("#focus").append(btn);
+	$("#focus .btnBg").css("opacity",0.5);
+
+	//为小按钮添加鼠标滑入事件，以显示相应的内容
+	$("#focus .btn span").css("opacity",0.4).mouseover(function() {
+		index = $("#focus .btn span").index(this);
+		showPics(index, sWidth);
+	}).eq(0).trigger("mouseover");
+
+
+	//本例为左右滚动，即所有li元素都是在同一排向左浮动，所以这里需要计算出外围ul元素的宽度
+	$("#focus ul").css("width",sWidth * (len));
+
+	//鼠标滑上焦点图时停止自动播放，滑出时开始自动播放
+	$("#focus").hover(function() {
+        //alert('xxxx');
+		clearInterval(picTimer);
+	},function() {
+		picTimer = setInterval(function() {
+			showPics(index, sWidth);
+			index++;
+			if(index == len) {index = 0;}
+		},3000); //此4000代表自动播放的间隔，单位：毫秒
+	}).trigger("mouseleave");
+}
+//显示图片函数，根据接收的index值显示相应的内容
+function showPics(index, sWidth) { //普通切换
+    var nowLeft = -index*sWidth; //根据index值计算ul元素的left值
+    $("#focus ul").stop(true,false).animate({"left":nowLeft},300); //通过animate()调整ul元素滚动到计算出的position
+    //$("#focus .btn span").removeClass("on").eq(index).addClass("on"); //为当前的按钮切换到选中的效果
+    $("#focus .btn span").stop(true,false).animate({"opacity":"0.4"},300).eq(index).stop(true,false).animate({"opacity":"1"},300); //为当前的按钮切换到选中的效果
+}
+</script>
