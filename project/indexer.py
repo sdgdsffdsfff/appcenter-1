@@ -4,14 +4,20 @@
 import pyes
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
+from common.ng_redis import NGRedis
 from www.controller.app.search import AppSearch
+from www.controller.app.app import AppController
 from www.controller.app.header import artworkUrl512_to_114_icon, file_size_format
 import threading, multiprocessing
 
 mongo = NGMongoConnect(settings['mongodb']['host'])
 mongo_db = mongo.get_database('appcenter')
 
+
 def index_apps(app_search, apps):
+    
+    app = AppController()
+
     for index, app in enumerate(apps):
         support_iphone, support_ipad = 0, 0
         for d in app['supportedDevices']:
@@ -20,6 +26,16 @@ def index_apps(app_search, apps):
         rating = app.get('averageUserRating', 0)
         try:
             icon = artworkUrl512_to_114_icon(app['artworkUrl512'])
+            sign = app.get('sign', 0)         
+            app_version = app.get_app_version_cache(app['bundleId'])
+            
+            if not app_version:
+                ipa_version_jb = 'unknown'
+                ipa_version_signed = 'unknown'
+            else:
+                ipa_version_jb = app_version['ipaVersion']['signed']
+                ipa_version_signed = app_version['ipaVersion']['jb']
+
             app_search.add_index(
                 ID = str(app['_id']),
                 track_name = app['trackName'],
@@ -27,7 +43,8 @@ def index_apps(app_search, apps):
                 support_ipad = support_ipad, icon = icon,
                 bundle_id = app['bundleId'], rating = rating,
                 size = file_size_format(app.get('fileSizeBytes', 0)),
-                sign = app.get('sign', 0), download_version = app.get('downloadVersion', "")
+                sign = sign, ipa_version_jb = ipa_version_jb,
+                ipa_version_signed = ipa_version_signed
             )
         except Exception, ex: print ex
 
@@ -55,11 +72,11 @@ def index_app():
     fields = {
         "trackName": 1, "bundleId": 1,
         "supportedDevices": 1, "artworkUrl512": 1,
-        "averageUserRating": 1, "sign": 1, "size": 1,
+        "averageUserRating": 1, "sign": 1,
         "fileSizeBytes": 1, "downloadVersion": 1
     }
     apps = []
-    for index, app in enumerate(mongo_db.AppBase.find({}, fields)):
+    for index, app in enumerate(mongo_db.AppBase.find({'review': 1}, fields)):
         apps.append(app)
         if (index + 1) % num_apps_per_process == 0:
             p = multiprocessing.Process(target=index_process_worker, args=(app_search, apps))

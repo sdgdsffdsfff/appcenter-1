@@ -27,7 +27,7 @@ settings = {
         'ids_name': 'ids'
     },
     'elasticsearch': {
-        'host': '192.168.16.112',
+        'host': '127.0.0.1',
         'port': 9200,
         'index': 'appcenter'
     },

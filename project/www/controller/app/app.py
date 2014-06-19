@@ -150,6 +150,15 @@ class AppController(ControllerBase):
         except Exception, ex:
             traceback.print_exc()
             pass
+    def get_app_version_cache(self, bundle_id, lang='EN'):
+        key = self.app_version_redis_key % lang
+        app = None
+        try:
+            json_str = redis_master.hget(key, bundle_id)
+            app = cjson.decode(json_str)
+        except:
+            pass
+        return app
 
     def get_app_cache(self, object_id, refresh_cache=False):
         """
