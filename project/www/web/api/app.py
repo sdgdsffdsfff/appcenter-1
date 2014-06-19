@@ -25,7 +25,7 @@ class DetailView(View):
         object_id = request.args.get('id', None)
         if object_id is not None:
             try:
-                data = self.app.get_app_cache(object_id, True)
+                data = self.app.get_app_cache(object_id, False)
             except Exception, ex:
                 print ex
                 pass
