@@ -14,7 +14,7 @@ mongo = NGMongoConnect(settings['mongodb']['host'])
 mongo_db = mongo.get_database('appcenter')
 
 
-def cache_genre_list(genre_id):
+def cache_app_list(genre_id):
     try:
         print "Start cache genre: %s app list" % genre_id
 
@@ -34,10 +34,10 @@ def cache_genre_list(genre_id):
         print "Cache %s ERROR: %s" % (genre_id, ex)
 
 
-def cache_genre_list_run(genreID=0):
+def cache_app_list_run(genreID=0):
     if genreID != 0:
         genre_id = int(genreID)
-        cache_genre_list(genre_id)
+        cache_app_list(genre_id)
     else:
         for genre in mongo_db.app_genre.find():
             cache_genre_list(genre['genreId'])
