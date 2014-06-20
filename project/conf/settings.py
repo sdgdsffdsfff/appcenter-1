@@ -36,6 +36,7 @@ settings = {
     'pic_url_host': 'http://61.155.215.40:5000/static/uploads',
     'tmp_dir': '/tmp',
     'ipa_dir': './www/static/ipa',
+    'download_server_host': 'http://dl.appvv.com',
     'client_url_host': 'http://vvdl.appvv.com',
     'client_upload_dir': './www/static/vshare/download'
 }
