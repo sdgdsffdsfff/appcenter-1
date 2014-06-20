@@ -66,7 +66,7 @@ def track_need_to_update():
 		data = res.json()
 		if data.get("data", {}).get("appid_file", {}) is None or \
 		   data.get("data", {}).get("appid_file", {}) == "None":
-			print("no job get, try in 5 minute later! wating...")
+			print("no job get, try in 5 minute later! waiting...")
 			time.sleep(60 * 5)
 			continue
 		oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
