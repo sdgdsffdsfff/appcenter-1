@@ -349,7 +349,7 @@ class AppController(ControllerBase):
         if count == 0:
             key = self.app_list_redis_key % (device, sign, self.default_language, genre_id, self.limit, sort)
             count = redis_master.llen(key)
-        print key
+            
         page_size = 12
         total_page = int(math.ceil(count / float(page_size)))
         prev_page = (page - 1) if page - 1 > 0 else 1
