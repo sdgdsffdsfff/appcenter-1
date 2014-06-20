@@ -87,4 +87,4 @@ def index_app():
     p.join()
     app_search.refresh()
 
-index_app()
+
