@@ -34,10 +34,10 @@ def cache_app_list(genre_id):
         print "Cache %s ERROR: %s" % (genre_id, ex)
 
 
-def cache_app_list_run(genreID=0):
-    if genreID != 0:
+def cache_app_list_run(genreID=None):
+    if genreID != None:
         genre_id = int(genreID)
         cache_app_list(genre_id)
     else:
         for genre in mongo_db.app_genre.find():
-            cache_genre_list(genre['genreId'])
+            cache_app_list(genre['genreId'])

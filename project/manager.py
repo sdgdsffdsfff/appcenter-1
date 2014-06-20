@@ -12,12 +12,12 @@ register_view()
 @manager.command
 def build_search_index(): build_search_index_run()
 
-#@manager.command
 @manager.option('-I', '--ID', help='App mongo obejct id ')
 def cache_app(ID): cache_app_run(ID)
 
-@manager.command
-def cache_app_list_run(genreID): cache_app_list_run(genreID)
+@manager.option('-G', '--genreID', help='App genre id ')
+def cache_app_list(genreID):
+    cache_app_list_run(genreID)
 
 @manager.command
 def update_app(): update_app_info()

@@ -14,19 +14,18 @@ mongo_db = mongo.get_database('appcenter')
 def worker(_id):
     appc = AppController()
     appc.set_app_cache(_id)
-    
+    print _id
 
-def cache_app_run(ID=0):
-    if ID != 0:
+def cache_app_run(ID=None):
+    if ID != None:
         appc = AppController()
         appc.set_app_cache(ID)
     else:
         apps = mongo_db.AppBase.find({'review': 1})
         count = apps.count()
                 
-        pool = multiprocessing.Pool(processes=5)
+        pool = multiprocessing.Pool(processes=10)
         for app in apps:
-            #worker(app['_id'])
             pool.apply_async(worker, (app['_id'], ))
         
         pool.close()
