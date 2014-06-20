@@ -6,6 +6,7 @@ from indexer import index_app
 manager = Manager(app)
 register_view()
 
+
 @manager.command
 def index(): index_app()
 

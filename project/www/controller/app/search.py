@@ -31,17 +31,35 @@ class AppSearch(object):
                                  'index': 'not_analyzed',
                                  'store': 'yes',
                                  'type': u'integer'},
+                u'sign': {'boost': 1.0,
+                                 'index': 'not_analyzed',
+                                 'store': 'yes',
+                                 'type': u'integer'},
                 u'bundleId': {'boost': 1.0,
                               'index': 'not_analyzed',
                               'store': 'yes',
                               'type': u'string'},
-
+                u'ID': {'boost': 1.0,
+                              'index': 'not_analyzed',
+                              'store': 'yes',
+                              'type': u'string'},
+                u'ipaVersionJb': {'boost': 1.0,
+                          'index': 'not_analyzed',
+                          'store': 'yes',
+                          'type': u'string'},
+                u'ipaVersionSigned': {'boost': 1.0,
+                          'index': 'not_analyzed',
+                          'store': 'yes',
+                          'type': u'string'},
                 u'icon': {'boost': 1.0,
                           'index': 'not_analyzed',
                           'store': 'yes',
                           'type': u'string'},
-
-                u'rating': {'boost': 1.0,
+                u'size': {'boost': 1.0,
+                          'index': 'not_analyzed',
+                          'store': 'yes',
+                          'type': u'string'},
+                u'averageUserRating': {'boost': 1.0,
                             'index': 'not_analyzed',
                             'store': 'yes',
                             'type': u'float'}
@@ -51,26 +69,41 @@ class AppSearch(object):
         except Exception, ex:
             print ex
 
-    def add_index(self, ID, track_name, support_iphone, support_ipad, bundle_id, icon, rating, size, sign, download_version):
+    def add_index(self, ID, track_name, support_iphone, support_ipad, bundle_id, icon, rating, size, sign, ipa_version_jb, ipa_version_signed):
         self.es.index(
-            {'ID': ID, 'trackName': track_name, 'supportIphone': support_iphone, 'supportIpad': support_ipad,
-             'bundleId': bundle_id, 'icon': icon, 'averageUserRating': rating, 'size': size, 'sign': sign,
-             'downloadVersion': download_version},
-            "appcenter", "apps")
+            {
+              'ID': ID, 
+              'trackName': track_name, 
+              'supportIphone': support_iphone, 
+              'supportIpad': support_ipad,
+              'bundleId': bundle_id,
+              'icon': icon, 
+              'averageUserRating': rating, 
+              'size': size, 
+              'sign': sign,
+              'ipaVersionJb': ipa_version_jb, 
+              'ipaVersionSigned': ipa_version_signed
+             },
+            self.index, "apps", ID)
 
-    def query(self, words, device, page=1, page_size=12):
+    def query(self, words, device, sign=0, page=1, page_size=12):
         """
         query
         """
         start = (page - 1) * page_size
-        must = [pyes.TextQuery('trackName', words)]
+        
+        should = [pyes.TextQuery('trackName', words)]
+        must = []
+        if sign == 1:
+          must.append(pyes.TermQuery('sign', 1))
         must_not = []
         if device == 'iphone':
             must_not.append(pyes.TermQuery('supportIphone', 0))
 
         results = self.es.search(
-            pyes.Search(pyes.BoolQuery(must=must, must_not=must_not),
-                        fields=['trackName', 'icon', 'bundleId', 'rating'],
+            pyes.Search(pyes.BoolQuery(must=must, must_not=must_not, should=should),
+                        fields=['trackName', 'icon', 'ID', 'bundleId', 'averageUserRating',  
+                        'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad'],
                         start=start,
                         size=page_size
             ))
@@ -81,11 +114,11 @@ class AppSearch(object):
         next_page = (page + 1) if page + 1 < total_page else total_page
 
         return {'results': results,
-                'pageinfo': {'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
+                'pageInfo': {'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
                              'nextPage': next_page}}
 
     def refresh(self):
-        self.es.indices.refresh(["appcenter"])
+        self.es.indices.refresh([self.index])
 
     def delete_index(self):
         self.es.indices.delete_index(self.index)

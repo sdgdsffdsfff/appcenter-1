@@ -4,6 +4,7 @@
 
 from __header__ import FlaskView, ApiView, route, request
 from www.controller.app.app import AppController
+from www.controller.app.search import AppSearch
 
 
 class View(FlaskView):
@@ -25,7 +26,7 @@ class DetailView(View):
         object_id = request.args.get('id', None)
         if object_id is not None:
             try:
-                data = self.app.get_app_cache(object_id, True)
+                data = self.app.get_app_cache(object_id, False)
             except Exception, ex:
                 print ex
                 pass
@@ -98,3 +99,23 @@ class RelatedView(View):
         num = request.args.get('num', 4)
         apps = self.app.get_related_app(object_id, self._view._language, int(num))
         return self._view.render(1000, apps)
+
+class SearchView(View):
+    """
+    搜索
+    """
+    @route('/search', methods=['GET'], endpoint='api_app_search')
+    def do_request(self):
+        words = request.args.get('q', None)
+        try:
+            page = int(request.args.get('page', 1))
+        except:
+            page = 1
+        try:
+            device = int(request.args.get('device', 1))
+        except:
+            device = 1
+        num = request.args.get('num', 4)
+        search = AppSearch()
+        res = search.query(words, device, self._view._sign, page, 12)
+        return self._view.render(1000, res)
