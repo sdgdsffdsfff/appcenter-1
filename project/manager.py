@@ -1,9 +1,13 @@
-from scripts.update_app_info import update_app_info
+#encoding=UTF-8
 from flask.ext.script import Manager
+
 from main import app, register_view
+
+from scripts.update_app_info import update_app_info
 from scripts.indexer import build_search_index_run
 from scripts.cache_app import cache_app_run
 from scripts.cache_app_list import cache_app_list_run
+from scripts.compare_update import track_need_to_update
 
 manager = Manager(app)
 register_view()
@@ -21,6 +25,10 @@ def cache_app_list_run(genreID): cache_app_list_run(genreID)
 
 @manager.command
 def update_app(): update_app_info()
+
+@manager.command
+def compare_update():
+	track_need_to_update()
 
 if __name__ == '__main__':
     manager.run()
