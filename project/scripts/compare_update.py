@@ -89,8 +89,16 @@ def track_need_to_update():
 			try:
 				compare_to_apple(file_to_update)
 				requests.post(finish_handle_url + oid + "/")
-				files = {'file': open('%s.json' % file_to_update, 'r')}
-				requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
+				num_lines = sum(1 for line in open('%s.json' % file_to_update))
+				if num_lines > send_num:
+					all_file_content = open('%s.json' % file_to_update, "r")
+					file_piece_list = group_list(all_file_content, send_num)
+					for file_piece in file_piece_list:
+						files = {'file': ("%s.json" % file_to_update, file_piece)}
+						requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
+				else:
+					files = {'file': open('%s.json' % file_to_update, 'r')}
+					requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
 				print("upload %s.json success!" % file_to_update)
 				#then remove the txt and json file
 				os.remove(file_to_update)
