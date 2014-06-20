@@ -17,7 +17,7 @@ def deploy_web():
     with cd(project_dir):
         run('git pull')
         run('kill -9 $(cat /tmp/appcenter_uwsgi.pid)')
-        run('appcenter.ini')
+        run('uwsgi appcenter.ini')
 
 def deploy():
     execute(deploy_web)

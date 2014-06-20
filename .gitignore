@@ -21,4 +21,6 @@
 !*.swf
 !*.doc
 !*.docx
+!*.sh
+!*.ini
 project/conf/settings_local.py
