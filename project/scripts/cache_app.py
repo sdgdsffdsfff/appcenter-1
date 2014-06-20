@@ -12,23 +12,20 @@ mongo = NGMongoConnect(settings['mongodb']['host'])
 mongo_db = mongo.get_database('appcenter')
 
 def worker(_id):
-    print _id
     appc = AppController()
     appc.set_app_cache(_id)
-    
+    print _id
 
-if __name__ == "__main__":
-    
-    try:
+def cache_app_run(ID=None):
+    if ID != None:
         appc = AppController()
-        appc.set_app_cache(sys.argv[1])
-    except:
+        appc.set_app_cache(ID)
+    else:
         apps = mongo_db.AppBase.find({'review': 1})
         count = apps.count()
                 
-        pool = multiprocessing.Pool(processes=5)
+        pool = multiprocessing.Pool(processes=10)
         for app in apps:
-            #worker(app['_id'])
             pool.apply_async(worker, (app['_id'], ))
         
         pool.close()

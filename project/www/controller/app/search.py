@@ -112,8 +112,16 @@ class AppSearch(object):
         total_page = int(math.ceil(count / float(page_size)))
         prev_page = (page - 1) if page - 1 > 0 else 1
         next_page = (page + 1) if page + 1 < total_page else total_page
-
-        return {'results': results,
+        items = []
+        for item in results:
+          if sign == 1:
+            item['ipaVersion'] = item['ipaVersionSigned']
+          else:
+            item['ipaVersion'] = item['ipaVersionJb']
+          del item['ipaVersionJb']
+          del item['ipaVersionSigned']
+          items.append(item)
+        return {'results': items,
                 'pageInfo': {'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
                              'nextPage': next_page}}
 
