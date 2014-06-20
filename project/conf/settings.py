@@ -5,29 +5,24 @@
 settings = {
     'new_app_redis': {
         'redis_master': {
-            'host': '127.0.0.1',
+            'host': '10.2.0.53',
             'port': 6379,
             'password': 'fuckall'
         },
         'redis_slave': [
             {
-                'host': '192.168.2.20',
-                'port': 6401,
-                'password': 'c00e6ceec1f19205d9528721af24fd5d7948696da0103891adbdc38e45a5a85a'
-            },
-            {
-                'host': '192.168.2.20',
-                'port': 6402,
-                'password': 'c00e6ceec1f19205d9528721af24fd5d7948696da0103891adbdc38e45a5a85a'
+                'host': '10.2.0.54',
+                'port': 6379,
+                'password': 'fuckall'
             }
         ]
     },
     'mongodb': {
-        'host': 'mongodb://127.0.0.1:27017',
+        'host': 'mongodb://10.2.0.40:27017',
         'ids_name': 'ids'
     },
     'elasticsearch': {
-        'host': '127.0.0.1',
+        'host': '10.2.0.40',
         'port': 9200,
         'index': 'appcenter'
     },
@@ -36,6 +31,7 @@ settings = {
     'pic_url_host': 'http://61.155.215.40:5000/static/uploads',
     'tmp_dir': '/tmp',
     'ipa_dir': './www/static/ipa',
+    'download_server_host': 'http://dl.appvv.com',
     'client_url_host': 'http://vvdl.appvv.com',
     'client_upload_dir': './www/static/vshare/download'
 }

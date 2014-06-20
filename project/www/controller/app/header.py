@@ -2,9 +2,12 @@
 #code by LP
 #2013-11-4
 
+import time
 import re
 import datetime
 import pygeoip
+import base64
+import hashlib
 from distutils.version import LooseVersion
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
@@ -86,9 +89,24 @@ def create_pic_url(path):
 def create_pic_url_by_path(path):
     return '%s/%s' % (settings['pic_url_host'], path)
 
-def create_ipa_url(hash):
-    return "http://dl.appvv.com/%s.ipa" % hash
+def create_ipa_url(hash_str):
 
+    return build_download_url(settings['download_server_host'], hash_str, 'fuck2088y33oumei', 172800)
+
+def build_download_url(host,  hash_str, secret, uri_prefix, expire):
+    '''
+    构造下载地址
+    '''
+    expire = int(time.time()) + expire
+    file_path = '/%s.ipa'
+    md5_str = secret + file_path + str(expire)
+    obj = hashlib.md5()
+    obj.update(md5_str)
+    md5_str = obj.digest()
+    md5_str = base64.encodestring(md5_str)
+    md5_str = md5_str.replace('+', '-').replace('/','_').replace('=', '')
+    
+    return '%s%s?st=%s&e=%s' % (host, file_path, md5_str, expire) 
 
 def artworkUrl512_to_175_icon(artworkUrl512):
     '''
