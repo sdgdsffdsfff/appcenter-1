@@ -87,6 +87,7 @@ def register_view():
     api.app.RelatedView.register(app, route_prefix='/api/')
     api.app.ListView.register(app, route_prefix='/api/')
     api.app.CheckUpdateView.register(app, route_prefix='/api/')
+    api.app.SearchView.register(app, route_prefix='/api/')
     api.app_topic.ListView.register(app, route_prefix='/api/')
     api.app_topic.DetailView.register(app, route_prefix='/api/')
     api.app_genre.ListView.register(app, route_prefix='/api/')
