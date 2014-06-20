@@ -92,9 +92,9 @@ def track_need_to_update():
 				num_lines = sum(1 for line in open('%s.json' % file_to_update))
 				if num_lines > send_num:
 					all_file_content = open('%s.json' % file_to_update, "r")
-					file_piece_list = group_list(all_file_content, send_num)
-					for file_piece in file_piece_list:
-						files = {'file': ("%s.json" % file_to_update, file_piece)}
+					file_piece_list = group_list(all_file_content.readlines(), send_num)
+					for index, file_piece in enumerate(file_piece_list):
+						files = {'file': ("%s.json-%s" % (file_to_update, index), "\n".join(file_piece))}
 						requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
 				else:
 					files = {'file': open('%s.json' % file_to_update, 'r')}
@@ -125,4 +125,16 @@ def read_in_chunks(file_object, chunk_size=1024):
 if __name__ == '__main__':
 	track_need_to_update()
 	#requests.post(get_file_failed_url + "53a3b9dc8475b6064bf5f020/")
+	# num_lines = sum(1 for line in open('rs.json'))
+	# if num_lines > send_num:
+	# 	all_file_content = open('rs.json', "r")
+	# 	file_piece_list = group_list(all_file_content.readlines(), send_num)
+	# 	for index, file_piece in enumerate(file_piece_list):
+	# 		files = {'file': ("rs.json-%s" % index, "\n".join(file_piece))}
+	# 		res = requests.post(post_file_url + "hot-app/appinfo/10/", files=files)
+	# 		print res
+	# else:
+	# 	files = {'file': open('%s.json' % file_to_update, 'r')}
+	# 	requests.post(post_file_url + "hot-app/appinfo/" + str(priority) + "/", files=files)
+	# print("upload rs.json success!")
 
