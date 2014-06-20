@@ -93,12 +93,12 @@ def create_ipa_url(hash_str):
 
     return build_download_url(settings['download_server_host'], hash_str, 'fuck2088y33oumei', 172800)
 
-def build_download_url(host,  hash_str, secret, uri_prefix, expire):
+def build_download_url(host,  hash_str, secret, expire):
     '''
     构造下载地址
     '''
     expire = int(time.time()) + expire
-    file_path = '/%s.ipa'
+    file_path = '/%s.ipa' % hash_str
     md5_str = secret + file_path + str(expire)
     obj = hashlib.md5()
     obj.update(md5_str)
@@ -199,12 +199,11 @@ def convertAppIpaHashToIpaURL(app):
     try:
         jb = create_ipa_url(app['ipaHash']['jb'])
     except:
-        pass
-
+        jb = None
     try:
         signed = create_ipa_url(app['ipaHash']['signed'])
     except:
-        pass
+        signed = None
         
     app['ipaURL'] = {
         'jb': jb,
