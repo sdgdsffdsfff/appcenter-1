@@ -1,13 +1,22 @@
 from flask.ext.script import Manager
 from main import app, register_view
-from indexer import index_app
+from scripts.indexer import build_search_index_run
+from scripts.cache_app import cache_app_run
+from scripts.cache_app_list import cache_app_list_run
 
 manager = Manager(app)
 register_view()
 
 
 @manager.command
-def index(): index_app()
+def build_search_index(): build_search_index_run()
+
+#@manager.command
+@manager.option('-I', '--ID', help='App mongo obejct id ')
+def cache_app(ID): cache_app_run(ID)
+
+@manager.command
+def cache_app_list_run(genreID): cache_app_list_run(genreID)
 
 if __name__ == '__main__':
     manager.run()

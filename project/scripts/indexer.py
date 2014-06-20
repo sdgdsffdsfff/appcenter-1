@@ -63,11 +63,13 @@ def index_process_worker(app_search, apps):
         if end > app_len: end = app_len
 
 
-def index_app():
+def build_search_index_run():
     app_search = AppSearch()
-    try: app_search.delete_index()
-    except: pass
-    app_search.create_index()
+    #try: app_search.delete_index()
+    #except: pass
+    try:
+        app_search.create_index()
+    except: pas
     num_apps_per_process = 50000
     fields = {
         "trackName": 1, "bundleId": 1,

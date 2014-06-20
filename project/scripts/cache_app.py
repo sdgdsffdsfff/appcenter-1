@@ -12,17 +12,15 @@ mongo = NGMongoConnect(settings['mongodb']['host'])
 mongo_db = mongo.get_database('appcenter')
 
 def worker(_id):
-    print _id
     appc = AppController()
     appc.set_app_cache(_id)
     
 
-if __name__ == "__main__":
-    
-    try:
+def cache_app_run(ID=0):
+    if ID != 0:
         appc = AppController()
-        appc.set_app_cache(sys.argv[1])
-    except:
+        appc.set_app_cache(ID)
+    else:
         apps = mongo_db.AppBase.find({'review': 1})
         count = apps.count()
                 

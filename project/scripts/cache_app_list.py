@@ -34,11 +34,10 @@ def cache_genre_list(genre_id):
         print "Cache %s ERROR: %s" % (genre_id, ex)
 
 
-if __name__ == "__main__":
-
-    try:
-        genre_id = int(sys.argv[1])
+def cache_genre_list_run(genreID=0):
+    if genreID != 0:
+        genre_id = int(genreID)
         cache_genre_list(genre_id)
-    except:
+    else:
         for genre in mongo_db.app_genre.find():
             cache_genre_list(genre['genreId'])
