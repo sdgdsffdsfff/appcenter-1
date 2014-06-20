@@ -115,9 +115,9 @@ class AppSearch(object):
         items = []
         for item in results:
           if sign == 1:
-            item['ipaVersion'] = item['ipaVersionSigned']
+            item['version'] = item['ipaVersionSigned']
           else:
-            item['ipaVersion'] = item['ipaVersionJb']
+            item['version'] = item['ipaVersionJb']
           del item['ipaVersionJb']
           del item['ipaVersionSigned']
           items.append(item)
