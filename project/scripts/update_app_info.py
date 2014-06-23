@@ -12,17 +12,18 @@ finish_handle_url = host_url + "finish-handling-file/"
 def update_app_info(file_name, data):
     oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
     print "begining file"
-    try:
-        for line in file(file_name, "r"):
+    for line in file(file_name, "r"):
+        try:
+            if line.strip() == "": continue
             app_info = json.loads(line)
-            try:
-                dicts = {}
-                for name, value in app_info.items(): dicts[name] = value
-                mongo_db.AppBase.update({"bundleId": app_info["bundleId"]}, {"$set": dicts}, True)
-            except Exception, e: print e.message; continue
+            dicts = {}
+            for name, value in app_info.items(): dicts[name] = value
+            mongo_db.AppBase.update({"bundleId": app_info["bundleId"]}, {"$set": dicts}, True)
+        except Exception, e: print "line error: %s" % e.message; continue
+    try:
         requests.post(finish_handle_url + oid + "/")
     except Exception, e:
-        print e.message
+        print "post error: %s" % e.message
         requests.post(get_file_failed_url + oid + "/")
 
 def request_4_appinfo_file():
