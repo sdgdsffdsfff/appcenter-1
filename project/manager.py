@@ -3,7 +3,7 @@ from flask.ext.script import Manager
 
 from main import app, register_view
 
-from scripts.update_app_info import update_app_info
+from scripts.update_app_info import *
 from scripts.indexer import build_search_index_run
 from scripts.cache_app import cache_app_run
 from scripts.cache_app_list import cache_app_list_run
@@ -24,7 +24,7 @@ def cache_app_list(genreID):
     cache_app_list_run(genreID)
 
 @manager.command
-def update_app(): update_app_info()
+def update_app(): recursive_update_app_info()
 
 @manager.command
 def compare_update():

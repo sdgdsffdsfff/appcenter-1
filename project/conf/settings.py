@@ -28,7 +28,7 @@ settings = {
     },
     'geoip_data': '/data0/www/appcenter/www/data/GeoIP.dat',
     'pic_upload_dir': './www/static/uploads',
-    'pic_url_host': 'http://61.155.215.40:5000/static/uploads',
+    'pic_url_host': 'http://ios.vshare.com/static/uploads',
     'tmp_dir': '/tmp',
     'ipa_dir': './www/static/ipa',
     'download_server_host': 'http://dl.appvv.com',
