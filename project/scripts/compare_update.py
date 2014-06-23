@@ -22,6 +22,8 @@ post_file_url = host_url + "post-file/"
 group_num = 100
 send_num = 10000
 
+WRITE_DIR = "/mnt/spider_result/"
+
 
 def group_list(l,block):
     size = len(l)
@@ -35,7 +37,7 @@ def compare_to_apple(filename):
 		"Accept-Encoding": "gzip,deflate,sdch",
 		"Host": "itunes.apple.com"
 	}
-	with open(filename, "r") as f:
+	with open(WRITE_DIR + filename, "r") as f:
 		lines = group_list(f.readlines(), group_num)
 		for line in lines:
 			url = api_url + (",".join(line)).replace("\n", "")
@@ -51,7 +53,7 @@ def compare_to_apple(filename):
 				continue
 			results = data.get("results", {})
 			for rs in results:
-				with open("%s.json"%filename, "a") as fs:
+				with open(WRITE_DIR + "%s.json"%filename, "a") as fs:
 					try:
 						fs.write(json.dumps(rs) + "\n")
 					except UnicodeDecodeError as ue:
@@ -66,7 +68,7 @@ def track_need_to_update():
 		data = res.json()
 		if data.get("data", {}).get("appid_file", {}) is None or \
 		   data.get("data", {}).get("appid_file", {}) == "None":
-			print("no job get, try in 5 minute later! waiting...")
+			print("date: %s, no job get, try in 5 minute later! waiting..." % (datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 			time.sleep(60 * 5)
 			continue
 		oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
@@ -84,26 +86,26 @@ def track_need_to_update():
 				print ec
 				requests.post(get_file_failed_url + oid + "/")
 			file_to_update = file_name.split("/")[-1]
-			with open(file_to_update, "w") as f:
+			with open(WRITE_DIR + file_to_update, "w") as f:
 				f.write(raw_res.text)
 			try:
 				compare_to_apple(file_to_update)
 				requests.post(finish_handle_url + oid + "/")
-				num_lines = sum(1 for line in open('%s.json' % file_to_update))
+				num_lines = sum(1 for line in open(WRITE_DIR + '%s.json' % file_to_update))
 				if num_lines > send_num:
-					all_file_content = open('%s.json' % file_to_update, "r")
+					all_file_content = open(WRITE_DIR + '%s.json' % file_to_update, "r")
 					file_piece_list = group_list(all_file_content.readlines(), send_num)
 					for index, file_piece in enumerate(file_piece_list):
 						files = {'file': ("%s.json-%s" % (file_to_update, index), "\n".join(file_piece))}
 						requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
 				else:
-					files = {'file': open('%s.json' % file_to_update, 'r')}
+					files = {'file': open(WRITE_DIR + '%s.json' % file_to_update, 'r')}
 					requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
 				print("upload %s.json success!" % file_to_update)
 				#then remove the txt and json file
-				os.remove(file_to_update)
+				os.remove(WRITE_DIR + file_to_update)
 				print("file %s removed!" % file_to_update)
-				os.remove(file_to_update + ".json")
+				os.remove(WRITE_DIR + file_to_update + ".json")
 				print("file %s.json removed!" % file_to_update)
 			except requests.exceptions.ConnectionError as ce:
 				print ce
@@ -124,7 +126,7 @@ def read_in_chunks(file_object, chunk_size=1024):
 
 if __name__ == '__main__':
 	track_need_to_update()
-	#requests.post(get_file_failed_url + "53a3b9dc8475b6064bf5f020/")
+	#requests.post(get_file_failed_url + "53a645288475b60e77f618f3/")
 	# num_lines = sum(1 for line in open('rs.json'))
 	# if num_lines > send_num:
 	# 	all_file_content = open('rs.json', "r")
