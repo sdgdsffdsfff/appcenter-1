@@ -97,7 +97,8 @@ def track_need_to_update():
 					file_piece_list = group_list(all_file_content.readlines(), send_num)
 					for index, file_piece in enumerate(file_piece_list):
 						files = {'file': ("%s.json-%s" % (file_to_update, index), "\n".join(file_piece))}
-						requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
+						upload_res = requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
+						print("upload file part-%s status: %s" % (index, upload_res.status_code))
 				else:
 					files = {'file': open(WRITE_DIR + '%s.json' % file_to_update, 'r')}
 					requests.post(post_file_url + task_name + "/appinfo/" + str(priority) + "/", files=files)
