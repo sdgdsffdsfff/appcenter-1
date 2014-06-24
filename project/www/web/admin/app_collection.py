@@ -157,6 +157,8 @@ class ItemAddView(View):
             except:
                 download_version = ''
             #check if items already in app_collection
+            print(DB.app_collection.find({'identifier':self._identifier, "items":\
+                 {"$elemMatch": {"trackName": app['trackName']}}}).count())
             if DB.app_collection.find({'identifier':self._identifier, "items":\
                 {"$elemMatch": {"trackName": app['trackName']}}}).count() != 0:
                 raise ValueError(u"应用已经存在")
