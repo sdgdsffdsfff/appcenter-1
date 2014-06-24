@@ -93,12 +93,12 @@
 	    </form>
 	    <!-- END RESPONSIVE QUICK SEARCH FORM -->
 	  </li>
-	  <li class="start">
-	    <a href="{{ url_for('admin_index_dashboard') }}">
-	      <i class="icon-home"></i> 
-	      <span class="title">首页</span>
-	    </a>
-	  </li>
+	  <!-- <li class="start"> -->
+	  <!--   <a href="{{ url_for('admin_index_dashboard') }}"> -->
+	  <!--     <i class="icon-home"></i>  -->
+	  <!--     <span class="title">首页</span> -->
+	  <!--   </a> -->
+	  <!-- </li> -->
 	  <li>
 	    <a href="{{ url_for('admin_genre_list') }}">
 	      <i class="icon-sitemap"></i> 
@@ -153,7 +153,7 @@
 	  </li>
 	  <li>
 	    <a href="{{ url_for('admin_client_list') }}">
-	      <i class="icon-copy"></i>
+	      <i class=" icon-bitbucket-sign"></i>
 	      <span class="title">客户端管理</span>
 	    </a>
 	  </li>
@@ -178,12 +178,12 @@
 
 
       {% if current_user.role.role == "Admin" %}
-       <li>
-	    <a href="{{ url_for('admin_cache_app_info') }}">
-	      <i class="icon-cny"></i>
-	      <span class="title">缓存状态</span>
-	    </a>
-	  </li>
+          <!-- <li> -->
+	  <!--   <a href="{{ url_for('admin_cache_app_info') }}"> -->
+	  <!--     <i class="icon-cny"></i> -->
+	  <!--     <span class="title">缓存状态</span> -->
+	  <!--   </a> -->
+	  <!-- </li> -->
           <li>
 	    <a href="{{ url_for('admin_user_list') }}">
 	      <i class="icon-group"></i>
