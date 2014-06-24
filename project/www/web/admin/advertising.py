@@ -159,6 +159,7 @@ class ItemAddView(View):
             message = {'status':'error', 'message':'添加失败，有些表单数据不正确！'}
 
         self._form.add_message(**message)
+        self._form.clean_value()
 
 
         return self._view.render('advertising_item_add', form=self._form, identifier=self._identifier)
