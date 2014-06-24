@@ -66,8 +66,8 @@ def upload_client_file(file, name, version, fileversion, review, target_dir, all
         else:
             dest = os.path.join(target_dir, filename)
         changed = False
+        fileName, fileExtension = os.path.splitext(dest)
         if os.path.isfile(dest):
-            fileName, fileExtension = os.path.splitext(dest)
             if review == "true":
                 changed = True
                 new_file_path = fileName + version + fileExtension
@@ -78,6 +78,7 @@ def upload_client_file(file, name, version, fileversion, review, target_dir, all
                 shutil.move(tmpfile, new_file_path)
         else:
             shutil.move(tmpfile, dest)
+            new_file_path = fileName + fileversion + fileExtension
     else:
         raise Exception('上传失败')
     if review == "true":
