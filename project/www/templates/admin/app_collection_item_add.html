@@ -114,6 +114,8 @@ function addToCollection(_id) {
 	ajax.Post("{{url_for('admin_app_collection_item_add', identifier=app_collection['identifier'])}}", data, function(res){
 		if(res.status == 'success'){
 			loadCollection();
+		}else{
+			alert(res.message);
 		}
 	});
 }

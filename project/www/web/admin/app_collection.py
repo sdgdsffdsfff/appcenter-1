@@ -124,9 +124,8 @@ class ItemAddView(View):
 
     @route('/item/add', methods=['GET', 'POST'], endpoint='admin_app_collection_item_add')
     def do_request(self):
-
+        self._identifier = request.args.get('identifier')
         if request.method != 'POST':
-            self._identifier = request.args.get('identifier')
             res = DB.app_collection.find_one({'identifier':self._identifier})
             if not res:
                 return self._view.error("应用集不存在")
@@ -157,6 +156,10 @@ class ItemAddView(View):
                 download_version = app['downloadVersion']
             except:
                 download_version = ''
+            #check if items already in app_collection
+            if DB.app_collection.find({'identifier':self._identifier, "items":\
+                {"$elemMatch": {"trackName": app['trackName']}}}).count() != 0:
+                raise ValueError(u"应用已经存在")
             items = {
                 'id': int(item_id),
                 'sort':int(request.form['sort']),
@@ -174,7 +177,6 @@ class ItemAddView(View):
             status, message = 'success', ''
         except Exception, ex:
             status, message = 'error', str(ex)
-
         return self._view.ajax_response(status, message, '')
 
 class ItemDeleteView(View):
