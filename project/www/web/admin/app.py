@@ -191,7 +191,8 @@ class CreateView(View):
                 name = genre['genreName']['ZH']
             except:
                 name = genre['genreName']['EN']
-
+            if genre['genreId'] == 6014: name = "游戏"
+            elif genre['genreId'] == 6021: name = "报刊杂志"
             genre_options.append((name, str(genre['genreId'])))
 
         self._form = Form('app_create_form', request, session)
