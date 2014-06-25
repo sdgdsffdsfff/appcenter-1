@@ -357,7 +357,7 @@ var App = function () {
         // handle the search query submit on enter press
         $('.page-sidebar').on('keypress', '.sidebar-search input', function (e) {
             if (e.which == 13) {
-                window.location.href = "extra_search.html";
+                //window.location.href = "extra_search.html";
                 return false; //<---- Add this line
             }
         });
@@ -373,10 +373,10 @@ var App = function () {
                         }
                         $('.sidebar-search').addClass("open");
                     } else {
-                        window.location.href = "extra_search.html";
+                        //window.location.href = "extra_search.html";
                     }
                 } else {
-                    window.location.href = "extra_search.html";
+                    //window.location.href = "extra_search.html";
             }
         });
     }
@@ -396,14 +396,14 @@ var App = function () {
 
         //handle hor menu search button click
         $('.header').on('click', '.hor-menu .search-form .btn', function (e) {
-                window.location.href = "extra_search.html";
+                //window.location.href = "extra_search.html";
                 e.preventDefault();
             });
 
         //handle hor menu search form on enter press
         $('.header').on('keypress', '.hor-menu .search-form input', function (e) {
                 if (e.which == 13) {
-                    window.location.href = "extra_search.html";
+                    //window.location.href = "extra_search.html";
                     return false;
                 }
             });
