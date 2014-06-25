@@ -36,6 +36,7 @@ def request_4_appinfo_file():
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
         print "Begining to get file: %s" % file_name
+        file_to_update = "/tmp/" + file_name.split("/")[-1]
         write_to_file = open(file_to_update, "wb")
         u = urllib2.urlopen(file_name)
         try:
@@ -46,7 +47,6 @@ def request_4_appinfo_file():
                 write_to_file.write(buffer)
         except Exception:
             requests.post(get_file_failed_url + oid + "/")
-        file_to_update = "/tmp/" + file_name.split("/")[-1]
         print "Finish getting remote file"
         return file_to_update, data
     return None, None
