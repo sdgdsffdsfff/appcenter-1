@@ -19,7 +19,9 @@ def update_app_info(file_name, data):
             dicts = {}
             for name, value in app_info.items(): dicts[name] = value
             mongo_db.AppBase.update({"bundleId": app_info["bundleId"]}, {"$set": dicts}, True)
-        except Exception, e: print "line error: %s" % e.message; continue
+        except Exception, e:
+            print "line error: %s" % e.message
+            continue
     try:
         requests.post(finish_handle_url + oid + "/")
     except Exception, e:
