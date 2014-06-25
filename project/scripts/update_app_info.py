@@ -1,4 +1,4 @@
-import json, requests, time
+import json, requests, time, urllib2, urllib
 
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
@@ -36,12 +36,18 @@ def request_4_appinfo_file():
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
         print "Begining to get file: %s" % file_name
-        try: raw_res = requests.get(file_name)
-        except Exception: requests.post(get_file_failed_url + oid + "/")
+        write_to_file = open(file_to_update, "wb")
+        u = urllib2.urlopen(file_name)
+        try:
+            block_size = 8192
+            while True:
+                buffer = u.read(block_size)
+                if not buffer: break
+                write_to_file.write(buffer)
+        except Exception:
+            requests.post(get_file_failed_url + oid + "/")
         file_to_update = "/tmp/" + file_name.split("/")[-1]
-        print "Begin to write remote file"
-        with open(file_to_update, "w") as f: f.write(raw_res.content)
-        print "Finish writing remote file"
+        print "Finish getting remote file"
         return file_to_update, data
     return None, None
 
