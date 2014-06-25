@@ -39,12 +39,16 @@ def request_4_appinfo_file():
         file_to_update = "/tmp/" + file_name.split("/")[-1]
         write_to_file = open(file_to_update, "wb")
         u = urllib2.urlopen(file_name)
+        file_size_dl = 0
         try:
             block_size = 8192
+            print "Begin to read file"
             while True:
                 buffer = u.read(block_size)
                 if not buffer: break
                 write_to_file.write(buffer)
+                file_size_dl += len(buffer)
+                print "Have Downloaded %d" % file_size_dl
         except Exception:
             requests.post(get_file_failed_url + oid + "/")
         print "Finish getting remote file"
