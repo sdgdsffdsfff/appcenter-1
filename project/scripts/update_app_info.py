@@ -41,7 +41,7 @@ def request_4_appinfo_file():
         u = urllib2.urlopen(file_name)
         file_size_dl = 0
         try:
-            block_size = 8192
+            block_size = 8192 * 4
             print "Begin to read file"
             while True:
                 buffer = u.read(block_size)
@@ -57,7 +57,8 @@ def request_4_appinfo_file():
 
 def recursive_update_app_info():
     while True:
-        file_name, data = request_4_appinfo_file()
+        try: file_name, data = request_4_appinfo_file()
+        except: file_name, data = None, None
         if not file_name:
             print("No job get, try in 5 minute later! waiting...")
             time.sleep(60 * 5)
