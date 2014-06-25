@@ -33,6 +33,7 @@ def request_4_appinfo_file():
     if data.get("code", "")  == 0 and data.get("data").get("appid_file") != None:
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
+        print "Begining to get file: %s" % file_name
         try: raw_res = requests.get(file_name)
         except Exception: requests.post(get_file_failed_url + oid + "/")
         file_to_update = "/tmp/" + file_name.split("/")[-1]
