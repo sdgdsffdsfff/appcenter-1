@@ -11,7 +11,7 @@ finish_handle_url = host_url + "finish-handling-file/"
 
 def update_app_info(file_name, data):
     oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
-    print "begining file"
+    print "Begining update app info"
     for line in file(file_name, "r"):
         try:
             if line.strip() == "": continue
@@ -33,10 +33,13 @@ def request_4_appinfo_file():
     if data.get("code", "")  == 0 and data.get("data").get("appid_file") != None:
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
+        print "Begining to get file: %s" % file_name
         try: raw_res = requests.get(file_name)
         except Exception: requests.post(get_file_failed_url + oid + "/")
         file_to_update = "/tmp/" + file_name.split("/")[-1]
+        print "Begin to write remote file"
         with open(file_to_update, "w") as f: f.write(raw_res.content)
+        print "Finish writing remote file"
         return file_to_update, data
     return None, None
 
