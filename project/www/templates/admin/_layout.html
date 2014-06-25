@@ -85,11 +85,11 @@
 	  <li>
 	    <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
 	    <form class="sidebar-search">
-	      <div class="input-box">
-		<a href="javascript:;" class="remove"></a>
-		<input type="text" placeholder="Search..." />
-		<input type="button" class="submit" value=" " />
-	      </div>
+	      	<div class="input-box">
+				<a href="javascript:;" class="remove"></a>
+				<input type="text" id="searchQ" placeholder="应用名称" />
+				<input type="button" class="submit" value=" " />
+	      	</div>
 	    </form>
 	    <!-- END RESPONSIVE QUICK SEARCH FORM -->
 	  </li>
@@ -460,6 +460,23 @@
 				App.initUniform();
 			});
 		}
+
+		function ajaxAppSearch(url) {
+			var ajax = NG.Ajax()
+			ajax.Get(url, function(res){
+				if(res.data){
+					$('#app_data_grad').html(res.data)
+				}
+			})
+		}
+
+		$('.sidebar-search .submit').on('click', function (e) {
+			var q = $("#searchQ").val()
+			if(q == ""){
+				return false;
+			}
+			ajaxAppSearch("{{ url_for("admin_app_ajaxlist")}}" + "?use=default&bundleId=&trackId=&trackName="+q)
+		});
 		
 	</script>
 	{% block scripts %}{% endblock %}
