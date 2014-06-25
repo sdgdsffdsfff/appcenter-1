@@ -206,12 +206,34 @@ class CreateView(View):
         self._form.add_field('textarea', '更新介绍', 'releaseNotes', data={'attributes':{'class':'m-wrap huge'}})
         self._form.add_validator(AppInfoValidator)
 
-    @route('/create', endpoint='admin_app_create')
+    @route('/create', methods=["GET","POST"], endpoint='admin_app_create')
     def get(self):
         try:
             self._init_form()
         except FormException, ex:
             return self._view.error(str(ex))
+        if request.method == "POST":
+            if self._form.validate():
+                #_id = MongoId()
+                data = {
+                #    '_id': _id,
+                    'trackId':int(request.form['trackId']),
+                    'trackName':request.form['trackName'],
+                    'bundleId':request.form['bundleId'],
+                    'version':request.form['version'],
+                    'primaryGenreId':int(request.form['primaryGenreId']),
+                    'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
+                    'description':request.form['description'],
+                    'releaseNotes':request.form['releaseNotes']
+                }
+                DB.AppBase.update({'bundleId':request.form['bundleId']}, {'$set':data}, upsert=True)
+                app = DB.AppBase.find_one({"trackId": int(request.form["trackId"])})
+                #return redirect(create_url('.app.edit', {'_id':app._id}))
+                return redirect(url_for("admin_app_edit") + "?_id=" + str(app["_id"]))
+            else:
+                message = {'status':'error', 'message':'添加失败'} 
+
+            self._form.add_message(**message)
         return self._view.render('app_create', form=self._form)
 
     @route('/create_post', endpoint='admin_app_create_post')

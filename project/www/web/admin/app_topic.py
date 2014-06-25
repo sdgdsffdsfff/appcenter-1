@@ -123,6 +123,7 @@ class AddView(AppTopicInfoBaseView):
             message = {'status': 'error', 'message': '添加失败，有些表单数据不正确！'}
 
         self._form.add_message(**message)
+        self._form.clean_value()
 
         return self._view.render('app_topic_add', form=self._form)
 
@@ -193,6 +194,7 @@ class EditView(AppTopicInfoBaseView):
             message = {'status': 'error', 'message': '编辑失败，有些表单数据不正确！'}
 
         self._form.add_message(**message)
+        self._form.clean_value()
 
         return self._view.render('app_topic_add', form=self._form)
 

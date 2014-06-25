@@ -34,7 +34,11 @@ class AddView(View):
     @route('/add', methods=['POST'], endpoint='admin_app_collection_add')
     def do_request(self):
         try:
-            data = {'identifier': request.form['identifier'], 'name': request.form['name'], 'title': {}}
+            if DB.app_collection.find({"identifier": request.form['identifier']}).count()!= 0:
+                status, message = 'error', "重复的标识项"
+                return self._view.ajax_response(status, message)
+            data = {'identifier': request.form['identifier'], 'name': request.form['name'], 'title': {}, "items": []}
+            language_count = 0
             for item in request.form:
                 if item == 'identifier' or item == 'name':
                     continue
@@ -42,8 +46,14 @@ class AddView(View):
                 if len(request.form[item]) > 0:
                     print request.form[item]
                     data['title'][language_code] = request.form[item]
+                    if request.form[item]:
+                        language_count += 1
+            if language_count == 0:
+                status, message = 'error', "至少填写一项语言"
+                return self._view.ajax_response(status, message)
             DB.app_collection.insert(data)
             status, message = 'success', '添加成功'
+
         except Exception, ex:
             status, message = 'error', str(ex)
 
@@ -73,7 +83,7 @@ class ItemListView(View):
         identifier = request.args.get('identifier')
         col = AppCollectionController(identifier, language=request.form['language'], country=request.form['country'])
         collection = col.get(None)
-
+        print(collection)
         #res = DB.app_collection.find_one({'identifier':identifier})
         #collection_list = []
         #if res and 'items' in res:
