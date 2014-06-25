@@ -461,21 +461,12 @@
 			});
 		}
 
-		function ajaxAppSearch(url) {
-			var ajax = NG.Ajax()
-			ajax.Get(url, function(res){
-				if(res.data){
-					$('#app_data_grad').html(res.data)
-				}
-			})
-		}
-
 		$('.sidebar-search .submit').on('click', function (e) {
 			var q = $("#searchQ").val()
 			if(q == ""){
 				return false;
 			}
-			ajaxAppSearch("{{ url_for("admin_app_ajaxlist")}}" + "?use=default&bundleId=&trackId=&trackName="+q)
+			window.location.href = "{{url_for('admin_app_list')}}#trackName=" +  q
 		});
 		
 	</script>
