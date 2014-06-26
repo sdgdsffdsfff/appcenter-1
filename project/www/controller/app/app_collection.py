@@ -6,7 +6,7 @@ from header import *
 
 
 class AppCollectionController(ControllerBase):
-    def __init__(self, identifier, language='US', ip=None, country=None):
+    def __init__(self, identifier, language='', ip=None, country=None):
         self._identifier = identifier
         self._language = language
 
@@ -36,16 +36,18 @@ class AppCollectionController(ControllerBase):
             filter_items = []
             for item in res['items']:
                 tmp_item = None
-
-                if 'language' in item and self._language in item['language']:
+                if self._language == "":
                     tmp_item = item
-                elif 'country' in item and self._country in item['country']:
-                    tmp_item = item
-                elif ('language' in item and len(item['language']) == 0) and \
-                        ('country' in item and len(item['country']) == 0):
-                    tmp_item = item
-                elif 'language' not in item and 'country' not in item:
-                    tmp_item = item
+                else:
+                    if 'language' in item and self._language in item['language']:
+                        tmp_item = item
+                    elif 'country' in item and self._country in item['country']:
+                        tmp_item = item
+                    elif ('language' in item and len(item['language']) == 0) and \
+                            ('country' in item and len(item['country']) == 0):
+                        tmp_item = item
+                    elif 'language' not in item and 'country' not in item:
+                        tmp_item = item
 
                 if tmp_item is None:
                     continue
