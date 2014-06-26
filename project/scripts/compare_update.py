@@ -11,7 +11,7 @@ import requests
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-api_url = "https://itunes.apple.com/cn/lookup?id="
+api_url = "https://itunes.apple.com/us/lookup?id="
 
 host_url = "http://54.183.93.130/"
 get_file_url = host_url + "get-file/trackid/"
