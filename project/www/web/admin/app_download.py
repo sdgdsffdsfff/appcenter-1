@@ -9,6 +9,7 @@ from __header__ import AdminView, FlaskView, DB, route, request, session, redire
 from bson.objectid import ObjectId
 from www.controller.app.app import AppController
 from www.controller.app.app_download import AppDownloadController
+from conf.settings import settings
 
 class View(FlaskView):
 
@@ -67,7 +68,7 @@ class UploadView(View):
             file = request.files['Filedata']
             if file and self.allowed_file(file.filename):
                 name = str(time.time()) + '_' + file.filename
-                tmp_file = os.path.join(vshare_settings['tmp_dir'], name)
+                tmp_file = os.path.join(settings['tmp_dir'], name)
                 file.save(tmp_file)
                 self.app_download.add(bundle_id=bundle_id, sign=sign, file_path=tmp_file)
                 status, message = 'success', u'上传成功'
