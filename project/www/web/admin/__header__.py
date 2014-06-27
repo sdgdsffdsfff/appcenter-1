@@ -23,6 +23,7 @@ def upload_hash_file(file, target_dir, allow_ext=['png', 'jpg']):
     '''
     if file:
         filename = secure_filename(file.filename)
+        filename = filename.lower()
         if '.' not in filename or filename.rsplit('.', 1)[1] not in set(allow_ext):
             raise Exception('文件类型不允许上传')
         tmpfile = os.path.join(settings['tmp_dir'], filename)
@@ -57,6 +58,7 @@ def upload_client_file(file, name, version, fileversion, review, target_dir, all
     '''
     if file:
         filename = secure_filename(file.filename)
+        filename = filename.lower()
         if '.' not in filename or filename.rsplit('.', 1)[1] not in set(allow_ext):
             raise Exception('文件类型不允许上传')
         tmpfile = os.path.join(settings['tmp_dir'], name)
