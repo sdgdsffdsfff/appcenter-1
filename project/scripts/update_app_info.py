@@ -1,4 +1,4 @@
-import json, requests, time, urllib2, urllib
+import json, requests, time, urllib2, urllib, zipfile
 
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
@@ -9,10 +9,14 @@ host_url = "http://54.183.93.130/"
 get_file_failed_url = host_url + "fail-getting-file/"
 finish_handle_url = host_url + "finish-handling-file/"
 
+FILE_TO_SAVE_DIR =  "/tmp/"
+
 def update_app_info(file_name, data):
     oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
+    json_file_name = file_name.split(".")[0] + ".json"
+    zipfile.ZipFile(file_name).extractall(FILE_TO_SAVE_DIR)
     print "Begining update app info"
-    for line in file(file_name, "r"):
+    for line in file(json_file_name, "r"):
         try:
             if line.strip() == "": continue
             app_info = json.loads(line)
@@ -35,7 +39,7 @@ def request_4_appinfo_file():
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
         print "Begining to get file: %s" % file_name
-        file_to_update = "/tmp/" + file_name.split("/")[-1]
+        file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
         write_to_file = open(file_to_update, "wb")
         print "Connecting remote file server"
         u = urllib2.urlopen(file_name, timeout=60)
