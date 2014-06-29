@@ -13,8 +13,9 @@ FILE_TO_SAVE_DIR =  "/tmp/"
 
 def update_app_info(file_name, data):
     oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
-    json_file_name = file_name.split(".")[0] + ".json"
-    zipfile.ZipFile(file_name).extractall(FILE_TO_SAVE_DIR)
+    file_to_zip = zipfile.ZipFile(file_name)
+    file_to_zip.extractall(FILE_TO_SAVE_DIR)
+    json_file_name = file_to_zip.namelist()[0]
     print "Begining update app info"
     for line in file(json_file_name, "r"):
         try:
