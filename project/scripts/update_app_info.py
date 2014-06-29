@@ -15,7 +15,7 @@ FILE_TO_SAVE_DIR =  "/tmp/"
 def request_appinfo_file_info():
     get_file_url = host_url + "get-file/appinfo/"
     print "Begin to get appinfo file info"
-    res = requests.post(get_file_url, timeout=30)
+    res = requests.post(get_file_url, timeout=60)
     return res.json()
 
 def request_appinfo_file(data):
@@ -42,7 +42,12 @@ def request_appinfo_file(data):
             return file_to_update, data
         except Exception, e:
             print "<Request Appinfo File> Error occurs and mongo id is : %s" % oid
-            requests.post(get_file_failed_url + oid + "/", timeout=30)
+            i = 5
+            while i > 0:
+                try:
+                    requests.post(get_file_failed_url + oid + "/", timeout=60)
+                    break
+                except: i -= 1
             return None, None
     print "No file has founded"
     return None, None
@@ -66,7 +71,12 @@ def update_app_info(file_name, data):
         print "Finish updating app info"
     except Exception, e:
         print "<Update App Info>post error: %s" % e.message
-        requests.post(get_file_failed_url + oid + "/", timeout=30)
+        i = 5
+        while i > 0:
+            try:
+                requests.post(get_file_failed_url + oid + "/", timeout=30)
+                break
+            except: i -= 1
 
 def get_appinfo_and_file():
     try:
