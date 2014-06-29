@@ -1,4 +1,4 @@
-import json, requests, time, urllib2, urllib, zipfile
+import json, requests, time, urllib2, urllib, zipfile, os
 
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
@@ -39,14 +39,14 @@ def request_4_appinfo_file():
     if data.get("code", "")  == 0 and data.get("data").get("appid_file") != None:
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
-        print "Begining to get file: %s" % file_name
-        file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
-        write_to_file = open(file_to_update, "wb")
-        print "Connecting remote file server"
-        u = urllib2.urlopen(file_name, timeout=60)
-        print "Finish Connecting"
-        file_size_dl = 0
         try:
+            print "Begining to get file: %s" % file_name
+            file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
+            write_to_file = open(file_to_update, "wb")
+            print "Connecting remote file server"
+            u = urllib2.urlopen(file_name, timeout=60)
+            print "Finish Connecting"
+            file_size_dl = 0
             block_size = 8192 * 4
             print "Begin to read file"
             while True:
