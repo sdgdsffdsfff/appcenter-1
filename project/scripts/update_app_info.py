@@ -21,7 +21,6 @@ def update_app_info(file_name, data):
             mongo_db.AppBase.update({"bundleId": app_info["bundleId"]}, {"$set": dicts}, True)
         except Exception, e:
             print "line error: %s" % e.message
-            continue
     try:
         requests.post(finish_handle_url + oid + "/")
     except Exception, e:
@@ -38,7 +37,9 @@ def request_4_appinfo_file():
         print "Begining to get file: %s" % file_name
         file_to_update = "/tmp/" + file_name.split("/")[-1]
         write_to_file = open(file_to_update, "wb")
-        u = urllib2.urlopen(file_name)
+        print "Connecting remote file server"
+        u = urllib2.urlopen(file_name, timeout=60)
+        print "Finish Connecting"
         file_size_dl = 0
         try:
             block_size = 8192 * 4
@@ -60,7 +61,7 @@ def recursive_update_app_info():
         try: file_name, data = request_4_appinfo_file()
         except: file_name, data = None, None
         if not file_name:
-            print("No job get, try in 5 minute later! waiting...")
-            time.sleep(60 * 5)
+            print("No job get, try in 1 minute later! waiting...")
+            time.sleep(60 * 1)
             continue
         update_app_info(file_name, data)
