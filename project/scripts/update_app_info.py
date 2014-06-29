@@ -17,7 +17,7 @@ def update_app_info(file_name, data):
     file_to_zip.extractall(FILE_TO_SAVE_DIR)
     json_file_name = file_to_zip.namelist()[0]
     print "Begining update app info"
-    for line in file(json_file_name, "r"):
+    for line in file(os.path.join(FILE_TO_SAVE_DIR, json_file_name), "r"):
         try:
             if line.strip() == "": continue
             app_info = json.loads(line)
@@ -55,10 +55,11 @@ def request_4_appinfo_file():
                 write_to_file.write(buffer)
                 file_size_dl += len(buffer)
                 print "Have Downloaded %d" % file_size_dl
-        except Exception:
+            print "Finish getting remote file"
+            return file_to_update, data
+        except Exception, e:
+            print "File Mongo Id: %s" % oid
             requests.post(get_file_failed_url + oid + "/")
-        print "Finish getting remote file"
-        return file_to_update, data
     return None, None
 
 def recursive_update_app_info():
