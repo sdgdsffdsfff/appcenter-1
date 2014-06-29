@@ -11,72 +11,76 @@ finish_handle_url = host_url + "finish-handling-file/"
 
 FILE_TO_SAVE_DIR =  "/tmp/"
 
-def update_app_info(file_name, data):
-    oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
-    file_to_zip = zipfile.ZipFile(file_name)
-    file_to_zip.extractall(FILE_TO_SAVE_DIR)
-    json_file_name = file_to_zip.namelist()[0]
-    print "Begining update app info"
-    for line in file(os.path.join(FILE_TO_SAVE_DIR, json_file_name), "r"):
-        try:
-            if line.strip() == "": continue
-            app_info = json.loads(line)
-            dicts = {}
-            for name, value in app_info.items(): dicts[name] = value
-            mongo_db.AppBase.update({"bundleId": app_info["bundleId"]}, {"$set": dicts}, True)
-        except Exception, e:
-            print "line error: %s" % e.message
-    try:
-        requests.post(finish_handle_url + oid + "/")
-    except Exception, e:
-        print "post error: %s" % e.message
-        requests.post(get_file_failed_url + oid + "/")
 
-def request_appinfo_file():
+def request_appinfo_file_info():
     get_file_url = host_url + "get-file/appinfo/"
+    print "Begin to get appinfo file info"
     res = requests.post(get_file_url)
     return res.json()
 
-def request_4_appinfo_file():
-    try:
-        data = request_appinfo_file()
-    except Exception, e:
-        print "Getting App info json Error: %s" % e.message
-        return None, None
-
+def request_appinfo_file(data):
     if data.get("code", "")  == 0 and data.get("data").get("appid_file") != None:
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
         try:
-            print "Begining to get file: %s" % file_name
+            print "Begin to get file: %s..." % file_name
             file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
             write_to_file = open(file_to_update, "wb")
-            print "Connecting remote file server"
+            print "Begin to connect remote file server"
             u = urllib2.urlopen(file_name, timeout=60)
-            print "Finish Connecting"
+            print "Finish connecting remote file server"
             file_size_dl = 0
-            block_size = 8192 * 4
-            print "Begin to read file"
+            block_size = 1028 * 16
+            print "Begin to read file from remote file server"
             while True:
                 buffer = u.read(block_size)
                 if not buffer: break
                 write_to_file.write(buffer)
                 file_size_dl += len(buffer)
-                print "Have Downloaded %d" % file_size_dl
+                print "Have readed %d size from file server" % file_size_dl
             print "Finish getting remote file"
             return file_to_update, data
         except Exception, e:
-            print "File Mongo Id: %s" % oid
+            print "<Request Appinfo File> Error occurs and mongo id is : %s" % oid
             requests.post(get_file_failed_url + oid + "/")
-    print "No File Gotten"
+            return None, None
+    print "No file has founded"
     return None, None
+
+def update_app_info(file_name, data):
+    oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
+    try:
+        file_to_zip = zipfile.ZipFile(file_name)
+        file_to_zip.extractall(FILE_TO_SAVE_DIR)
+        json_file_name = file_to_zip.namelist()[0]
+        print "Begin to update app info"
+        for line in file(os.path.join(FILE_TO_SAVE_DIR, json_file_name), "r"):
+            try:
+                if line.strip() == "": continue
+                app_info = json.loads(line)
+                dicts = {}
+                for name, value in app_info.items(): dicts[name] = value
+                mongo_db.AppBase.update({"bundleId": app_info["bundleId"]}, {"$set": dicts}, True)
+            except Exception, e: print "line error: %s" % e.message
+        requests.post(finish_handle_url + oid + "/")
+        print "Finish updating app info"
+    except Exception, e:
+        print "<Update App Info>post error: %s" % e.message
+        requests.post(get_file_failed_url + oid + "/")
+
+def get_appinfo_and_file():
+    try:
+        data = request_appinfo_file_info()
+    except Exception, e:
+        print "Getting App info json Error: %s" % e.message
+        return None, None
+    return request_appinfo_file()
 
 def recursive_update_app_info():
     while True:
-        try: file_name, data = request_4_appinfo_file()
-        except: file_name, data = None, None
+        file_name, data = get_appinfo_and_file()
         if not file_name:
-            print("No job get Or Connect timeout, try in 1 minute later! waiting...")
+            print("No job get Or Fuck its networking, try in 1 minute later! waiting...")
             time.sleep(60 * 1)
             continue
         update_app_info(file_name, data)
