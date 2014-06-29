@@ -9,7 +9,7 @@ host_url = "http://54.183.93.130/"
 get_file_failed_url = host_url + "fail-getting-file/"
 finish_handle_url = host_url + "finish-handling-file/"
 
-FILE_TO_SAVE_DIR =  "/tmp/"
+FILE_TO_SAVE_DIR =  "/data1/tmp_jsons/"
 
 
 def request_appinfo_file_info():
@@ -41,13 +41,15 @@ def request_appinfo_file(data):
             print "Finish getting remote file"
             return file_to_update, data
         except Exception, e:
-            print "<Request Appinfo File> Error occurs and mongo id is : %s" % oid
+            print "<Request Appinfo File> Error %s occurs and mongo id is : %s" % (e.message, oid)
             i = 5
             while i > 0:
                 try:
                     requests.post(get_file_failed_url + oid + "/", timeout=60)
                     break
-                except: i -= 1
+                except:
+                    time.sleep(3)
+                    i -= 1
             return None, None
     print "No file has founded"
     return None, None
@@ -70,13 +72,15 @@ def update_app_info(file_name, data):
         requests.post(finish_handle_url + oid + "/", timeout=30)
         print "Finish updating app info"
     except Exception, e:
-        print "<Update App Info>post error: %s" % e.message
+        print "<Update App Info>post error: %s and mongo id is %s" % (e.message, oid)
         i = 5
         while i > 0:
             try:
                 requests.post(get_file_failed_url + oid + "/", timeout=30)
                 break
-            except: i -= 1
+            except:
+                time.sleep(3)
+                i -= 1
 
 def get_appinfo_and_file():
     try:
