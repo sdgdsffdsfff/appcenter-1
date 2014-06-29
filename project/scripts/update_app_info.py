@@ -32,10 +32,18 @@ def update_app_info(file_name, data):
         print "post error: %s" % e.message
         requests.post(get_file_failed_url + oid + "/")
 
-def request_4_appinfo_file():
+def request_appinfo_file():
     get_file_url = host_url + "get-file/appinfo/"
     res = requests.post(get_file_url)
-    data = res.json()
+    return res.json()
+
+def request_4_appinfo_file():
+    try:
+        data = request_appinfo_file()
+    except Exception, e:
+        print "Getting App info json Error: %s" % e.message
+        return None, None
+
     if data.get("code", "")  == 0 and data.get("data").get("appid_file") != None:
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
@@ -60,6 +68,7 @@ def request_4_appinfo_file():
         except Exception, e:
             print "File Mongo Id: %s" % oid
             requests.post(get_file_failed_url + oid + "/")
+    print "No File Gotten"
     return None, None
 
 def recursive_update_app_info():
@@ -67,7 +76,7 @@ def recursive_update_app_info():
         try: file_name, data = request_4_appinfo_file()
         except: file_name, data = None, None
         if not file_name:
-            print("No job get, try in 1 minute later! waiting...")
+            print("No job get Or Connect timeout, try in 1 minute later! waiting...")
             time.sleep(60 * 1)
             continue
         update_app_info(file_name, data)
