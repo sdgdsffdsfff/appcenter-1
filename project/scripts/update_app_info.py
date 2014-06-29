@@ -74,7 +74,7 @@ def get_appinfo_and_file():
     except Exception, e:
         print "Getting App info json Error: %s" % e.message
         return None, None
-    return request_appinfo_file()
+    return request_appinfo_file(data)
 
 def recursive_update_app_info():
     while True:
