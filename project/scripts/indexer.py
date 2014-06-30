@@ -69,7 +69,7 @@ def build_search_index_run():
     #except: pass
     try:
         app_search.create_index()
-    except: pas
+    except: pass
     num_apps_per_process = 50000
     fields = {
         "trackName": 1, "bundleId": 1,

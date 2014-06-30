@@ -253,7 +253,8 @@ class CreateView(View):
                 'primaryGenreId':int(request.form['primaryGenreId']),
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                 'description':request.form['description'],
-                'releaseNotes':request.form['releaseNotes']
+                'releaseNotes':request.form['releaseNotes'],
+                'review': request.form['review']
             }
             DB.AppBase.update({'bundleId':request.form['bundleId']}, {'$set':data}, upsert=True)
             return redirect(create_url('.app.edit', {'_id':_id}))
@@ -340,7 +341,7 @@ class EditView(AppDetailBaseView):
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={'option': lang_options})
         self._form.add_field('textarea', '描述', 'description', data={'attributes':{'class':'m-wrap large','rows':'10'}})
         self._form.add_field('textarea', '更新介绍', 'releaseNotes', data={'attributes':{'class':'m-wrap large','rows':'10'}})
-
+        self._form.add_field('radio', '审核', 'review', data={'option': [("审核通过", "1"), ("未审核", "0")]})
         self._form.set_value(data)
         self._form.add_validator(AppInfoValidator)
 
@@ -370,7 +371,8 @@ class EditView(AppDetailBaseView):
                 'primaryGenreId':int(request.form['primaryGenreId']),
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                 'description':request.form['description'],
-                'releaseNotes':request.form['releaseNotes']
+                'releaseNotes':request.form['releaseNotes'],
+                'review': request.form['review']
             }
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
