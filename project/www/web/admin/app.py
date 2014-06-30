@@ -144,7 +144,7 @@ class AddView(View):
                         _id = app['_id']
                         DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':data})
 
-                    return redirect(url_for('app_edit', {'_id': app['_id']}))
+                    return redirect(url_for("admin_app_edit") + "?_id=" + str(app["_id"]))
             except Exception, ex:
                 message = {'status':'error', 'message':str(ex)}
         else:
