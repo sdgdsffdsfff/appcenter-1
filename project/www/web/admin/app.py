@@ -397,6 +397,29 @@ class AppInfoValidator(FormValidatorAbstract):
         }
 
 
+class SyncIconView(View):
+    '''
+    sync the icon with the apple
+    '''
+    @route('/sync_icon', methods=['GET'], endpoint='admin_app_sync_icon')
+    def do_request(self):
+        try:
+            trackId = request.args.get("trackId", "")
+            _id = request.args.get("_id", "")
+            url = 'http://itunes.apple.com/us/lookup?id=%s' % (trackId)
+            apple_data = requests.get(url)
+            data = apple_data.json()
+            data = data["results"][0]
+            DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':{'artworkUrl60': data['artworkUrl60'],
+                              'artworkUrl512': data["artworkUrl512"],
+                              "artworkUrl100": data["artworkUrl100"]}})
+            status, message = 'success', '更新图标成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
+            pass
+        return self._view.ajax_response(status, message)
+
+
 class ScreenshotView(View):
 
     @route('/screenshot', endpoint='admin_app_screenshot')

@@ -45,6 +45,7 @@
 				<img src="{{ icon['local'] }}" />
 				{% endif %}
 				<span class="help-inline"></span>
+				<button id="syncIcon" class="btn green"><i class="icon-ok"></i> 同步官方图标</button>
 			</div>
 		</div>
 		 {% for field in form.field_list() %}
@@ -65,4 +66,24 @@
 	</div>
 </div>
 <!-- END  FORM-->
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+	$("#syncIcon").click(function(e){
+		e.preventDefault();
+		var ajax = NG.Ajax()
+		var _id = getParameterByName('_id');
+		var trackId = $("input[name='trackId']").val()
+		ajax.Get("{{url_for('admin_app_sync_icon')}}" + "?_id=" + _id + "&trackId=" + trackId, function(res) {
+			alert(res.message)
+		})
+		
+	})
+</script>
 {% endblock %}
