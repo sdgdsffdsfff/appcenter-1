@@ -87,7 +87,7 @@
 	    <form class="sidebar-search">
 	      	<div class="input-box">
 				<a href="javascript:;" class="remove"></a>
-				<input type="text" id="searchQ" placeholder="应用名称" />
+				<input type="text" id="searchQ" placeholder="TrackId" />
 				<input type="button" class="submit" value=" " />
 	      	</div>
 	    </form>
@@ -466,7 +466,7 @@
 			if(q == ""){
 				return false;
 			}
-			window.location.href = "{{url_for('admin_app_list')}}#trackName=" +  q
+			window.location.href = "{{url_for('admin_app_list')}}#trackId=" +  q
 		});
 		
 		function getParameterByName(name) {
