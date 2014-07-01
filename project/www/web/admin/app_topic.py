@@ -68,6 +68,7 @@ class AppTopicInfoBaseView(View):
         self._form.add_field('checkbox', '投放国家', 'country', data={'value': '', 'option': country_options})
         self._form.add_field('file', '专题图标', 'pic', data={'attributes': {}})
         self._form.add_field('radio', '状态', 'status', data={'value': '0', 'option':[('发布','1'), ('未发布','0')]})
+        self._form.add_validator(AppTopicAddValidator)
 
 
 class AddView(AppTopicInfoBaseView):
@@ -204,7 +205,8 @@ class AppTopicAddValidator(FormValidatorAbstract):
     def rules(self):
         return {
             'name': {'required':True},
-            'pic': {'required':True}
+            'pic': {'required':True},
+            'description': {'required':True}
         }
 
 
