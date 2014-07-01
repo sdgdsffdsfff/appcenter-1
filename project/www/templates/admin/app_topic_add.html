@@ -57,4 +57,27 @@
 <!-- END  TABLE PORTLET-->
 {% endblock %}
 
+{% block scripts %}
+<script type="text/javascript">
+		function getParameterByName(name) {
+		    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		        results = regex.exec(location.search);
+		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
+	//redirect to list page when add successful
+	function checkRedirect() {
+		if("{{form.status()}}" == "success") {
+			return true
+		}
+		return false
+	}
+
+	if(checkRedirect() == true) {
+		var layout = getParameterByName("layout")
+		window.location.href = "{{url_for('admin_app_topic_list')}}?layout=" + layout
+	}
+</script>
+{% endblock %}
+
 {% block menuName %}应用专题{% endblock %}
