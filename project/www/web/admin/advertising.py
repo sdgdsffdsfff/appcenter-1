@@ -161,7 +161,6 @@ class ItemAddView(View):
         self._form.add_message(**message)
         self._form.clean_value()
 
-
         return self._view.render('advertising_item_add', form=self._form, identifier=self._identifier)
 
 
