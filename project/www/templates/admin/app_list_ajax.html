@@ -9,6 +9,8 @@
 			<th>trackId | BundleId</th>
 			<th>主分类</th>
 			<th>版本</th>
+                        <th>设备支持</th>
+			<th>状态</th>
 			<th>操作</th>
 		</tr>
 	</thead>
@@ -21,6 +23,23 @@
 			<td>{{ app['trackId'] }} | {{ app['bundleId'] }}</td>
 			<td>{{ app['primaryGenreName'] }}</td>
 			<td>{{ app['version'] }} | {{ app['downloadVersion'] }}</td>
+                        <td width=40>
+                          {% for name in app['supportedDevices'] if 'iPhone' in name %}
+                          <img src="/static/img/iphone.png" alt="{{ name }}">
+                          {% break %}
+                          {% endfor %}
+                          {% for name in app['supportedDevices'] if 'iPad' in name %}
+                          <img src="/static/img/ipad.png" alt="{{ name }}">
+                          {% break %}
+                          {% endfor %}
+                        </td>
+                        <td>
+                          {% if app['review'] == 1 %}
+                          <img src="/static/img/okay.png" title="已审核">
+                          {% else %}
+                          <img src="/static/img/warning.png" title="未审核">
+                          {% endif %}
+                        </td>
 			<td>
 				<a href="{{ url_for('admin_app_edit') }}?_id={{app['_id']}}&{{current_page_params}}" class="btn red icn-only" title="编辑"><i class="icon-edit icon-white"></i></a>
 				<a href="{{ url_for('admin_app_download_list') }}?bundleId={{app['bundleId']}}&{{current_page_params}}" class="btn green icn-only" title="下载地址"><i class="icon-download icon-white"></i></a>
