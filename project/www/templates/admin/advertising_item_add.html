@@ -57,5 +57,19 @@
 <!-- END  TABLE PORTLET-->
 {% endblock %}
 
-
+{% block scripts %}
+<script type="text/javascript">
+	//redirect to list page when add successful
+	function checkRedirect() {
+		if("{{form.status()}}" == "success") {
+			return true
+		}
+		return false
+	}
+	var identifier = getParameterByName("identifier")
+	if(checkRedirect() == true) {
+		window.location.href = "{{url_for('admin_advertising_item_list')}}?identifier=" + identifier
+	}
+</script>
+{% endblock %}
 {% block menuName %}广告位置{% endblock %}

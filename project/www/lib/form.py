@@ -286,6 +286,12 @@ class Form(object):
         except:
             return ''
 
+    def status(self):
+        try:
+            return self._status
+        except Exception:
+            return ''
+
     def add_validator(self, validator_obj):
         self._validators.append(validator_obj)
 
