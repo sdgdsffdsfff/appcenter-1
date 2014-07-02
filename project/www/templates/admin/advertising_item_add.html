@@ -75,6 +75,7 @@
 	}
 	var identifier = getParameterByName("identifier")
 	var layout = getParameterByName("layout")
+	if(layout == ""){layout = "default"}
 	if(checkRedirect() == true) {
 		window.location.href = "{{url_for('admin_advertising_item_list')}}?identifier=" + identifier + "&layout=" + layout
 	}
