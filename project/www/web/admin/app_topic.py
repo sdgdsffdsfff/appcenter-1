@@ -133,12 +133,14 @@ class EditView(AppTopicInfoBaseView):
     专题编辑
     '''
     def before_request(self, name):
+        super(EditView, self).before_request(name)
         self._id = request.args.get('_id', None)
         if self._id is None:
             return self._view.error("参数不正确")
         self.topic_data = DB.app_topic.find_one({'_id': ObjectId(self._id)})
-
-        super(EditView, self).before_request(name)
+        self.icon = {}
+        self.icon["url"] = self.topic_data["icon_store_path"]
+        
 
     @route('/edit', methods=['GET', 'POST'], endpoint='admin_app_topic_edit')
     def do_request(self):
@@ -150,8 +152,8 @@ class EditView(AppTopicInfoBaseView):
                 self._form.set_value(self.topic_data)
             except FormException, ex:
                 return self._view.error(str(ex))
-
-            return self._view.render('app_topic_add', form=self._form)
+            self._view.assign('create_pic_url', create_pic_url)
+            return self._view.render('app_topic_add', form=self._form, icon=self.icon)
 
         try:
             self._init_form()
