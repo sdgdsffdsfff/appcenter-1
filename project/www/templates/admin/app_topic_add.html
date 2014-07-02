@@ -37,14 +37,16 @@
 	<div class="portlet-body form form-horizontal">
 		{{ form.message() | safe }}
 		{{ form.begin_form() | safe }}
+		{% if icon %}
 		<div class="control-group">
 			<label class="control-label">图标</label>
 			<div class="controls">
 				{% if icon['url'] %}
-				<img src="{{ create_pic_url(icon['url']) }}" />
+					<img width="60" height="60" src="{{ create_pic_url(icon['url']) }}" />
 				{% endif %}
 			</div>
 		</div>
+		{% endif %}
 		 {% for field in form.field_list() %}
 		<div class="control-group {% if field.is_error() %}error{% endif %}">
 			<label class="control-label">{{ field.label() | safe }}</label>
