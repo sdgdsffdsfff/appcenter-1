@@ -72,8 +72,8 @@ class ItemListView(View):
         res = DB.advertising.find_one({'identifier':identifier})
         ad_list = []
         if res and 'items' in res:
-            ad_list = res['items']
-
+            tmp_ad_list = res['items']
+            ad_list = sorted(tmp_ad_list, key=lambda k: k.get("order", ""))
         self._view.assign('create_pic_url', create_pic_url)
 
         return self._view.render('advertising_item_list', ad_list=ad_list, ad=res)
@@ -114,6 +114,7 @@ class ItemAddView(View):
         self._form.add_field('text', '标题', 'title', data={'attributes':{'class':'m-wrap large', 'placeholder': '标题'}})
         self._form.add_field('select', '所属广告位', 'identifier', data={'value':identifier, 'option': identifier_options, 'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '链接', 'link', data={'attributes':{'class':'m-wrap large', 'placeholder': '链接'}})
+        self._form.add_field('text', '排序', 'order', data={'attributes':{'class':'m-wrap large', 'placeholder': '排序'}})
         self._form.add_field('checkbox', '投放语言', 'language', data={ 'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家（优先）', 'country', data={ 'value': '', 'option': country_options})
         self._form.add_field('file', '上传图片', 'pic', data={ 'attributes': {}})
@@ -145,6 +146,7 @@ class ItemAddView(View):
                 'id': int(item_id),
                 'title': request.form['title'],
                 'link': request.form['link'],
+                'order': request.form["order"],
                 'hash': hash_str,
                 'store_path': save_file,
                 'language': language,

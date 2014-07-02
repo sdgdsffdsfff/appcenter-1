@@ -60,6 +60,13 @@
 {% block scripts %}
 <script type="text/javascript">
 	//redirect to list page when add successful
+	function getParameterByName(name) {
+	    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+	        results = regex.exec(location.search);
+	    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
+
 	function checkRedirect() {
 		if("{{form.status()}}" == "success") {
 			return true
@@ -67,8 +74,10 @@
 		return false
 	}
 	var identifier = getParameterByName("identifier")
+	var layout = getParameterByName("layout")
+	if(layout == ""){layout = "default"}
 	if(checkRedirect() == true) {
-		window.location.href = "{{url_for('admin_advertising_item_list')}}?identifier=" + identifier
+		window.location.href = "{{url_for('admin_advertising_item_list')}}?identifier=" + identifier + "&layout=" + layout
 	}
 </script>
 {% endblock %}

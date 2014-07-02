@@ -45,6 +45,7 @@
                         <td>图片</td>
                         <th>标题</th>
                         <th>链接</th>
+                        <th>排序</th>
                         <th>投放语言</th>
                         <th>投放国家</th>
                         <th>操作</th>
@@ -63,6 +64,7 @@
                         </td>
                         <td>{{ a['title'] }}</td>
                         <td>{{ a['link'] }}</td>
+                        <td>{{ a['order'] }}</td>
                         <td>{% for lang in a['language'] %} {{lang}} {% endfor %}</td>
                         <td>{% for country in a['country'] %} {{country}} {% endfor %}</td>
                         <td>
