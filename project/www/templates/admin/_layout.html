@@ -466,7 +466,8 @@
 			if(q == ""){
 				return false;
 			}
-			window.location.href = "{{url_for('admin_app_list')}}#trackId=" +  q
+			window.location.href = "{{url_for('admin_app_list')}}#trackId=" +  q;
+                       loadPage();
 		});
 		
 		function getParameterByName(name) {

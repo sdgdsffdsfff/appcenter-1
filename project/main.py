@@ -4,7 +4,7 @@
 
 from flask import Flask, url_for
 from flask.ext.login import LoginManager
-
+from jinja2 import Environment
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -16,6 +16,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 login_manager.login_view = "/admin/login/"
+
+app.jinja_options['extensions'].append('jinja2.ext.loopcontrols')
 
 def register_view():
     import www.web.admin as admin
