@@ -411,11 +411,14 @@ class SyncIconView(View):
             url = 'http://itunes.apple.com/us/lookup?id=%s' % (trackId)
             apple_data = requests.get(url)
             data = apple_data.json()
-            data = data["results"][0]
-            DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':{'artworkUrl60': data['artworkUrl60'],
-                              'artworkUrl512': data["artworkUrl512"],
-                              "artworkUrl100": data["artworkUrl100"]}})
-            status, message = 'success', '更新图标成功'
+            if len(data["results"]) == 0:
+                status, message = 'error', u'找不到苹果官方数据，可能此应用已经下架'
+            else:
+                data = data["results"][0]
+                DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':{'artworkUrl60': data['artworkUrl60'],
+                                  'artworkUrl512': data["artworkUrl512"],
+                                  "artworkUrl100": data["artworkUrl100"]}})
+                status, message = 'success', '更新图标成功'
         except Exception, ex:
             status, message = 'error', str(ex)
             pass
