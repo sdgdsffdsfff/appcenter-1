@@ -254,7 +254,7 @@ class CreateView(View):
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                 'description':request.form['description'],
                 'releaseNotes':request.form['releaseNotes'],
-                'review': request.form['review']
+                'review': int(request.form['review'])
             }
             DB.AppBase.update({'bundleId':request.form['bundleId']}, {'$set':data}, upsert=True)
             return redirect(create_url('.app.edit', {'_id':_id}))
@@ -374,7 +374,7 @@ class EditView(AppDetailBaseView):
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                 'description':request.form['description'],
                 'releaseNotes':request.form['releaseNotes'],
-                'review': request.form['review']
+                'review': int(request.form['review'])
             }
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
