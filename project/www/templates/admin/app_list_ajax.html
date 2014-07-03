@@ -9,6 +9,7 @@
 			<th>trackId | BundleId</th>
 			<th>主分类</th>
 			<th>版本</th>
+			<th>状态</th>
 			<th>操作</th>
 		</tr>
 	</thead>
@@ -21,6 +22,11 @@
 			<td>{{ app['trackId'] }} | {{ app['bundleId'] }}</td>
 			<td>{{ app['primaryGenreName'] }}</td>
 			<td>{{ app['version'] }} | {{ app['downloadVersion'] }}</td>
+			{% if app['review']|int == 1 %}
+				<td><i class="icon-ok"></i></td>
+			{% else %}
+				<td><i class="icon-minus-sign"></i></td>
+			{% endif %}
 			<td>
 				<a href="{{ url_for('admin_app_edit') }}?_id={{app['_id']}}&{{current_page_params}}" class="btn red icn-only" title="编辑"><i class="icon-edit icon-white"></i></a>
 				<a href="{{ url_for('admin_app_download_list') }}?bundleId={{app['bundleId']}}&{{current_page_params}}" class="btn green icn-only" title="下载地址"><i class="icon-download icon-white"></i></a>
