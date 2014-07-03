@@ -40,23 +40,16 @@ class ListView(View):
     @route('/list', endpoint='api_app_list')
     def get(self):
         genre_id = request.args.get('genre_id', 0)
-        device = request.args.get('device', 1)
+        device = request.args.get('device', "1")
         sort = request.args.get('sort', 'sort')
         page = request.args.get('page', 1)
 
         xsort = 'sort'
-        if sort == 'new':
-            xsort = '_id'
-        elif sort == 'hot':
-            xsort = 'downloadCount'
+        if sort == 'new': xsort = '_id'
+        elif sort == 'hot': xsort = 'downloadCount'
 
-        try:
-            if device == 'ipad' or device == "2":
-                device = 'ipad'
-            else:
-                device = 'iphone'
-        except:
-            device = 'iphone'
+        if device == 'ipad' or device == "2": device = 'ipad'
+        else: device = 'iphone'
 
         data = self.app.get_apps_cache(device, self._view._sign, genre_id, int(page), xsort)
 
