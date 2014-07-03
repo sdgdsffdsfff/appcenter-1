@@ -58,13 +58,13 @@ class AppCollectionController(ControllerBase):
                 if front:
                     filter_items.append(
                         {'trackName': tmp_item['trackName'], 'ID': tmp_item['ID'], 'averageUserRating': rating,
-                        'icon': tmp_item['icon'], 'version': tmp_item['version'], 'size': tmp_item['size'], 'sort': tmp_item['sort']})
+                         'icon': tmp_item['icon'], 'version': tmp_item.get('version', ''), 'size': tmp_item.get('size', ''), 'sort': tmp_item['sort']})
                 else:
                     filter_items.append(
                         {'trackName': tmp_item['trackName'], 'ID': tmp_item['ID'], 'averageUserRating': rating,
                         'icon': tmp_item['icon'], 'sort': tmp_item['sort'], 'country': tmp_item['country'],
-                        'id': tmp_item['id'], 'language': tmp_item['language'], 'version': tmp_item['version'], 
-                        'size': tmp_item['size']})
+                         'id': tmp_item['id'], 'language': tmp_item['language'], 'version': tmp_item.get('version', ''),
+                         'size': tmp_item.get('size', '')})
             data = sort_items(filter_items)
             return {'title': title, 'identifier': res['identifier'], 'data': data if num is None else data[0:num]}
         except Exception, ex:
