@@ -5,7 +5,7 @@
 import os
 import urllib
 from collections import OrderedDict
-from conf.settings import settings
+from conf.settings import settings, DOMAIN_URL
 from common.ng_mongo import NGMongoConnect
 
 mongo = NGMongoConnect(settings['mongodb']['host'])
@@ -25,7 +25,7 @@ class ClientController(object):
 			'build': client['build'], 
 			'description': client['desc'],
 			'fileURL': os.path.join(settings['client_url_host'], client['store_path']),
-			'plistURL': 'http://192.168.16.70:5000/api/client/ios/plist'+ urllib.quote('?type=%s' % client_type)
+			'plistURL': DOMAIN_URL + '/api/client/ios/plist'+ urllib.quote('?type=%s' % client_type)
 		}
 
 	def get_latest_version_plist(self, client_type):
