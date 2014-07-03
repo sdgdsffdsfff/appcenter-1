@@ -82,6 +82,8 @@ def register_view():
     admin.client.AddView.register(app, route_prefix='/admin/')
     admin.client.DeleteView.register(app, route_prefix='/admin/')
     admin.client.ToggleStateView.register(app, route_prefix='/admin/')
+    admin.search_q.ListView.register(app, route_prefix='/admin/')
+    admin.search_q.DeleteView.register(app, route_prefix='/admin/')
 
 
     api.iphone.HomePageView.register(app, route_prefix='/api/')
