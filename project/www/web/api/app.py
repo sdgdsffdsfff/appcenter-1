@@ -51,7 +51,7 @@ class ListView(View):
             xsort = 'downloadCount'
 
         try:
-            if int(device) == 2 or device == 'ipad':
+            if device == 'ipad' or device == "2":
                 device = 'ipad'
             else:
                 device = 'iphone'

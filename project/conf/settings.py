@@ -36,5 +36,6 @@ settings = {
     'client_upload_dir': './www/static/vshare/download'
 }
 
+DOMAIN_URL = 'http://ios.vshare.com'
 try: from settings_local import *
 except Exception, e: print e.message
