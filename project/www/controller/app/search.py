@@ -109,7 +109,10 @@ class AppSearch(object):
                         fields=['trackName', 'icon', 'ID', 'bundleId', 'averageUserRating',  
                         'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount'],
                         start=start,
-                        size=page_size
+                        size=page_size,
+                        sort = [
+                            { "downloadCount" : "desc" },
+                        ]
             ))
 
         count = results.count()
