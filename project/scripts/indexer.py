@@ -42,7 +42,8 @@ def index_apps(app_search, apps):
                 bundle_id = app['bundleId'], rating = rating,
                 size = file_size_format(app.get('fileSizeBytes', 0)),
                 sign = sign, ipa_version_jb = ipa_version_jb,
-                ipa_version_signed = ipa_version_signed
+                ipa_version_signed = ipa_version_signed,
+                download_count = app.get("downloadCount", 0)
             )
         except Exception, ex: print ex
 
@@ -73,7 +74,8 @@ def build_search_index_run():
         "trackName": 1, "bundleId": 1,
         "supportedDevices": 1, "artworkUrl512": 1,
         "averageUserRating": 1, "sign": 1,
-        "fileSizeBytes": 1, "downloadVersion": 1
+        "fileSizeBytes": 1, "downloadVersion": 1,
+        "downloadCount": 1
     }
     apps = []
     for index, app in enumerate(mongo_db.AppBase.find({'review': 1}, fields)):

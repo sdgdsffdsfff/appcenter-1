@@ -72,7 +72,7 @@ class AppSearch(object):
         except Exception, ex:
             print ex
 
-    def add_index(self, ID, track_name, support_iphone, support_ipad, bundle_id, icon, rating, size, sign, ipa_version_jb, ipa_version_signed):
+    def add_index(self, ID, track_name, support_iphone, support_ipad, bundle_id, icon, rating, size, sign, ipa_version_jb, ipa_version_signed, download_count):
         self.es.index(
             {
               'ID': ID, 
@@ -85,7 +85,8 @@ class AppSearch(object):
               'size': size, 
               'sign': sign,
               'ipaVersionJb': ipa_version_jb, 
-              'ipaVersionSigned': ipa_version_signed
+              'ipaVersionSigned': ipa_version_signed,
+              'downloadCount': download_count
              },
             self.index, "apps", ID)
 
@@ -106,9 +107,12 @@ class AppSearch(object):
         results = self.es.search(
             pyes.Search(pyes.BoolQuery(must=must, must_not=must_not, should=should),
                         fields=['trackName', 'icon', 'ID', 'bundleId', 'averageUserRating',  
-                        'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad'],
+                        'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount'],
                         start=start,
-                        size=page_size
+                        size=page_size,
+                        sort = [
+                            { "downloadCount" : "desc" },
+                        ]
             ))
 
         count = results.count()

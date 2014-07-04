@@ -100,8 +100,11 @@ class FormRadio(FormFieldBase):
         html = ''
         for n,v in self._option:
             checked = ''
-            if v == self._value:
-                checked = 'checked="checked"'
+            try:
+                if float(v) == float(self._value):
+                    checked = 'checked="checked"'
+            except ValueError:
+                pass
             html += '<label class="radio inline"><input type="radio" name="%s" value="%s" %s %s/> %s</label>' % (self._name, v, checked, self._attributes, n)
         return html
 
