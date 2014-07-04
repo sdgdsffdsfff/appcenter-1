@@ -1,4 +1,8 @@
-import json, requests, time, urllib2, urllib, zipfile, os, sys, pexpect
+import json, requests, time, urllib2, urllib, zipfile, os, sys
+try:
+    import pexpect
+except ImportError:
+    pass
 
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
