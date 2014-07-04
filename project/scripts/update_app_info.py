@@ -35,7 +35,7 @@ def request_appinfo_file(data):
             child.timeout = 300
             child.expect('password:')
             child.sendline('aPp6vv_c7om')
-            child.interact()
+            child.expect(pexpect.EOF)
             # file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
             # write_to_file = open(file_to_update, "wb")
             # print "Begin to connect remote file server"
