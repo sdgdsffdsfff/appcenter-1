@@ -42,7 +42,8 @@ def index_apps(app_search, apps):
                 bundle_id = app['bundleId'], rating = rating,
                 size = file_size_format(app.get('fileSizeBytes', 0)),
                 sign = sign, ipa_version_jb = ipa_version_jb,
-                ipa_version_signed = ipa_version_signed
+                ipa_version_signed = ipa_version_signed,
+                download_count = app.get("downloadCount", 0)
             )
         except Exception, ex: print ex
 
