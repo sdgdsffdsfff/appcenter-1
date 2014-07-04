@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 # Created by pengchangliang on 14-3-22.
-
+from datetime import datetime
 import math
+
 import pyes
+
 from conf.settings import settings
+from www.controller.app.header import mongo_db
 
 
 class AppSearch(object):
@@ -130,3 +133,13 @@ class AppSearch(object):
 
     def delete_index(self):
         self.es.indices.delete_index(self.index)
+
+    def count_search_q(self, q, results):
+        data = {
+            "q": q,
+            "count": results["pageInfo"]["count"],
+            "qtime": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        mongo_db.search_q.insert(data)
+
+

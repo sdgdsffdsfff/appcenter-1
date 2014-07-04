@@ -1,0 +1,85 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %} 搜索词管理 {% endblock %}
+{% block title %} 搜索词 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+    <i class="icon-home"></i>
+    <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+    <i class="icon-angle-right"></i>
+  </li>
+  <li>搜索词列表</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+  <div class="portlet-title">
+    <div class="caption"><i class="icon-edit"></i>搜索词列表</div>
+    <div class="tools"></div>
+  </div>
+  <div class="portlet-body">
+    <div class="table-toolbar">
+    </div>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>名称</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for q in search_q_list %}
+        <tr>
+          <td><strong>{{ q['q'] }}</strong></td>
+          <td>
+            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{q['_id']}}">删除</a>
+            <div id="confirm_box_{{q['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+              <div class="modal-body">
+                <p>确定要删除吗?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">取消</button>
+                <button type="button" data-dismiss="modal" class="btn red" onclick="deleteSearch_q('{{q['_id']}}')">确定</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="pagination">
+  <ul>
+    <li><a href="javascript:;">总计 {{page_info["count"]}} 条记录, 当前 {{ page_info["page"] }} / {{ page_info["total"] }} 页</a></li>
+    <li><a href="{{ url_for('admin_search_list') }}?page={{page_info["page"] - 1}}">上一页</a></li>
+    <li><a href="{{ url_for('admin_search_list') }}?page={{page_info["page"] + 1}}">下一页</a></li>
+  </ul>
+</div>
+
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var ajax = NG.Ajax();
+
+function deleteSearch_q(_id){
+        var url = "{{url_for('admin_search_q_delete')}}?_id="+_id;
+        ajax.Get(url, function(res){
+                if(res.status == 'success'){
+                        location.reload();
+                } else{
+                        alert(res)
+                }
+        });
+}
+</script>
+{% endblock %}
+
+{% block menuName %}黑名单管理{% endblock %}

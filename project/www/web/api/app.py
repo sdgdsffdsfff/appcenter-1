@@ -111,4 +111,5 @@ class SearchView(View):
         num = request.args.get('num', 4)
         search = AppSearch()
         res = search.query(words, device, self._view._sign, page, 12)
+        search.count_search_q(words, res)
         return self._view.render(1000, res)
