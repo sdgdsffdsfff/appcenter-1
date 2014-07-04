@@ -23,7 +23,6 @@ def request_appinfo_file(data):
         file_name = data.get("data", {}).get("appid_file", {}).get("filename", "")
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
         try:
-            FILE_TO_SAVE_DIR = "/Users/qijianbiao/"
             print "Begin to get file: %s..." % file_name
             remote_file_dir = "/mnt/spiders/upload/app_info_files/" + file_name.split("/")[-1]
             file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
