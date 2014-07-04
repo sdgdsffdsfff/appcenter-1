@@ -107,7 +107,7 @@ class AppSearch(object):
         results = self.es.search(
             pyes.Search(pyes.BoolQuery(must=must, must_not=must_not, should=should),
                         fields=['trackName', 'icon', 'ID', 'bundleId', 'averageUserRating',  
-                        'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad'],
+                        'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount'],
                         start=start,
                         size=page_size
             ))

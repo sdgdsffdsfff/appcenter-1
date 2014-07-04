@@ -74,7 +74,8 @@ def build_search_index_run():
         "trackName": 1, "bundleId": 1,
         "supportedDevices": 1, "artworkUrl512": 1,
         "averageUserRating": 1, "sign": 1,
-        "fileSizeBytes": 1, "downloadVersion": 1
+        "fileSizeBytes": 1, "downloadVersion": 1,
+        "downloadCount": 1
     }
     apps = []
     for index, app in enumerate(mongo_db.AppBase.find({'review': 1}, fields)):
