@@ -1,4 +1,4 @@
-import json, requests, time, urllib2, urllib, zipfile, os
+import json, requests, time, urllib2, urllib, zipfile, os, sys, pexpect
 
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
@@ -24,20 +24,29 @@ def request_appinfo_file(data):
         oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
         try:
             print "Begin to get file: %s..." % file_name
+            remote_file_dir = "/mnt/spiders/upload/app_info_files/" + file_name.split("/")[-1]
             file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
-            write_to_file = open(file_to_update, "wb")
-            print "Begin to connect remote file server"
-            u = urllib2.urlopen(file_name, timeout=60)
-            print "Finish connecting remote file server"
-            file_size_dl = 0
-            block_size = 1028 * 16
-            print "Begin to read file from remote file server"
-            while True:
-                buffer = u.read(block_size)
-                if not buffer: break
-                write_to_file.write(buffer)
-                file_size_dl += len(buffer)
-                print "Have readed %d size from file server" % file_size_dl
+            cmd = 'scp root@54.183.93.130:%s %s' % (remote_file_dir, file_to_update)
+            child = pexpect.spawn(cmd)
+            child.timeout = 300
+            child.expect('password:')
+            child.sendline('aPp6vv_c7om')
+            child.interact()
+            # file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
+            # write_to_file = open(file_to_update, "wb")
+            # print "Begin to connect remote file server"
+            # u = urllib2.urlopen(file_name, timeout=60)
+            # print "Finish connecting remote file server"
+            # file_size_dl = 0
+            # block_size = 1028 * 16
+            # print "Begin to read file from remote file server"
+            # while True:
+            #     buffer = u.read(block_size)
+            #     if not buffer: break
+            #     write_to_file.write(buffer)
+            #     file_size_dl += len(buffer)
+            #     print "Have readed %d size from file server" % file_size_dl
+
             print "Finish getting remote file"
             return file_to_update, data
         except Exception, e:
