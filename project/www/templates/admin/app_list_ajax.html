@@ -34,7 +34,7 @@
               {% endfor %}
             </td>
             <td>
-              {% if app['review']|int == 1 %}
+              {% if app.get("review")|int == 1 %}
               <img src="/static/img/okay.png" title="已审核">
               {% else %}
               <img src="/static/img/warning.png" title="未审核">
