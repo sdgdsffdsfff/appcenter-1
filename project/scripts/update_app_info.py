@@ -79,6 +79,8 @@ def update_app_info(file_name, data):
                 mongo_db.AppBase.update({"bundleId": app_info["bundleId"]}, {"$set": dicts}, True)
             except Exception, e: print "line error: %s" % e.message
         requests.post(finish_handle_url + oid + "/", timeout=30)
+        os.remove(file_name)
+        os.remove(os.path.join(FILE_TO_SAVE_DIR, json_file_name))
         print "Finish updating app info"
     except Exception, e:
         print "<Update App Info>post error: %s and mongo id is %s" % (e.message, oid)
