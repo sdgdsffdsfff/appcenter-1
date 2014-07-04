@@ -23,10 +23,7 @@ def cache_app_run(ID=None):
     else:
         apps = mongo_db.AppBase.find({'review': 1})
         count = apps.count()
-                
         pool = multiprocessing.Pool(processes=10)
-        for app in apps:
-            pool.apply_async(worker, (app['_id'], ))
-        
+        for app in apps: pool.apply_async(worker, (app['_id'], ))
         pool.close()
         pool.join()
