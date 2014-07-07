@@ -32,7 +32,7 @@ def request_appinfo_file(data):
             file_to_update = FILE_TO_SAVE_DIR + file_name.split("/")[-1]
             cmd = 'scp root@54.183.93.130:%s %s' % (remote_file_dir, file_to_update)
             child = pexpect.spawn(cmd)
-            child.timeout = 300
+            child.timeout = 600
             child.expect('password:')
             child.sendline('aPp6vv_c7om')
             child.expect(pexpect.EOF)

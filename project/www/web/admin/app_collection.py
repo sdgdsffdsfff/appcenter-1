@@ -181,6 +181,7 @@ class ItemAddView(View):
                 'averageUserRating': rating,
                 'icon': artworkUrl512_to_114_icon(app['artworkUrl512']),
                 'ID': str(app['_id']),
+                'bundleId': app['bundleId'],
                 'size': file_size_format(app['fileSizeBytes']),
                 'version': download_version
             }

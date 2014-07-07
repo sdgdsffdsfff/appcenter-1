@@ -15,7 +15,7 @@
 			<tr>
 				<td><img style="width:40px; height:40px" src="{{ a['icon'] }}" /></td>
 				<td><input type="text" value="{{ a['sort'] }}" name="sort_{{ a['id'] }}" style="width:30px" /></td>
-				<td><strong>{{ a['trackName'] }}</strong><br />{{ a['ID'] }}</td>
+				<td><strong>{{ a['trackName'] }}</strong><br />{{ a['bundleId'] }}</td>
 				<td>{% for lang in a['language'] %} {{lang}}  {% endfor %}</td>
 				<td>{% for country in a['country'] %} {{country}} {% endfor %}</td>
 				<td>
