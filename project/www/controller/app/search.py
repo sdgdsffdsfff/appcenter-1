@@ -65,7 +65,11 @@ class AppSearch(object):
                 u'averageUserRating': {'boost': 1.0,
                             'index': 'not_analyzed',
                             'store': 'yes',
-                            'type': u'float'}
+                            'type': u'float'},
+                u'downloadCount': {'boost': 1.0,
+                            'index': 'not_analyzed',
+                            'store': 'yes',
+                            'type': u'integer'}
             }
 
             self.es.indices.put_mapping("apps", {'properties': mapping}, [self.index])
