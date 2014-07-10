@@ -1,4 +1,5 @@
 #encoding=UTF-8
+from collections import defaultdict
 import os
 import json
 import time
@@ -11,8 +12,10 @@ import requests
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-api_id_url = "https://itunes.apple.com/us/lookup?id="
-api_bundleId_url = "https://itunes.apple.com/us/lookup?bundleId="
+country = ["us", "cn"]
+
+api_id_url = "https://itunes.apple.com/%s/lookup?id="
+api_bundleId_url = "https://itunes.apple.com/%s/lookup?bundleId="
 
 host_url = "http://54.183.93.130/"
 get_file_url = host_url + "get-file/trackid/"
@@ -40,13 +43,15 @@ def compare_to_apple(filename):
 	}
 	with open(WRITE_DIR + filename, "r") as f:
 		lines = group_list(f.readlines(), group_num)
+		d = defaultdict(list)
 		for line in lines:
 			if "." in line:
 				url = api_bundleId_url + (",".join(line)).replace("\n", "")
 			else:
 				url = api_id_url + (",".join(line)).replace("\n", "")
+
 			try:
-				res = requests.get(url, headers=headers)
+				res = requests.get(url % country[0], headers=headers)
 			except requests.exceptions.ConnectionError as ce:
 				print ce, url
 				continue
@@ -55,14 +60,35 @@ def compare_to_apple(filename):
 			except Exception as e:
 				print e
 				continue
-			results = data.get("results", {})
-			for rs in results:
-				with open(WRITE_DIR + "%s.json"%filename, "a") as fs:
-					try:
-						fs.write(json.dumps(rs) + "\n")
-					except UnicodeDecodeError as ue:
-						print ue, rs
-						continue
+
+			try:
+				res_cn = requests.get(url % country[1], headers=headers)
+			except requests.exceptions.ConnectionError as ce:
+				print ce, url
+				continue
+			try:
+				data_cn = res_cn.json()
+			except Exception as e:
+				print e
+				continue
+
+			results = data.get('results', {})
+			results_cn = data_cn.get("results", {})
+
+			[d[rs["trackId"]].append(rs) for rs in results]
+			[d[rs["trackId"]].append(rs) for rs in results_cn]
+
+			with open(WRITE_DIR + "%s.json"%filename, "a") as fs:
+				for ha in d.values():
+					fs.write("[")
+					for item in ha:
+						try:
+							fs.write(json.dumps(item) + ",")
+							fs.write("{},"*(len(country) - len(ha)))
+						except UnicodeDecodeError as ue:
+							print ue, rs
+							continue
+					fs.write("]\n")
 	end = datetime.now()
 	print("process takes %s seconds" % (end - start).total_seconds())
 
@@ -72,7 +98,7 @@ def track_need_to_update():
 		data = res.json()
 		if data.get("data", {}).get("appid_file", {}) is None or \
 		   data.get("data", {}).get("appid_file", {}) == "None":
-			print("date: %s, no job get, try in 5 minute later! waiting..." % (datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+			print("date: %s, no job get, try in 1 minute later! waiting..." % (datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 			time.sleep(60 * 1)
 			continue
 		oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
@@ -131,6 +157,7 @@ def read_in_chunks(file_object, chunk_size=1024):
 
 if __name__ == '__main__':
 	track_need_to_update()
+	#compare_to_apple("test.txt")
 	#requests.post(get_file_failed_url + "53a645288475b60e77f618f3/")
 	# num_lines = sum(1 for line in open('rs.json'))
 	# if num_lines > send_num:
