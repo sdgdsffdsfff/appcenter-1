@@ -11,7 +11,8 @@ import requests
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-api_url = "https://itunes.apple.com/us/lookup?id="
+api_id_url = "https://itunes.apple.com/us/lookup?id="
+api_bundleId_url = "https://itunes.apple.com/us/lookup?bundleId="
 
 host_url = "http://54.183.93.130/"
 get_file_url = host_url + "get-file/trackid/"
@@ -40,7 +41,10 @@ def compare_to_apple(filename):
 	with open(WRITE_DIR + filename, "r") as f:
 		lines = group_list(f.readlines(), group_num)
 		for line in lines:
-			url = api_url + (",".join(line)).replace("\n", "")
+			if "." in line:
+				url = api_bundleId_url + (",".join(line)).replace("\n", "")
+			else:
+				url = api_id_url + (",".join(line)).replace("\n", "")
 			try:
 				res = requests.get(url, headers=headers)
 			except requests.exceptions.ConnectionError as ce:
