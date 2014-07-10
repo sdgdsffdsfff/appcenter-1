@@ -73,7 +73,7 @@ def track_need_to_update():
 		if data.get("data", {}).get("appid_file", {}) is None or \
 		   data.get("data", {}).get("appid_file", {}) == "None":
 			print("date: %s, no job get, try in 5 minute later! waiting..." % (datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-			time.sleep(60 * 5)
+			time.sleep(60 * 1)
 			continue
 		oid = data.get("data", {}).get("appid_file", {}).get("_id", {}).get("$oid", "")
 		if data.get("code", "")  == 0:
