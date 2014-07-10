@@ -45,7 +45,7 @@ def compare_to_apple(filename):
 		lines = group_list(f.readlines(), group_num)
 		d = defaultdict(list)
 		for line in lines:
-			if ",".join(line[0:10]).count(".") > 5:
+			if ",".join(line[0:10]).count(".") != 0:
 				url = api_bundleId_url + (",".join(line)).replace("\n", "")
 			else:
 				url = api_id_url + (",".join(line)).replace("\n", "")
