@@ -79,16 +79,7 @@ def compare_to_apple(filename):
 			[d[rs["trackId"]].append(rs) for rs in results_cn]
 
 			with open(WRITE_DIR + "%s.json"%filename, "a") as fs:
-				for ha in d.values():
-					fs.write("[")
-					for item in ha:
-						try:
-							fs.write(json.dumps(item) + ",")
-							fs.write("{},"*(len(country) - len(ha)))
-						except UnicodeDecodeError as ue:
-							print ue, rs
-							continue
-					fs.write("]\n")
+				for ha in d.values(): fs.write(json.dumps(ha) + "\n")
 	end = datetime.now()
 	print("process takes %s seconds" % (end - start).total_seconds())
 
