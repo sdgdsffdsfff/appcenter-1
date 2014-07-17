@@ -5,3 +5,4 @@ import iphone
 import ipad
 import client
 import language
+import hotword

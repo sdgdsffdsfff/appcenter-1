@@ -99,3 +99,4 @@ def register_view():
     api.client.UpdateView.register(app, route_prefix='/api/')
     api.client.PlistView.register(app, route_prefix='/api/')
     api.language.ListView.register(app, route_prefix='/api/')
+    api.hotword.ListView.register(app, route_prefix='/api/')
