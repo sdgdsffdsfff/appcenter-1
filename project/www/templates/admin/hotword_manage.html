@@ -1,0 +1,175 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %} 热词管理 {% endblock %}
+{% block title %} 热词词 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+    <i class="icon-home"></i>
+    <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+    <i class="icon-angle-right"></i>
+  </li>
+  <li>热词列表</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="modal fade  hide in" data-width="700" id="add_modal">
+  <div class="modal-header">
+    <a class="close" href="#" data-dismiss="modal"></a>
+    <h3>热词添加</h3>
+  </div>
+  <div class="modal-body inner">
+    <div class="alert hide" id="form-alert"></div>
+    <form action="" id="hot_word-add-form" class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label">热词</label>
+        <div class="controls">
+          <input type="text" name="name" required class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">排序</label>
+        <div class="controls">
+          <input type="number" name="order" required class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">投放语言</label>
+        <div class="controls">
+          {% for lang in lang_options %}
+            <label class="checkbox inline">
+              <div class="">
+                  <span><input type="checkbox" name="language" value="{{lang[1]}}">{{lang[0]}}</span>
+              </div>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">设备</label>
+        <div class="controls">
+          <label class="checkbox inline">
+              <div class="">
+                  <span><input type="checkbox" name="device" value="1">iPhone</span>
+              </div>
+          </label>
+          <label class="checkbox inline">
+              <div class="">
+                  <span><input type="checkbox" name="device" value="2">iPad</span>
+              </div>
+          </label>
+          <span class="help-inline">
+          </span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">取消</button>
+    <button  class="btn red" onclick="addHotWord()">确定添加</button>
+  </div>
+</div>
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+  <div class="portlet-title">
+    <div class="caption"><i class="icon-edit"></i>热词列表</div>
+    <div class="tools"></div>
+  </div>
+  <div class="portlet-body">
+    <div class="table-toolbar">
+      <div class="btn-group">
+        <a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
+      </div>
+    </div>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>名称</th>
+          <th>语言</th>
+          <th>设备</th>
+          <th>排序</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for hw in hotword_list %}
+        <tr>
+          <td><strong>{{ hw['name'] }}</strong></td>
+          <td>{{ hw['language']|join(',') }}</td>
+          <td>
+            {% for name in hw['device'] if '1' in name %}
+            <img src="/static/img/iphone.png" alt="{{ name }}">
+            {% break %}
+            {% endfor %}
+            {% for name in hw['device'] if '2' in name %}
+            <img src="/static/img/ipad.png" alt="{{ name }}">
+            {% break %}
+            {% endfor %}
+          </td>
+          <td>{{ hw['order']}}</td>
+          <td>
+            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{hw['_id']}}">删除</a>
+            <div id="confirm_box_{{hw['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+              <div class="modal-body">
+                <p>确定要删除吗?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">取消</button>
+                <button type="button" data-dismiss="modal" class="btn red" onclick="deleteHotWord('{{hw['_id']}}')">确定</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="pagination">
+  <ul>
+    <li><a href="javascript:;">总计 {{page_info["count"]}} 条记录, 当前 {{ page_info["page"] }} / {{ page_info["total"] }} 页</a></li>
+    <li><a href="{{ url_for('admin_hotword_list') }}?page={{page_info["page"] - 1}}">上一页</a></li>
+    <li><a href="{{ url_for('admin_hotword_list') }}?page={{page_info["page"] + 1}}">下一页</a></li>
+  </ul>
+</div>
+
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var ajax = NG.Ajax();
+
+function deleteHotWord(_id){
+        var url = "{{url_for('admin_hotword_delete')}}?_id="+_id;
+        ajax.Get(url, function(res){
+                if(res.status == 'success'){
+                        location.reload();
+                } else{
+                        alert(res)
+                }
+        });
+}
+
+function addHotWord(){
+        var url = '{{ url_for("admin_hotword_add") }}';
+        var data = $('#hot_word-add-form').serialize();
+        ajax.Post(url, data, function(res){
+                if(res.status == 'success'){
+                        $('#add_modal').modal('hide');
+                        location.reload();
+                }else{
+                        $('#form-alert').html(res.message);
+                        $('#form-alert').show();
+                }
+        });
+}
+</script>
+{% endblock %}
+
+{% block menuName %}热词管理{% endblock %}

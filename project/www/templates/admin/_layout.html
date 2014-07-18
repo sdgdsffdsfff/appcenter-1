@@ -181,6 +181,12 @@
 	      <span class="title">搜索词列表</span>
 	    </a>
 	  </li>
+	  <li>
+	    <a href="{{ url_for('admin_hotword_list') }}">
+	      <i class="icon-font"></i>
+	      <span class="title">热词列表</span>
+	    </a>
+	  </li>
 
 
       {% if current_user.role.role == "Admin" %}
