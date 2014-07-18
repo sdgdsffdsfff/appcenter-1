@@ -15,3 +15,4 @@ import dirty_word
 import client_type
 import client
 import search_q
+import hotword
