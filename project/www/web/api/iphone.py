@@ -45,3 +45,10 @@ class HomePageView(View):
         #topic
         data['topic'] = self._get_app_topic()
         return self._view.render(1000, data)
+
+# class HomeAdImageView(View):
+#     @route('/home_ad_image', endpoint='api_home_ad_image')
+#     def get(self):
+#         data = {}
+#         data['ad_images'] = self._get_advertising('iphone_index_flash')
+#         return self._view.render(1000, data)
