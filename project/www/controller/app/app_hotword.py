@@ -3,7 +3,7 @@
 #2013-11-28
 
 import datetime
-from operator import attrgetter
+from operator import itemgetter, attrgetter
 from header import *
 from bson.objectid import ObjectId
 from bson.json_util import dumps
@@ -29,5 +29,6 @@ class AppHotWordController(ControllerBase):
         if not res:
             return []
         rs = []
-        [rs.append(word["name"]) for word in res]
-        return dumps(sorted(rs))
+        [rs.append((word["name"], word["order"])) for word in res]
+        sorted_rs = sorted(rs, key=itemgetter(1), reverse=True)
+        return dumps([item[0] for item in sorted_rs])
