@@ -3,6 +3,7 @@
 #2013-11-28
 
 import datetime
+from operator import attrgetter
 from header import *
 from bson.objectid import ObjectId
 from bson.json_util import dumps
@@ -10,7 +11,7 @@ from bson.json_util import dumps
 
 class AppHotWordController(ControllerBase):
 
-    def __init__(self, language='EN', device="1", ip=None):
+    def __init__(self, language='EN', device="iPhone", ip=None):
 
         self._language = language
         self._country = get_country_code(ip)
@@ -23,7 +24,10 @@ class AppHotWordController(ControllerBase):
         return dumps(res)
 
     def get_list(self):
-        res = mongo_db.hot_word.find({"language": self._language, "device": self.device})
+        res = mongo_db.hot_word.find({"language": {"$regex": self._language},
+                                    "device": {"$regex" : self.device}})
         if not res:
             return []
-        return dumps(res)
+        rs = []
+        [rs.append(word["name"]) for word in res]
+        return dumps(sorted(rs))
