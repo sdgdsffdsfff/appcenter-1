@@ -31,4 +31,4 @@ class AppHotWordController(ControllerBase):
         rs = []
         [rs.append((word["name"], word["order"])) for word in res]
         sorted_rs = sorted(rs, key=itemgetter(1), reverse=True)
-        return dumps([item[0] for item in sorted_rs])
+        return [item[0] for item in sorted_rs]
