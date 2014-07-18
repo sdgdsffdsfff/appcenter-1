@@ -16,7 +16,7 @@ class ListView(View):
     @route('/list', endpoint='api_hotword_list')
     def get(self):
         language = request.args.get('language', "EN")
-        device = request.args.get("device", "iPhone")
+        device = request.args.get("device", "1")
         hotwords = AppHotWordController(language, device)
         data = hotwords.get_list()
         return self._view.render(1000, data)

@@ -54,12 +54,12 @@
         <div class="controls">
           <label class="checkbox inline">
               <div class="">
-                  <span><input type="checkbox" name="device" value="iPhone">iPhone</span>
+                  <span><input type="checkbox" name="device" value="1">iPhone</span>
               </div>
           </label>
           <label class="checkbox inline">
               <div class="">
-                  <span><input type="checkbox" name="device" value="iPad">iPad</span>
+                  <span><input type="checkbox" name="device" value="2">iPad</span>
               </div>
           </label>
           <span class="help-inline">
@@ -102,11 +102,11 @@
           <td><strong>{{ hw['name'] }}</strong></td>
           <td>{{ hw['language']|join(',') }}</td>
           <td>
-            {% for name in hw['device'] if 'iPhone' in name %}
+            {% for name in hw['device'] if '1' in name %}
             <img src="/static/img/iphone.png" alt="{{ name }}">
             {% break %}
             {% endfor %}
-            {% for name in hw['device'] if 'iPad' in name %}
+            {% for name in hw['device'] if '2' in name %}
             <img src="/static/img/ipad.png" alt="{{ name }}">
             {% break %}
             {% endfor %}

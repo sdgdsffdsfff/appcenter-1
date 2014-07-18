@@ -11,7 +11,7 @@ from bson.json_util import dumps
 
 class AppHotWordController(ControllerBase):
 
-    def __init__(self, language='EN', device="iPhone", ip=None):
+    def __init__(self, language='EN', device="1", ip=None):
 
         self._language = language
         self._country = get_country_code(ip)
