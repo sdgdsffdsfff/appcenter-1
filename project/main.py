@@ -104,3 +104,4 @@ def register_view():
     api.language.ListView.register(app, route_prefix='/api/')
     api.hotword.ListView.register(app, route_prefix='/api/')
     api.app_ad_image.ListView.register(app, route_prefix='/api/')
+    api.other_ad.InfoView.register(app, route_prefix='/api/')
