@@ -19,28 +19,18 @@ class ListView(View):
         other_ad_list = DB.other_ad.find()
         return self._view.render('other_ad_manage', other_ad_list=list(other_ad_list))
 
-class AddView(View):
-    @route('/add', methods=['POST'], endpoint='admin_other_ad_add')
+class EditView(View):
+    @route('/edit', methods=['POST'], endpoint='admin_other_ad_edit')
     def post(self):
         try:
             data = {
-                'code': request.form['code'],
-                'name': request.form['name'],
-                'nameofother_ad': request.form["nameofother_ad"]
+                'cs': request.form['cs'],
+                'language': request.form['language'],
+                'login_ad_status': request.form["login_ad_status"],
+                'position_ad_status': request.form["position_ad_status"]
             }
-            DB.other_ad.update({"name": request.form['name']}, data, True)
+            DB.other_ad.update({"cs": request.form['name']}, data, True)
             status, message = 'success', '添加成功'
         except Exception, ex:
             status, message = 'error', str(ex.message)
-        return self._view.ajax_response(status, message)
-
-class DeleteView(View):
-    @route('/delete', endpoint='admin_other_ad_delete')
-    def get(self):
-        try:
-            _id = request.args.get('_id')
-            res = DB.other_ad.remove({'_id': ObjectId(_id)})
-            status, message = 'success', '删除成功'
-        except Exception, ex:
-            status, message = 'error', str(ex)
         return self._view.ajax_response(status, message)

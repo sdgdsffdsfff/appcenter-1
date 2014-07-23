@@ -10,48 +10,11 @@
     <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
     <i class="icon-angle-right"></i>
   </li>
-  <li>第三方广告列表</li>
+  <li>第三方广告</li>
 </ul>
 {% endblock %}
 
 {% block content %}
-
-<div class="modal fade  hide in" data-width="700" id="add_modal">
-  <div class="modal-header">
-    <a class="close" href="#" data-dismiss="modal"></a>
-    <h3>第三方广告添加</h3>
-  </div>
-  <div class="modal-body inner">
-    <div class="alert hide" id="form-alert"></div>
-    <form action="" id="other_ad-add-form" class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label">第三方广告名称</label>
-        <div class="controls">
-          <input type="text" name="name" class="m-wrap large" />
-          <span class="help-inline"></span>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label">Code</label>
-        <div class="controls">
-          <input type="text" name="code" class="m-wrap large" />
-          <span class="help-inline"></span>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label">名称本地第三方广告</label>
-        <div class="controls">
-          <input type="text" name="nameofother_ad" class="m-wrap large" />
-          <span class="help-inline"></span>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" data-dismiss="modal" class="btn">取消</button>
-    <button  class="btn red" onclick="addOther_Ad()">确定添加</button>
-  </div>
-</div>
 
 <!-- BEGIN  TABLE PORTLET-->
 <div class="portlet box blue">
@@ -60,35 +23,119 @@
     <div class="tools"></div>
   </div>
   <div class="portlet-body">
-    <div class="table-toolbar">
-      <div class="btn-group">
-        <a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
-      </div>
-    </div>
     <table class="table table-striped table-hover table-bordered">
       <thead>
         <tr>
-          <th>名称</th>
-          <th>Code</th>
-          <th>名称本地第三方广告</th>
+          <th>语言</th>
+          <th>版本</th>
+          <th>首屏广告状态</th>
+          <th>推荐位广告状态</th>
+          <th>推荐位广告位置</th>
           <th>操作</th>
         </tr>
       </thead>
       <tbody>
         {% for other_ad in other_ad_list %}
         <tr>
-          <td><strong>{{ other_ad['name'] }}</strong></td>
-          <td>{{ other_ad['code'] }}</td>
-          <td>{{ other_ad['nameofother_ad'] }}</td>
+          <td><strong>{{ other_ad['language'] }}</strong></td>
+          <td>{{ other_ad['cs'] }}</td>
+          <td>{{ other_ad['login_ads']['status'] }}</td>
+          <td>{{ other_ad['position_ads']['status'] }}</td>
+          <td>{{ other_ad['position_ads']['positions'] }}</td>
           <td>
-            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{other_ad['_id']}}">删除</a>
-            <div id="confirm_box_{{other_ad['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
-              <div class="modal-body">
-                <p>确定要删除吗?</p>
+            <a class=" btn green" data-toggle="modal" href="#edit_modal_{{other_ad['_id']}}">编辑</a>
+            <div class="modal fade  hide in" data-width="700" id="edit_modal_{{other_ad['_id']}}">
+              <div class="modal-header">
+                <a class="close" href="#" data-dismiss="modal"></a>
+                <h3>第三方广告编辑</h3>
+              </div>
+              <div class="modal-body inner">
+                <div class="alert hide" id="form-alert"></div>
+                <form action="" id="other_ad-add-form" class="form-horizontal">
+                  <div class="control-group">
+                    <label class="control-label">投放设备</label>
+                    <div class="controls">
+                      <select name="cs" class="m-wrap large chosen"  multiple="multiple" data-placeholder="请选择设备">
+                        <option value="iphonejb">Iphone越狱设备</option>
+                        <option value="iphoneunjb">Iphone正版设备</option>
+                        <option value="ipadjb">Ipad越狱设备</option>
+                        <option value="ipadunjb">Ipad正版设备</option>
+                        <option value="all" selected="true">全部设备</option>
+                      </select>
+                      <span class="help-inline"></span>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">投放语言</label>
+                    <div class="controls">
+                      <select name="language" class="m-wrap large chosen"  multiple="multiple" data-placeholder="请选择语言">
+                        <option value="zh">中文</option>
+                        <option value="en">英文</option>
+                        <option value="arab">阿拉伯</option>
+                        <option value="all" selected="true">全部</option>
+                      </select>
+                      <span class="help-inline"></span>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">投放地点</label>
+                    <div class="controls">
+                      <select name="location" class="m-wrap large chosen"  multiple="multiple" data-placeholder="请选择地区">
+                        <option value="zh">中国</option>
+                        <option value="en">美国</option>
+                        <option value="arab">阿拉伯</option>
+                        <option value="all" selected="true">全部</option>
+                      </select>
+                      <span class="help-inline"></span>
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">首屏广告状态</label>
+                    <div class="controls">
+                      <input type="radio" name="login_ad_status" class="m-wrap" value="1" checked="true" />开启首屏广告
+                      <input type="radio" name="login_ad_status" class="m-wrap" value="0" />关闭首屏广告
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">推荐位广告状态</label>
+                    <div class="controls">
+                      <input type="radio" name="position_ad_status" class="m-wrap" value="1" checked="true" />开启推荐位广告
+                      <input type="radio" name="position_ad_status" class="m-wrap" value="0" />关闭推荐位广告
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">首屏广告来源</label>
+                    <div class="controls">
+                      <select class="chosen" data-placeholder="请选择广告来源" name="login_ad_source">
+                        <option value="inomobi">inomobi</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">推荐位广告来源</label>
+                    <div class="controls">
+                      <select class="chosen" data-placeholder="请选择广告来源" name="position_ad_source">
+                        <option value="inomobi">inomobi</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">推荐位列表</label>
+                    <div class="controls">
+                      <select class="chosen" multiple="multiple" data-placeholder="选择推荐位">
+                        {% for item_index, item_value in [[1, "第一个"], [2, "第二个"], [3, "第三个"], [4, "第四个"]] %}
+                        <option value="{{item_index}}" {% if item_index in other_ad["position_ads"]["positions"] %}selected="true"{% endif %}>{{item_value}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+
+                </form>
               </div>
               <div class="modal-footer">
                 <button type="button" data-dismiss="modal" class="btn">取消</button>
-                <button type="button" data-dismiss="modal" class="btn red" onclick="deleteOther_Ad('{{other_ad['_id']}}')">确定</button>
+                <button  class="btn red" onclick="addOther_Ad()">确定添加</button>
               </div>
             </div>
           </td>
@@ -102,22 +149,14 @@
 {% endblock %}
 
 {% block scripts %}
+<link rel="stylesheet" type="text/css" href="/static/metronic1.4/assets/plugins/chosen-bootstrap/chosen/chosen.css" />
+<script type="text/javascript" src="/static/metronic1.4/assets/plugins/chosen-bootstrap/chosen/chosen.jquery.min.js"></script>
+
 <script type="text/javascript">
 var ajax = NG.Ajax();
 
-function deleteOther_Ad(_id){
-        var url = "{{url_for('admin_other_ad_delete')}}?_id="+_id;
-        ajax.Get(url, function(res){
-                if(res.status == 'success'){
-                        location.reload();
-                } else{
-                        alert(res)
-                }
-        });
-}
-
 function addOther_Ad(){
-        var url = '{{ url_for("admin_other_ad_add") }}';
+        var url = '{{ url_for("admin_other_ad_edit") }}';
         var data = $('#other_ad-add-form').serialize();
         ajax.Post(url, data, function(res){
                 if(res.status == 'success'){
@@ -129,6 +168,7 @@ function addOther_Ad(){
                 }
         });
 }
+$(".chosen").chosen({disable_search_threshold: 10});
 </script>
 {% endblock %}
 

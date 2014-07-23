@@ -9,6 +9,6 @@ class OtherAdController(ControllerBase):
 
     def get(self):
         try:
-            res = mongo_db.other_add.find_one({}, {"_id":0})
+            res = mongo_db.other_ad.find({}, {"_id": 0})
             return res
         except Exception, ex: return {}

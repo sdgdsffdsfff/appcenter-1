@@ -13,4 +13,4 @@ class InfoView(View):
     def get(self):
         other_add_controller = OtherAdController()
         other_add = other_add_controller.get()
-        return self._view.render(1000, other_add)
+        return self._view.render(1000, list(other_add))
