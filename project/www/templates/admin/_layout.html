@@ -133,6 +133,13 @@
 	      <span class="title">广告位置</span>
 	    </a>
 	  </li>
+          <li>
+	    <a class="active" href="{{ url_for("admin_other_ad_list") }}">
+	      <i class="icon-tumblr-sign"></i> 
+	      <span class="title">第三方广告</span>
+	    </a>
+	  </li>
+
 	  <li>
 	    <a href="{{ url_for('admin_app_collection_list') }}">
 	      <i class="icon-th"></i>
@@ -169,9 +176,9 @@
 	      <span class="title">国家管理</span>
 	    </a>
 	  </li>
-      <li>
+          <li>
 	    <a href="{{ url_for('admin_dirty_word_list') }}">
-	      <i class="icon-cny"></i>
+	      <i class="icon-won"></i>
 	      <span class="title">敏感词管理</span>
 	    </a>
 	  </li>

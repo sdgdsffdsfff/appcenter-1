@@ -2,7 +2,6 @@ from __header__ import FlaskView, ApiView, route, request
 from www.controller.app.other_ad import OtherAdController
 
 class View(FlaskView):
-
     route_base = '/other_ad'
 
     def before_request(self, name):
