@@ -57,11 +57,11 @@ class AppCollectionController(ControllerBase):
                     rating = 0
                 if front:
                     filter_items.append(
-                        {'trackName': tmp_item['trackName'], 'ID': tmp_item['ID'], 'averageUserRating': rating, 'bundleId': tmp_item['bundleId'],
+                        {'trackName': tmp_item['trackName'], 'ID': tmp_item['ID'], 'averageUserRating': rating, 'bundleId': tmp_item.get('bundleId',''),
                          'icon': tmp_item['icon'], 'version': tmp_item.get('version', ''), 'size': tmp_item.get('size', ''), 'sort': tmp_item['sort']})
                 else:
                     filter_items.append(
-                        {'trackName': tmp_item['trackName'], 'ID': tmp_item['ID'], 'averageUserRating': rating, 'bundleId': tmp_item['bundleId'],
+                        {'trackName': tmp_item['trackName'], 'ID': tmp_item['ID'], 'averageUserRating': rating, 'bundleId': tmp_item.get('bundleId',''),
                         'icon': tmp_item['icon'], 'sort': tmp_item['sort'], 'country': tmp_item['country'],
                          'id': tmp_item['id'], 'language': tmp_item['language'], 'version': tmp_item.get('version', ''),
                          'size': tmp_item.get('size', '')})
