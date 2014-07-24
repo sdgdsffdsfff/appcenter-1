@@ -25,6 +25,7 @@ class OtherAdController(ControllerBase):
                 total_status = temp_status1 & temp_status2 & temp_status3 & int(other_ad["status"])
                 data_clone = copy.copy(data)
                 data_clone["status"] = total_status
+                data_clone["position"] = other_ad["position"]
                 data_clone["source"] = other_ad["source"]
                 data_clone["data"] = other_ad.get("data", [])
                 data_clone["child_positions"] = other_ad["child_positions"]
