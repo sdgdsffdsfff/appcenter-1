@@ -2,11 +2,12 @@
 import main, hashlib
 from flask.ext.login import UserMixin
 from __header__ import AdminView, FlaskView
-from __header__ import DB, route
+from __header__ import DB, route, upload_hash_file
 from flask.ext.login import current_user
 from functools import wraps
 from flask import request, abort
 from bson.objectid import ObjectId
+from conf.settings import settings
 
 class View(FlaskView):
     route_base = '/other-ad-manager'
@@ -40,4 +41,39 @@ class EditView(View):
             status, message = 'success', '添加成功'
         except Exception, ex:
             status, message = 'error', str(ex.message)
+        return self._view.ajax_response(status, message)
+
+class CustomAdListView(View):
+    @route('/customad-list', endpoint='admin_other_ad_customad_list')
+    def get(self):
+        position = request.args.get("position")
+        other_ad = DB.other_ad.find_one({"position": position})
+        customad_list = other_ad.get("data", [])
+        languages = DB.language.find({}, {"_id": 0})
+        locations = DB.location.find({}, {"_id": 0})
+        return self._view.render('other_ad_customad_manage',
+                                 other_ad = other_ad,
+                                 other_ad_customad_list=list(customad_list),
+                                 languages=list(languages),
+                                 locations=list(locations))
+
+class CustomadDeleteView(View):
+    @route('/customad-list', endpoint='admin_customad_delete')
+    def get(self):
+        try:
+            status, message = 'success', '删除成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
+        return self._view.ajax_response(status, message)
+
+class CustomadAddView(View):
+    @route('/customad-add', methods=["POST"], endpoint='admin_customad_add')
+    def post(self):
+        try:
+            name = request.form["name"]
+            link = request.form["link_url"]
+            hash_str, abs_save_file, save_file = upload_hash_file(request.files["image_url"], settings["client_upload_dir"])
+            status, message = 'success', '添加成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
         return self._view.ajax_response(status, message)

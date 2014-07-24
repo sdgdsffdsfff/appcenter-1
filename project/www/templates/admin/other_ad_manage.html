@@ -19,7 +19,7 @@
 <!-- BEGIN  TABLE PORTLET-->
 <div class="portlet box blue">
   <div class="portlet-title">
-    <div class="caption"><i class="icon-edit"></i>第三方广告列表</div>
+    <div class="caption"><i class="icon-edit"></i>广告位列表</div>
     <div class="tools"></div>
   </div>
   <div class="portlet-body">
@@ -46,6 +46,8 @@
           <td>{{ other_ad['source'] }}</td>
           <td>
             <a class=" btn green" data-toggle="modal" href="#edit_modal_{{other_ad['_id']}}">编辑</a>
+            <a class=" btn yellow" href="{{url_for("admin_other_ad_customad_list", position=other_ad["position"])}}">自定义广告</a>
+
             <div class="modal fade  hide in" data-width="700" id="edit_modal_{{other_ad['_id']}}">
               <div class="modal-header">
                 <a class="close" href="#" data-dismiss="modal"></a>
