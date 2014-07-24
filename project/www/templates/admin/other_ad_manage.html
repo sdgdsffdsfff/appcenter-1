@@ -36,7 +36,13 @@
         {% for other_ad in other_ad_list %}
         <tr>
           <td><strong>{{ other_ad['position'] }}</strong></td>
-          <td>{{ other_ad['status'] }}</td>
+          <td>
+            {% if other_ad['status'] == 1 %}
+            <button type="button" class="btn blue">开启</button>
+            {% else %}
+            <button type="button" class="btn">关闭</button>
+            {% endif %}
+          </td>
           <td>{{ other_ad['source'] }}</td>
           <td>
             <a class=" btn green" data-toggle="modal" href="#edit_modal_{{other_ad['_id']}}">编辑</a>
@@ -64,8 +70,12 @@
                     <label class="control-label">投放语言</label>
                     <div class="controls">
                       <select name="languages" class="m-wrap large chosen"  multiple="multiple" data-placeholder="请选择语言">
-                        {% for lang, lang_name in [["en", "英文"], ["cn", "中文"], ["all", "全部"]] %}
-                        <option value="{{lang}}" {% if lang in other_ad["languages"] %}selected="true"{% endif %}>{{lang_name}}</option>
+                        <option value="all" {% if "all" in other_ad["languages"] %}selected="true"{% endif %}>
+                          All
+                        </option>
+
+                        {% for lang in languages %}
+                        <option value="{{lang["code"]}}" {% if lang["code"] in other_ad["languages"] %}selected="true"{% endif %}>{{lang["name"]}}</option>
                         {% endfor %}
                       </select>
                       <span class="help-inline"></span>
@@ -75,8 +85,13 @@
                     <label class="control-label">投放地点</label>
                     <div class="controls">
                       <select name="locations" class="m-wrap large chosen"  multiple="multiple" data-placeholder="请选择地区">
-                        {% for location, location_name in [["china", "中国"], ["hongkong", "香港"], ["all", "全部"]] %}
-                        <option value="{{location}}" {% if location in other_ad["locations"] %}selected="true"{% endif %}>{{location_name}}</option>
+                        <option value="all" {% if "all" in other_ad["locations"] %}selected="true"{% endif %}>
+                          All
+                        </option>
+                        {% for location in locations %}
+                        <option value="{{location["location"]}}" {% if location["location"] in other_ad["locations"] %}selected="true"{% endif %}>
+                          {{location["location_name"]}}
+                        </option>
                         {% endfor %}
                       </select>
                       <span class="help-inline"></span>

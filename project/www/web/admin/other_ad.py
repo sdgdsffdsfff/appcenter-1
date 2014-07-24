@@ -17,7 +17,12 @@ class ListView(View):
     @route('/list', endpoint='admin_other_ad_list')
     def get(self):
         other_ad_list = DB.other_ad.find()
-        return self._view.render('other_ad_manage', other_ad_list=list(other_ad_list))
+        languages = DB.language.find({}, {"_id": 0})
+        locations = DB.location.find({}, {"_id": 0})
+        return self._view.render('other_ad_manage',
+                                 other_ad_list=list(other_ad_list),
+                                 languages=list(languages),
+                                 locations=locations)
 
 class EditView(View):
     @route('/edit', methods=['POST'], endpoint='admin_other_ad_edit')
