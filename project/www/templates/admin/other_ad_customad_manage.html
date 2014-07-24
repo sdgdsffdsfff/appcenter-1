@@ -46,6 +46,22 @@
           <span class="help-inline"></span>
         </div>
       </div>
+      <div class="control-group">
+        <label class="control-label">投放地点</label>
+        <div class="controls">
+          <select name="locations" class="m-wrap large chosen"  multiple="multiple" data-placeholder="请选择地区">
+            <option value="all" {% if "all" in other_ad["locations"] %}selected="true"{% endif %}>
+              All
+            </option>
+            {% for location in locations %}
+            <option value="{{location["location"]}}" {% if location["location"] in other_ad["locations"] %}selected="true"{% endif %}>
+              {{location["location_name"]}}
+            </option>
+            {% endfor %}
+          </select>
+          <span class="help-inline"></span>
+        </div>
+      </div>
   </div>
   <div class="modal-footer">
     <button type="button" data-dismiss="modal" class="btn">取消</button>
@@ -103,6 +119,9 @@
 {% endblock %}
 
 {% block scripts %}
+<link rel="stylesheet" type="text/css" href="/static/metronic1.4/assets/plugins/chosen-bootstrap/chosen/chosen.css" />
+<script type="text/javascript" src="/static/metronic1.4/assets/plugins/chosen-bootstrap/chosen/chosen.jquery.min.js"></script>
+
 <script type="text/javascript">
 var ajax = NG.Ajax();
 
@@ -116,6 +135,8 @@ function deleteCustomad(hash, position){
                 }
         });
 }
+$(".chosen").chosen({disable_search_threshold: 10});
+
 </script>
 {% endblock %}
 

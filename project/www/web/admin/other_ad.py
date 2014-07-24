@@ -78,16 +78,17 @@ class CustomadAddView(View):
             position = request.form["position"]
             name = request.form["name"]
             link = request.form["link_url"]
+            locations = request.form.getlist("locations")
             hash_str, abs_save_file, save_file = upload_hash_file(
                 request.files["image_url"],
                 settings["pic_upload_dir"]
             )
-
             DB.other_ad.update({"position": position}, {"$push": {"data": {
                 "url": save_file,
                 "link_url": link,
                 "name": name,
-                "hash": hash_str
+                "hash": hash_str,
+                "locations": locations
             }}})
         except Exception, ex:
             status, message = 'error', str(ex)

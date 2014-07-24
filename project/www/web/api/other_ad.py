@@ -11,6 +11,6 @@ class View(FlaskView):
 class InfoView(View):
     @route('/info', endpoint='api_other_ad_info')
     def get(self):
-        other_add_controller = OtherAdController()
+        other_add_controller = OtherAdController(ip=request.remote_addr)
         other_add = other_add_controller.get()
         return self._view.render(1000, list(other_add))

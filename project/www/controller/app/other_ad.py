@@ -27,8 +27,16 @@ class OtherAdController(ControllerBase):
                 data_clone["status"] = total_status
                 data_clone["position"] = other_ad["position"]
                 data_clone["source"] = other_ad["source"]
-                data_clone["data"] = other_ad.get("data", [])
-                for di in data_clone["data"]: di["image_url"] = create_pic_url_by_path(di.get("url", ""))
+                data_clone["data"] = []
+                temp_data = other_ad.get("data", [])
+
+                for di in temp_data:
+                    if "all" in di.get("locations", []) or self._location in di.get("locations", []):
+                        data_clone["data"].append({
+                            "name": di["name"],
+                            "link_url": di["link_url"],
+                            "image_url": create_pic_url_by_path(di.get("url", ""))
+                        })
                 data_clone["child_positions"] = other_ad["child_positions"]
                 res.append(data_clone)
             return res
