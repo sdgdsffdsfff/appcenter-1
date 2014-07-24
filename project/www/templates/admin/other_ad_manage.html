@@ -47,7 +47,7 @@
               </div>
               <div class="modal-body inner">
                 <div class="alert hide" id="form-alert"></div>
-                <form action="" id="other_ad-add-form" class="form-horizontal">
+                <form action="" id="other_ad-add-form-{{other_ad['_id']}}" class="form-horizontal">
                   <input type="hidden" name="position" value="{{other_ad["position"]}}" />
                   <div class="control-group">
                     <label class="control-label">投放设备</label>
@@ -119,7 +119,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" data-dismiss="modal" class="btn">取消</button>
-                <button  class="btn blue" onclick="editOtherAd()">确定添加</button>
+                <button  class="btn blue" onclick="editOtherAd('{{other_ad["_id"]}}')">确定添加</button>
               </div>
             </div>
           </td>
@@ -139,9 +139,9 @@
 <script type="text/javascript" src="/static/metronic1.4/assets/plugins/chosen-bootstrap/chosen/chosen.jquery.min.js"></script>
 <script type="text/javascript">
 var ajax = NG.Ajax();
-function editOtherAd(){
+function editOtherAd(other_ad_id){
         var url = '{{ url_for("admin_other_ad_edit") }}';
-        var data = $('#other_ad-add-form').serialize();
+        var data = $('#other_ad-add-form-' + other_ad_id).serialize();
         ajax.Post(url, data, function(res){
                 if(res.status == 'success'){
                         $('#add_modal').modal('hide');
