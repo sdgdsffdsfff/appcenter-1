@@ -24,12 +24,14 @@ class EditView(View):
     def post(self):
         try:
             data = {
-                'cs': request.form['cs'],
-                'language': request.form['language'],
-                'login_ad_status': request.form["login_ad_status"],
-                'position_ad_status': request.form["position_ad_status"]
+                "cses" : request.form.getlist("cses"),
+                "languages": request.form.getlist("languages"),
+                "locations": request.form.getlist("locations"),
+                "status": int(request.form.get("status", 0)),
+                "source": request.form["source"],
+                "child_positions": request.form.getlist("child_positions")
             }
-            DB.other_ad.update({"cs": request.form['name']}, data, True)
+            DB.other_ad.update({"position": request.form['position']}, {"$set": data}, True)
             status, message = 'success', '添加成功'
         except Exception, ex:
             status, message = 'error', str(ex.message)
