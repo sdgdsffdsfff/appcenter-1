@@ -5,7 +5,7 @@ from __header__ import AdminView, FlaskView
 from __header__ import DB, route, upload_hash_file
 from flask.ext.login import current_user
 from functools import wraps
-from flask import request, abort
+from flask import request, abort, redirect, url_for
 from bson.objectid import ObjectId
 from conf.settings import settings
 
@@ -58,9 +58,14 @@ class CustomAdListView(View):
                                  locations=list(locations))
 
 class CustomadDeleteView(View):
-    @route('/customad-list', endpoint='admin_customad_delete')
+    @route('/customad-delete', endpoint='admin_customad_delete')
     def get(self):
         try:
+            hash_str = request.args.get("hash")
+            position = request.args.get("position")
+            DB.other_ad.update({"position": position}, {"$pull": { "data": {
+                "hash": hash_str
+            }}})
             status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)
@@ -70,10 +75,19 @@ class CustomadAddView(View):
     @route('/customad-add', methods=["POST"], endpoint='admin_customad_add')
     def post(self):
         try:
+            position = request.form["position"]
             name = request.form["name"]
             link = request.form["link_url"]
-            hash_str, abs_save_file, save_file = upload_hash_file(request.files["image_url"], settings["client_upload_dir"])
-            status, message = 'success', '添加成功'
+            hash_str, abs_save_file, save_file = upload_hash_file(
+                request.files["image_url"],
+                settings["client_upload_dir"]
+            )
+            DB.other_ad.update({"position": position}, {"$push": {"data": {
+                "link_url": link,
+                "name": name,
+                "hash": hash_str
+            }}})
         except Exception, ex:
             status, message = 'error', str(ex)
-        return self._view.ajax_response(status, message)
+            print message
+        return redirect(url_for("admin_other_ad_customad_list", position=position))
