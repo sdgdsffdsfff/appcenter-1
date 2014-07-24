@@ -1,0 +1,122 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %} 自定义广告管理 {% endblock %}
+{% block title %} 自定义广告 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+    <i class="icon-home"></i>
+    <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+    <i class="icon-angle-right"></i>
+  </li>
+  <li>自定义广告列表</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade  hide in" data-width="700" id="add_modal">
+  <div class="modal-header">
+    <a class="close" href="#" data-dismiss="modal"></a>
+    <h3>自定义广告添加</h3>
+  </div>
+  <div class="modal-body inner">
+    <div class="alert hide" id="form-alert"></div>
+    <form enctype="multipart/form-data" action="{{url_for('admin_customad_add')}}" id="customad-add-form" class="form-horizontal" method="post">
+      <input type="hidden" name="position" value="{{other_ad["position"]}}" />
+      <div class="control-group">
+        <label class="control-label">名称</label>
+        <div class="controls">
+          <input type="text" name="name" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">链接</label>
+        <div class="controls">
+          <input type="text" name="link_url" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">图片</label>
+        <div class="controls">
+          <input type="file" name="image_url" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">取消</button>
+    <input type="submit" class="btn red" class="btn"  value="确定添加"/>
+  </div>
+  </form>
+</div>
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+  <div class="portlet-title">
+    <div class="caption"><i class="icon-edit"></i>自定义广告列表</div>
+    <div class="tools"></div>
+  </div>
+  <div class="portlet-body">
+    <div class="table-toolbar">
+      <div class="btn-group">
+        <a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
+      </div>
+    </div>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>名称</th>
+          <th>链接地址</th>
+          <th>图片</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for customad in other_ad_customad_list %}
+        <tr>
+          <td><strong>{{ customad['name'] }}</strong></td>
+          <td>{{ customad['link_url'] }}</td>
+          <td>{{ customad['hash'] }}</td>
+          <td>
+            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{customad['hash']}}">删除</a>
+            <div id="confirm_box_{{customad['hash']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+              <div class="modal-body">
+                <p>确定要删除吗?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">取消</button>
+                <button type="button" data-dismiss="modal" class="btn red" onclick="deleteCustomad('{{customad['hash']}}', '{{other_ad['position']}}')">确定</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var ajax = NG.Ajax();
+
+function deleteCustomad(hash, position){
+        var url = "{{url_for('admin_customad_delete')}}?hash="+hash+"&position="+position;
+        ajax.Get(url, function(res){
+                if(res.status == 'success'){
+                        location.reload();
+                } else{
+                        alert(res)
+                }
+        });
+}
+</script>
+{% endblock %}
+
+{% block menuName %}自定义广告管理{% endblock %}
