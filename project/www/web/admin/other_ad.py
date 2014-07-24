@@ -80,9 +80,11 @@ class CustomadAddView(View):
             link = request.form["link_url"]
             hash_str, abs_save_file, save_file = upload_hash_file(
                 request.files["image_url"],
-                settings["client_upload_dir"]
+                settings["pic_upload_dir"]
             )
+
             DB.other_ad.update({"position": position}, {"$push": {"data": {
+                "url": save_file,
                 "link_url": link,
                 "name": name,
                 "hash": hash_str
