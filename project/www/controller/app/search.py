@@ -143,11 +143,15 @@ class AppSearch(object):
         self.es.indices.delete_index(self.index)
 
     def count_search_q(self, q, results):
-        data = {
-            "q": q.encode("utf-8"),
-            "count": results["pageInfo"]["count"],
-            "qtime": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        mongo_db.search_q.insert(data)
+        search = mongo_db.search_q.find({"q": q.encode("utf-8")}).count()
+        if search:
+            mongo_db.search_q.update({"q": q}, {"$inc": {"search_count": 1}})
+        else:
+            data = {
+                "q": q.encode("utf-8"),
+                "count": results["pageInfo"]["count"],
+                "qtime": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            mongo_db.search_q.insert(data)
 
 
