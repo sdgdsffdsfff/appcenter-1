@@ -144,7 +144,7 @@ class AppSearch(object):
 
     def count_search_q(self, q, results):
         data = {
-            "q": q,
+            "q": q.encode("utf-8"),
             "count": results["pageInfo"]["count"],
             "qtime": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
