@@ -16,7 +16,7 @@ class InfoView(View):
         jb = request.args.get("jb", "0")
         device_s = "iphone" if device == "1"  else "ipad"
         jb_s = "jb" if jb == "1" else "unjb"
-        cs = jb_s + device_s
+        cs = device_s + jb_s
         other_add_controller = OtherAdController(language=language, ip=request.remote_addr, cs=cs)
         other_add = other_add_controller.get()
         return self._view.render(1000, list(other_add))
