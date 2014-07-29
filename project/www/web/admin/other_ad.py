@@ -76,6 +76,7 @@ class CustomadAddView(View):
     def post(self):
         try:
             position = request.form["position"]
+            ad_position = request.form["ad_position"]
             name = request.form["name"]
             link = request.form["link_url"]
             locations = request.form.getlist("locations")
@@ -86,6 +87,7 @@ class CustomadAddView(View):
             DB.other_ad.update({"position": position}, {"$push": {"data": {
                 "url": save_file,
                 "link_url": link,
+                "ad_position": ad_position,
                 "name": name,
                 "hash": hash_str,
                 "locations": locations

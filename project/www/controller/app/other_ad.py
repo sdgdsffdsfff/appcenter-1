@@ -34,6 +34,7 @@ class OtherAdController(ControllerBase):
                     if "all" in di.get("locations", []) or self._location in di.get("locations", []):
                         data_clone["data"].append({
                             "name": di["name"],
+                            "ad_position": di.get("ad_position", ""),
                             "link_url": di["link_url"],
                             "image_url": create_pic_url_by_path(di.get("url", ""))
                         })

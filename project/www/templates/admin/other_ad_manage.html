@@ -123,7 +123,7 @@
                   </div>
                   <div class="control-group">
                     <label class="control-label">推荐位列表</label>
-                    <div class="controls">{{child_positions}}
+                    <div class="controls">
                       <select class="chosen" multiple="multiple" data-placeholder="选择推荐位" name="child_positions">
                         {% for item_index, item_value in [["1", "第一个"], ["2", "第二个"], ["3", "第三个"], ["4", "第四个"]] %}
                         <option value="{{item_index}}" {% if item_index in other_ad["child_positions"] %}selected="true"{% endif %}>{{item_value}}</option>

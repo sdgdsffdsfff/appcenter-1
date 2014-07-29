@@ -47,6 +47,16 @@
         </div>
       </div>
       <div class="control-group">
+        <label class="control-label">推荐位列表</label>
+        <div class="controls">
+          <select class="chosen" data-placeholder="选择推荐位" name="ad_position">
+            {% for item_index, item_value in [["1", "第一个"], ["2", "第二个"], ["3", "第三个"], ["4", "第四个"],  ["5", "第五个"],  ["6", "第六个"],  ["7", "第七个"],  ["8", "第八个"]] %}
+            <option value="{{item_index}}">{{item_value}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
         <label class="control-label">投放地点</label>
         <div class="controls">
           <select name="locations" class="m-wrap large chosen"  multiple="multiple" data-placeholder="请选择地区">
@@ -88,6 +98,7 @@
           <th>名称</th>
           <th>链接地址</th>
           <th>图片</th>
+          <th>推荐位</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -97,6 +108,7 @@
           <td><strong>{{ customad['name'] }}</strong></td>
           <td>{{ customad['link_url'] }}</td>
           <td>{{ customad['hash'] }}</td>
+          <td>{{ customad.get('ad_position', '') }}</td>
           <td>
             <a class=" btn red" data-toggle="modal" href="#confirm_box_{{customad['hash']}}">删除</a>
             <div id="confirm_box_{{customad['hash']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
