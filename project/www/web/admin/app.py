@@ -428,6 +428,35 @@ class SyncIconView(View):
         return self._view.ajax_response(status, message)
 
 
+class SyncInfoView(View):
+    '''
+    sync the app info with the apple
+    '''
+    @route('/sync_app_info', methods=['GET'], endpoint='admin_app_sync_info')
+    def do_request(self):
+        try:
+            trackId = request.args.get("trackId", "")
+            _id = request.args.get("_id", "")
+            url = 'http://itunes.apple.com/us/lookup?id=%s' % (trackId)
+            apple_data = requests.get(url)
+            data = apple_data.json()
+            if len(data["results"]) == 0:
+                status, message = 'error', u'找不到苹果官方数据，可能此应用已经下架'
+            else:
+                data = data["results"][0]
+                app = DB.AppBase.find_one({'trackId':int(trackId)})
+                if app is None:
+                    _id = DB.AppBase.insert(data)
+                else:
+                    _id = app['_id']
+                    DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':data})
+                status, message = 'success', '更新应用信息成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
+            pass
+        return self._view.ajax_response(status, message)
+
+
 class ScreenshotView(View):
 
     @route('/screenshot', endpoint='admin_app_screenshot')
