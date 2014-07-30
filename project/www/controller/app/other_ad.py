@@ -17,6 +17,7 @@ class OtherAdController(ControllerBase):
         try:
             other_ads = mongo_db.other_ad.find({}, {"_id": 0})
             res = []
+            extras = mongo_db.other_ad_manage.find_one({}, {"_id": 0})
             for other_ad in other_ads:
                 temp_status1, temp_status2, temp_status3 = 0, 0, 0
                 if "all" in other_ad["cses"] or self._cs in other_ad["cses"]: temp_status1 = 1
@@ -40,6 +41,7 @@ class OtherAdController(ControllerBase):
                         })
                 data_clone["child_positions"] = other_ad["child_positions"]
                 res.append(data_clone)
+            res.append(extras)
             return res
         except Exception, ex:
             print ex.message
