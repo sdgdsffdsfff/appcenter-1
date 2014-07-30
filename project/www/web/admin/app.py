@@ -340,6 +340,7 @@ class EditView(AppDetailBaseView):
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方应用地址', 'trackViewUrl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '可下载版本', 'downloadVersion', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '主分类', 'primaryGenreId', data={'option': genre_options})
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={'option': lang_options})
         self._form.add_field('textarea', '描述', 'description', data={'attributes':{'class':'m-wrap large','rows':'10'}})
