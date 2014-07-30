@@ -338,6 +338,7 @@ class EditView(AppDetailBaseView):
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '官方应用地址', 'trackViewUrl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '主分类', 'primaryGenreId', data={'option': genre_options})
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={'option': lang_options})
@@ -369,6 +370,7 @@ class EditView(AppDetailBaseView):
                 'trackId':int(request.form['trackId']),
                 'trackName':request.form['trackName'],
                 'bundleId':request.form['bundleId'],
+                'trackViewUrl':request.form['trackViewUrl'],
                 'version':request.form['version'],
                 'primaryGenreId':int(request.form['primaryGenreId']),
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
