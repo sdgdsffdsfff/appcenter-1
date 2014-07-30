@@ -338,7 +338,9 @@ class EditView(AppDetailBaseView):
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '官方应用地址', 'trackViewUrl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '可下载版本', 'downloadVersion', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '主分类', 'primaryGenreId', data={'option': genre_options})
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={'option': lang_options})
         self._form.add_field('textarea', '描述', 'description', data={'attributes':{'class':'m-wrap large','rows':'10'}})
@@ -369,6 +371,7 @@ class EditView(AppDetailBaseView):
                 'trackId':int(request.form['trackId']),
                 'trackName':request.form['trackName'],
                 'bundleId':request.form['bundleId'],
+                'trackViewUrl':request.form['trackViewUrl'],
                 'version':request.form['version'],
                 'primaryGenreId':int(request.form['primaryGenreId']),
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
@@ -419,6 +422,35 @@ class SyncIconView(View):
                                   'artworkUrl512': data["artworkUrl512"],
                                   "artworkUrl100": data["artworkUrl100"]}})
                 status, message = 'success', '更新图标成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
+            pass
+        return self._view.ajax_response(status, message)
+
+
+class SyncInfoView(View):
+    '''
+    sync the app info with the apple
+    '''
+    @route('/sync_app_info', methods=['GET'], endpoint='admin_app_sync_info')
+    def do_request(self):
+        try:
+            trackId = request.args.get("trackId", "")
+            _id = request.args.get("_id", "")
+            url = 'http://itunes.apple.com/us/lookup?id=%s' % (trackId)
+            apple_data = requests.get(url)
+            data = apple_data.json()
+            if len(data["results"]) == 0:
+                status, message = 'error', u'找不到苹果官方数据，可能此应用已经下架'
+            else:
+                data = data["results"][0]
+                app = DB.AppBase.find_one({'trackId':int(trackId)})
+                if app is None:
+                    _id = DB.AppBase.insert(data)
+                else:
+                    _id = app['_id']
+                    DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':data})
+                status, message = 'success', '更新应用信息成功'
         except Exception, ex:
             status, message = 'error', str(ex)
             pass

@@ -43,6 +43,7 @@ def register_view():
     admin.app.EditView.register(app, route_prefix='/admin/')
     admin.app.SortView.register(app, route_prefix='/admin/')
     admin.app.SyncIconView.register(app, route_prefix='/admin/')
+    admin.app.SyncInfoView.register(app, route_prefix='/admin/')
     admin.app.ScreenshotView.register(app, route_prefix='/admin/')
     admin.app_download.ListView.register(app, route_prefix='/admin/')
     admin.app_download.DeleteView.register(app, route_prefix='/admin/')

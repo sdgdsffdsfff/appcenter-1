@@ -48,6 +48,13 @@
 				<button id="syncIcon" class="btn green"><i class="icon-ok"></i> 同步官方图标</button>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">对比官方信息</label>
+			<div class="controls">
+				<span class="help-inline"></span>
+				<button id="syncInfo" class="btn green"><i class="icon-ok"></i> 同步应用信息</button>
+			</div>
+		</div>
 		 {% for field in form.field_list() %}
 		<div class="control-group {% if field.is_error() %}error{% endif %}">
 			<label class="control-label">{{ field.label() | safe }}</label>
@@ -78,6 +85,17 @@
 			alert(res.message)
 		})
 		
+	})
+
+	$("#syncInfo").click(function(e){
+		e.preventDefault();
+		var ajax = NG.Ajax()
+		var _id = getParameterByName('_id');
+		var trackId = $("input[name='trackId']").val()
+		ajax.Get("{{url_for('admin_app_sync_info')}}" + "?_id=" + _id + "&trackId=" + trackId, function(res) {
+			alert(res.message)
+			location.reload()
+		})
 	})
 </script>
 {% endblock %}
