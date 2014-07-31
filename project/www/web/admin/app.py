@@ -5,7 +5,7 @@
 '''
 应用相关操作
 '''
-
+import copy
 import os
 import time
 import cjson
@@ -236,6 +236,7 @@ class CreateView(View):
             self._form.add_message(**message)
         return self._view.render('app_create', form=self._form)
 
+    """this method is deprecated, not used in this project"""
     @route('/create_post', endpoint='admin_app_create_post')
     def post(self):
         try:
@@ -332,6 +333,26 @@ class EditView(AppDetailBaseView):
             if genre['genreId'] == 6014: name = "游戏"
             elif genre['genreId'] == 6021: name = "报刊杂志"
             genre_options.append((name, str(genre['genreId'])))
+        #check device support, check if supportIphone or supportIpad
+        if "supportIphone" in self.app_data:
+            self.supportIphone = self.app_data["supportIphone"]
+        else:
+            if "supportedDevices" in self.app_data:
+                if True in [item.startswith("iPhone") for item in self.app_data["supportedDevices"]]:
+                    self.supportIphone = 1
+            else:
+                supportIphone = 0
+        if "supportIpad" in self.app_data:
+            self.supportIpad = self.app_data["supportIpad"]
+        else:
+            if "supportedDevices" in self.app_data:
+                if True in [item.startswith("iPad") for item in self.app_data["supportedDevices"]]:
+                    self.supportIpad = 1
+            else:
+                self.supportIpad = 0
+        if data:
+            data["supportIphone"]= self.supportIphone
+            data["supportIpad"] = self.supportIpad
 
         self._form = Form('app_edit_form', request, session)
         self._form.add_field('file', '上传图标', 'pic', data={'attributes': {}})
@@ -342,6 +363,8 @@ class EditView(AppDetailBaseView):
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '可下载版本', 'downloadVersion', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '主分类', 'primaryGenreId', data={'option': genre_options})
+        self._form.add_field('radio', '支持iPhone', 'supportIphone', data={'option': [("是", "1"), ("否", "0")]})
+        self._form.add_field('radio', '支持iPad', 'supportIpad', data={'option': [("是", "1"), ("否", "0")]})
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={'option': lang_options})
         self._form.add_field('textarea', '描述', 'description', data={'attributes':{'class':'m-wrap large','rows':'10'}})
         self._form.add_field('textarea', '更新介绍', 'releaseNotes', data={'attributes':{'class':'m-wrap large','rows':'10'}})
@@ -362,7 +385,7 @@ class EditView(AppDetailBaseView):
 
 
         try:
-            self._init_form(request.form)
+            self._init_form(dict(request.form))
         except FormException, ex:
             return self.error(str(ex))
 
@@ -379,6 +402,11 @@ class EditView(AppDetailBaseView):
                 'releaseNotes':request.form['releaseNotes'],
                 'review': int(request.form['review'])
             }
+            if int(request.form["supportIphone"]) != self.supportIphone:
+                data["supportIphone"] = int(request.form["supportIphone"])
+            if int(request.form["supportIpad"]) != self.supportIpad:
+                data["supportIpad"] = int(request.form["supportIpad"])
+
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
         else:
