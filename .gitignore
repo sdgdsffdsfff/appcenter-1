@@ -25,3 +25,4 @@
 !*.ini
 project/www/static/uploads/*
 project/conf/settings_local.py
+fabfile.py
