@@ -356,6 +356,8 @@ class EditView(AppDetailBaseView):
             app_cn = DB.AppBase_CN.find_one({"trackId": data["trackId"]})
             if app_cn:
                 data["trackName_CN"] = app_cn["trackName"]
+                data["description_cn"] = app_cn.get("description", "")
+                data["releaseNotes_cn"] = app_cn.get("releaseNotes", "")
 
 
         self._form = Form('app_edit_form', request, session)
@@ -372,7 +374,9 @@ class EditView(AppDetailBaseView):
         self._form.add_field('radio', '支持iPad', 'supportIpad', data={'option': [("是", "1"), ("否", "0")]})
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={'option': lang_options})
         self._form.add_field('textarea', '描述', 'description', data={'attributes':{'class':'m-wrap large','rows':'10'}})
+        self._form.add_field('textarea', '描述(中)', 'description_cn', data={'attributes':{'class':'m-wrap large','rows':'10'}})
         self._form.add_field('textarea', '更新介绍', 'releaseNotes', data={'attributes':{'class':'m-wrap large','rows':'10'}})
+        self._form.add_field('textarea', '更新介绍(中)', 'releaseNotes_cn', data={'attributes':{'class':'m-wrap large','rows':'10'}})
         self._form.add_field('radio', '审核', 'review', data={'option': [("审核通过", "1"), ("未审核", "0")]})
         self._form.set_value(data)
         self._form.add_validator(AppInfoValidator)
@@ -412,14 +416,20 @@ class EditView(AppDetailBaseView):
             if int(request.form["supportIpad"]) != self.supportIpad:
                 data["supportIpad"] = int(request.form["supportIpad"])
 
-            data_cn = {"trackName": request.form["trackName_CN"]}
+            data_cn = {
+                "trackName": request.form["trackName_CN"],
+                "description": request.form["description_cn"],
+                "releaseNotes": request.form["releaseNotes_cn"]
+            }
             app_cn = DB.AppBase_CN.find_one({"trackId": int(request.form["trackId"])})
             if app_cn:
                 DB.AppBase_CN.update({"_id": app_cn["_id"]}, {"$set": data_cn})
             else:
                 data_cn = {
                     "trackId": int(request.form["trackId"]),
-                    "trackName": request.form["trackName_CN"]
+                    "trackName": request.form["trackName_CN"],
+                    "description": request.form["description_cn"],
+                    "releaseNotes": request.form["releaseNotes_cn"]
                 }
                 DB.AppBase_CN.insert(data_cn)
 
@@ -518,15 +528,21 @@ class ScreenshotView(View):
         if bundle_id is None:
             return self._view.error('参数不正确')
         device = request.args.get('device', 'iphone')
+        lang = request.args.get("lang", "en")
 
         app = DB.AppBase.find_one({'bundleId': bundle_id})
+        app_cn = DB.AppBase_CN.find_one({"bundleId": bundle_id})
         apple_screenshot = []
         if device == 'iphone':
-            if 'screenshotUrls' in app:
+            if lang == "en" and 'screenshotUrls' in app:
                 apple_screenshot = app['screenshotUrls']
+            else:
+                apple_screenshot = app_cn.get("screenshotUrls", "")
         else:
-            if 'ipadScreenshotUrls' in app:
+            if lang == "en" and 'ipadScreenshotUrls' in app:
                 apple_screenshot = app['ipadScreenshotUrls']
+            else:
+                apple_screenshot = app_cn.get('ipadScreenshotUrls', "")
         self._view.assign('device', device)
         self._view.assign('screenshot', apple_screenshot)
         self._view.assign('create_pic_url', create_pic_url)
