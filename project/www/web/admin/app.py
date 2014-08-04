@@ -353,11 +353,16 @@ class EditView(AppDetailBaseView):
         if data:
             data["supportIphone"]= self.supportIphone
             data["supportIpad"] = self.supportIpad
+            app_cn = DB.AppBase_CN.find_one({"trackId": data["trackId"]})
+            if app_cn:
+                data["trackName_CN"] = app_cn["trackName"]
+
 
         self._form = Form('app_edit_form', request, session)
         self._form.add_field('file', '上传图标', 'pic', data={'attributes': {}})
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '应用中文名称', 'trackName_CN', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方应用地址', 'trackViewUrl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
@@ -406,6 +411,17 @@ class EditView(AppDetailBaseView):
                 data["supportIphone"] = int(request.form["supportIphone"])
             if int(request.form["supportIpad"]) != self.supportIpad:
                 data["supportIpad"] = int(request.form["supportIpad"])
+
+            data_cn = {"trackName": request.form["trackName_CN"]}
+            app_cn = DB.AppBase_CN.find_one({"trackId": int(request.form["trackId"])})
+            if app_cn:
+                DB.AppBase_CN.update({"_id": app_cn["_id"]}, {"$set": data_cn})
+            else:
+                data_cn = {
+                    "trackId": int(request.form["trackId"]),
+                    "trackName": request.form["trackName_CN"]
+                }
+                DB.AppBase_CN.insert(data_cn)
 
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
