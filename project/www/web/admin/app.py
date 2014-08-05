@@ -365,6 +365,8 @@ class EditView(AppDetailBaseView):
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '应用中文名称', 'trackName_CN', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '编辑翻译(中文)', 'cnname', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '编辑翻译(阿拉伯)', 'arname', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方应用地址', 'trackViewUrl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
@@ -402,6 +404,8 @@ class EditView(AppDetailBaseView):
             data = {
                 'trackId':int(request.form['trackId']),
                 'trackName':request.form['trackName'],
+                'cnname': request.form["cnname"],
+                'arname': request.form["arname"],
                 'bundleId':request.form['bundleId'],
                 'trackViewUrl':request.form['trackViewUrl'],
                 'version':request.form['version'],
