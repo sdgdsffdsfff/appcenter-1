@@ -548,6 +548,7 @@ class ScreenshotView(View):
             else:
                 apple_screenshot = app_cn.get('ipadScreenshotUrls', "")
         self._view.assign('device', device)
+        self._view.assign('lang', lang)
         self._view.assign('screenshot', apple_screenshot)
         self._view.assign('create_pic_url', create_pic_url)
         return self._view.ajax_render('app_screenshot_list')
@@ -577,7 +578,14 @@ class ScreenshotView(View):
                     data = {'screenshotUrls': pic_url}
                 if request.form['device'] == 'ipad':
                     data = {'ipadScreenshotUrls': pic_url}
-                DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
+                if request.form["lang"] == "en":
+                    DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
+                else:
+                    try:
+                        DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data})
+                    except Exception:
+                        data = data.update({'bundleId': bundle_id})
+                        DB.AppBase_CN.insert(data)
                 status, message = 'success', u'上传成功'
             else:
                 raise Exception(u'必须是jpg,png文件')
@@ -590,15 +598,21 @@ class ScreenshotView(View):
         try:
             bundle_id = request.form['bundleId']
             device = request.form['device']
+            lang = request.form["lang"]
             url = request.form['url']
             app = DB.AppBase.find_one({'bundleId': bundle_id})
+            app_cn = DB.AppBase_CN.find_one({'bundleId': bundle_id})
             if not app:
                 raise Exception("应用不存在")
             pic_array = []
-            if device == 'iphone':
+            if device == 'iphone' and lang == "en":
                 pic_array = app['screenshotUrls']
-            if device == 'ipad':
+            else:
+                pic_array = app_cn['screenshotUrls']
+            if device == 'ipad' and lang == "en":
                 pic_array = app['ipadScreenshotUrls']
+            else:
+                pic_array = app_cn['ipadScreenshotUrls']
             if len(pic_array) == 0:
                 raise Exception("没有该截图")
             print pic_array
@@ -610,7 +624,10 @@ class ScreenshotView(View):
             if device == 'ipad':
                 data = {'ipadScreenshotUrls': pic_array}
             if data:
-                DB.AppBase.update({'bundleId': bundle_id}, {'$set': data})
+                if lang == "en":
+                    DB.AppBase.update({'bundleId': bundle_id}, {'$set': data})
+                else:
+                    DB.AppBase_CN.update({'bundleId': bundle_id}, {'$set': data})
             status, message = 'success', u'删除成功'
         except Exception, ex:
             import traceback

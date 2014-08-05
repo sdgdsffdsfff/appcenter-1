@@ -82,6 +82,19 @@
                     </label>  
                 </div>
             </div>
+            <div class="control-group">
+                <label class="control-label">语言</label>
+                <div class="controls">
+                    <label class="radio">
+                    <input type="radio" name="lang" value="en" checked />
+                    EN
+                    </label>
+                    <label class="radio">
+                    <input type="radio" name="lang" value="cn" />
+                    CN
+                    </label>  
+                </div>
+            </div>
 
             <div class="control-group">
 				<label class="control-label">截图</label>
@@ -148,6 +161,7 @@
         $('#screenshot').uploadify('upload');
     }
     function loadScreenShot(device, lang){
+        $('#'+device+'_screenshot_'+lang).html("");
         $.getJSON('{{url_for('admin_app_screenshot_list')}}?bundleId={{app['bundleId']}}&device='+device+'&lang='+lang, {}, function(res){
             if(res.status == 'success'){
                 $('#'+device+'_screenshot_'+lang).html(res.data);
@@ -158,9 +172,9 @@
         });
 
     }
-    function removePic(pic_url, device){
+    function removePic(pic_url, device, lang){
         var url = '{{ url_for('admin_app_screenshot_delete') }}';
-        $.post(url, {'url': pic_url, 'device': device, 'bundleId': '{{app['bundleId']}}'}, function(res){
+        $.post(url, {'url': pic_url, 'lang':lang, 'device': device, 'bundleId': '{{app['bundleId']}}'}, function(res){
             res = $.parseJSON(res);
             if (res.status == 'success'){
                 loadScreenShot('iphone', "cn");
