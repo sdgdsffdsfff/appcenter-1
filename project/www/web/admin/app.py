@@ -553,6 +553,37 @@ class ScreenshotView(View):
         self._view.assign('create_pic_url', create_pic_url)
         return self._view.ajax_render('app_screenshot_list')
 
+    @route('/screenshot/sync', methods=['POST'], endpoint='admin_app_screenshot_sync')
+    def sync_screenshot(self):
+        langs = ["us", "cn"]
+        bundle_id = request.form.get('bundleId', None)
+        if bundle_id is None:
+            status, message = 'error', '参数不正确'
+            return self._view.ajax_response(status, message)
+
+        app = DB.AppBase.find_one({'bundleId': bundle_id})
+        app_cn = DB.AppBase_CN.find_one({"bundleId": bundle_id})
+        url = 'http://itunes.apple.com/%s/lookup?bundleId=%s'
+        try:
+            for lang in langs:
+                apple_data = requests.get(url % (lang, bundle_id))
+                data = apple_data.json()
+                if len(data["results"]) == 0:
+                    status, message = 'error', u'找不到苹果官方数据，可能此应用已经下架'
+                else:
+                    data = data["results"][0]
+                    if lang == "us":
+                        DB.AppBase.update({"bundleId": bundle_id}, {"$set": {"ipadScreenshotUrls": data["ipadScreenshotUrls"],
+                                                                             "screenshotUrls": data["screenshotUrls"]}}, upsert=True)
+                    elif lang == "cn":
+                        DB.AppBase_CN.update({"bundleId": bundle_id}, {"$set": {"ipadScreenshotUrls": data["ipadScreenshotUrls"],
+                                                                               "screenshotUrls": data["screenshotUrls"]}}, upsert=True)
+                    status, message = 'success', '更新截图成功'
+        except Exception:
+            status, message = 'error', str(ex)
+            pass
+        return self._view.ajax_response(status, message)
+
     def allowed_file(self, filename):
         return '.' in filename and filename.rsplit('.', 1)[1] in ['jpg', 'png', 'jpeg']
 
@@ -605,14 +636,10 @@ class ScreenshotView(View):
             if not app:
                 raise Exception("应用不存在")
             pic_array = []
-            if device == 'iphone' and lang == "en":
-                pic_array = app['screenshotUrls']
-            else:
-                pic_array = app_cn['screenshotUrls']
-            if device == 'ipad' and lang == "en":
-                pic_array = app['ipadScreenshotUrls']
-            else:
-                pic_array = app_cn['ipadScreenshotUrls']
+            if lang == "en":
+                pic_array = app["screenshotUrls"] if device=="iphone" else app["ipadScreenshotUrls"]
+            elif lang == "cn":
+                pic_array = app["screenshotUrls"] if device=="iphone" else app["ipadScreenshotUrls"]
             if len(pic_array) == 0:
                 raise Exception("没有该截图")
             print pic_array

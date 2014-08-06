@@ -37,8 +37,9 @@
 	<div class="tab-content">
         <div class="table-toolbar">
             <div class="btn-group">
-                <a class="btn green" data-toggle="modal" href="#screenshot_upload_modal">上传截图<i class="icon-upload"></i></a>
+                <a class="btn green" data-toggle="modal" href="#screenshot_upload_modal">上传截图<i class="icon-upload"></i></a> 
             </div>
+            <a class="btn blue" onclick="syncIcon('{{app['bundleId']}}')">同步官方截图<i class="icon-cloud"></i></a>
         </div>
         <hr class="clearfix">
         <div class="row-fluid">
@@ -177,6 +178,23 @@
         $.post(url, {'url': pic_url, 'lang':lang, 'device': device, 'bundleId': '{{app['bundleId']}}'}, function(res){
             res = $.parseJSON(res);
             if (res.status == 'success'){
+                location.reload()
+                loadScreenShot('iphone', "cn");
+                loadScreenShot('iphone', "en");
+                loadScreenShot('ipad', "cn");
+                loadScreenShot('ipad', "en");
+            }else{
+                alert(res.message);
+            }
+        });
+    }
+
+    function syncIcon(bundleId) {
+        var url = "{{ url_for('admin_app_screenshot_sync') }}";
+        $.post(url, {'url': url, 'bundleId': '{{app['bundleId']}}'}, function(res){
+            res = $.parseJSON(res);
+            if (res.status == 'success'){
+                location.reload()
                 loadScreenShot('iphone', "cn");
                 loadScreenShot('iphone', "en");
                 loadScreenShot('ipad', "cn");
