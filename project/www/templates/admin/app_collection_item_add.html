@@ -6,7 +6,7 @@
     {% endblock %}
 
     {% block page_title %} 分类 {% endblock %}
-    {% block title %} 应用集合 <small>自定义应用集合</small> {% endblock %}
+    {% block title %} 首页推荐 <small>自定义首页推荐</small> {% endblock %}
 
     {% block breadcrumb %}
     <ul class="breadcrumb">
@@ -16,7 +16,7 @@
             <i class="icon-angle-right"></i>
         </li>
         <li>
-            <a href="{{ url_for('admin_app_collection_list') }}">应用集合</a>
+            <a href="{{ url_for('admin_app_collection_list') }}">首页推荐</a>
             <i class="icon-angle-right"></i>
         </li>
         <li>{{ app_collection['name'] }}</li>
