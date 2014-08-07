@@ -126,7 +126,7 @@ class AddView(View):
 
         if self._form.validate():
             try:
-                r = re.search(r"""itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?mt""", request.form['apple_url'])
+                r = re.search(r"""itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?.*?""", request.form['apple_url'])
                 track_id = int(r.group(2))
                 url = 'http://itunes.apple.com/%s/lookup?id=%s' % (r.group(1), track_id)
                 apple_data = requests.get(url)
@@ -164,7 +164,7 @@ class AppAddValidator(FormValidatorAbstract):
         }
 
     def validate_url(self, url):
-        r = re.search('itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?mt', url)
+        r = re.search('itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?.*?', url)
         if r == None:
             return '地址格式不正确'
         return True
@@ -539,14 +539,14 @@ class ScreenshotView(View):
         apple_screenshot = []
         if device == 'iphone':
             if lang == "en" and 'screenshotUrls' in app:
-                apple_screenshot = app['screenshotUrls']
+                apple_screenshot = app['screenshotUrls'] if app else []
             else:
-                apple_screenshot = app_cn.get("screenshotUrls", "")
+                apple_screenshot = app_cn.get("screenshotUrls", "") if app_cn else []
         else:
             if lang == "en" and 'ipadScreenshotUrls' in app:
-                apple_screenshot = app['ipadScreenshotUrls']
+                apple_screenshot = app['ipadScreenshotUrls'] if app else []
             else:
-                apple_screenshot = app_cn.get('ipadScreenshotUrls', "")
+                apple_screenshot = app_cn.get('ipadScreenshotUrls', "") if app_cn else []
         self._view.assign('device', device)
         self._view.assign('lang', lang)
         self._view.assign('screenshot', apple_screenshot)
