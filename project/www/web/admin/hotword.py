@@ -17,14 +17,21 @@ class View(FlaskView):
 class ListView(View):
     @route('/list', endpoint='admin_hotword_list')
     def get(self):
+        language = request.args.get("lang", "")
+        device = request.args.get("device", "")
         NUM_PER_PAGE = 50
-        count = DB.hot_word.find().count()
+        if language != "" or device != "":
+            query = {"$or": [{"language": language}, {"device": device}]}
+        else:
+            query = {}
+        count = DB.hot_word.find(query).count()
         page_info = {"count": count}
         page = int(request.args.get('page', 1))
         page_info["total"] = int(math.ceil(count / float(NUM_PER_PAGE)))
         if page > page_info["total"] or page < 1: page = 1
         page_info["page"] = page
-        hotword_list = DB.hot_word.find().sort("order", -1).skip((page-1)*NUM_PER_PAGE).limit(NUM_PER_PAGE)
+        hotword_list = DB.hot_word.find(query).\
+                                   sort("order", -1).skip((page-1)*NUM_PER_PAGE).limit(NUM_PER_PAGE)
         #get the support country
         lang_options = []
         [lang_options.append((lang['name'],lang['code'])) for lang in DB.client_support_language.find()]

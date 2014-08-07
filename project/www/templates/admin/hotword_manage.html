@@ -85,7 +85,24 @@
       <div class="btn-group">
         <a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
       </div>
+      <div class="btn-group">
+      <form action="#" method="">
+          <select id="device">
+              <option value="">All</option>
+                <option value="1" {% if device == "1" %} selected {% endif %}>iPhone</option>
+                <option value="2" {% if device == "2" %} selected {% endif %}>iPad</option>
+          </select>
+          <select id="lang">
+              <option value="">All</option>
+              {% for lang in lang_options %}
+                  <option value="{{lang[1]}}" {% if lan == lang[1] %} selected {% endif %}>{{lang[0]}}</option>
+              {% endfor %}
+          </select>
+          <button class="btn blue" id="ad_search">搜索</button>
+      </form>
+  </div>
     </div>
+    
     <table class="table table-striped table-hover table-bordered">
       <thead>
         <tr>
@@ -169,6 +186,14 @@ function addHotWord(){
                 }
         });
 }
+
+$("#ad_search").click(function(event) {
+    event.preventDefault();
+    var device = $("#device").val()
+    var lang = $("#lang").val()
+    var url = "{{url_for('admin_hotword_list')}}?&lang=" + lang + "&device="+device;
+    window.location.href = url;
+})
 </script>
 {% endblock %}
 
