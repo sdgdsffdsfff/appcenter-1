@@ -69,12 +69,30 @@ class ItemListView(View):
     @route('/item/list', endpoint='admin_advertising_item_list')
     def get(self):
         identifier = request.args.get('identifier')
+        lang = request.args.get("lang", "")
+        country = request.args.get("country", "")
         res = DB.advertising.find_one({'identifier':identifier})
         ad_list = []
         if res and 'items' in res:
             tmp_ad_list = res['items']
             ad_list = sorted(tmp_ad_list, key=lambda k: k.get("order", ""))
+            if lang != "" or country != "":
+                ad_list = [item for item in ad_list if lang in item["language"] or country in item["country"]]
+        #语言选项
+        lang_options = []
+        langs = DB.client_support_language.find()
+        for lang in langs:
+            lang_options.append((lang['name'],lang['code']))
+        #国家选项
+        country_options = []
+        countries = DB.country.find()
+        for country in countries:
+            country_options.append((country['name'], country['code']))
         self._view.assign('create_pic_url', create_pic_url)
+        self._view.assign("lang_options", lang_options)
+        self._view.assign("country_options", country_options)
+        self._view.assign("count", country)
+        self._view.assign("lan", lang)
 
         return self._view.render('advertising_item_list', ad_list=ad_list, ad=res)
 

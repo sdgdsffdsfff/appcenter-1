@@ -35,7 +35,22 @@
             <div class="btn-group">
                 <a class="btn green" data-toggle="modal" href="{{ url_for('admin_advertising_item_add', identifier=ad['identifier']) }}{% if layout != 'default' %}&layout=tiny{% endif%}">新添加广告 <i class="icon-plus"></i></a>
             </div>
-            <div class="btn-group pull-right">
+            <div class="btn-group">
+                <form action="#" method="">
+                    <select id="country">
+                        <option value="">All</option>
+                        {% for country in country_options %}
+                            <option value="{{country[1]}}" {% if count == country[1] %} selected {% endif %}>{{country[0]}}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="lang">
+                        <option value="">All</option>
+                        {% for lang in lang_options %}
+                            <option value="{{lang[1]}}" {% if lan == lang[1] %} selected {% endif %}>{{lang[0]}}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn blue" id="ad_search">搜索</button>
+                </form>
             </div>
         </div>
         <div id="data_grad">
@@ -99,6 +114,13 @@ function deleteAdvertisingItem(identifier, id){
     });
 }
 
+$("#ad_search").click(function(event) {
+    event.preventDefault();
+    var country = $("#country").val()
+    var lang = $("#lang").val()
+    var url = "{{url_for('admin_advertising_item_list')}}?identifier="+"{{ad['identifier']}}"+"&lang=" + lang + "&country="+country;
+    window.location.href = url;
+})
 </script>
 {% endblock %}
 
