@@ -117,7 +117,7 @@ class ItemAddView(View):
         self._form.add_field('text', '排序', 'order', data={'attributes':{'class':'m-wrap large', 'placeholder': '排序'}})
         self._form.add_field('checkbox', '投放语言', 'language', data={ 'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家（优先）', 'country', data={ 'value': '', 'option': country_options})
-        self._form.add_field('file', '上传图片', 'pic', data={ 'attributes': {}})
+        self._form.add_field('file', '上传图片(jpg格式，iPhone 640*251，iPad 408*178)', 'pic', data={ 'attributes': {}})
         self._form.add_validator(AdvertisingItemValidator)
 
     @route('/item/add', methods=['GET', 'POST'], endpoint='admin_advertising_item_add')
