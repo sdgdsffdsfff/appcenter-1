@@ -48,6 +48,23 @@ class AddView(View):
         return self._view.ajax_response(status, message)
 
 
+class AdOrderUpdateView(View):
+    '''
+    广告排序修改
+    '''
+    @route('/order/update', methods=['POST'], endpoint='admin_advertising_order_update')
+    def post(self):
+        try:
+            #dangers to use eval, but since we use internal, that's would be find.
+            pk, identifier = eval(request.form["pk"])
+            value = request.form["value"]
+            DB.advertising.update({"identifier": identifier, "items.id": int(pk)}, {"$set": {"items.$.order": int(value)}})
+            status, message = 'success', '添加成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
+
+        return self._view.ajax_response(status, message)
+
 class DeleteView(View):
 
     @route('/delete', endpoint='admin_advertising_delete')
@@ -94,7 +111,7 @@ class ItemListView(View):
         self._view.assign("count", country)
         self._view.assign("lan", lang)
 
-        return self._view.render('advertising_item_list', ad_list=ad_list, ad=res)
+        return self._view.render('advertising_item_list', ad_list=ad_list, ad=res, identifier=identifier)
 
 
 class ItemAddView(View):
