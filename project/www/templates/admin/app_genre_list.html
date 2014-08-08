@@ -1,7 +1,6 @@
 {% extends "admin/_layout.html" %}
 
 {% block head %}
-    
 {% endblock %}
 
 {% block page_title %} 分类 {% endblock %}
@@ -37,6 +36,9 @@
 				<button id="sync_genre" class="btn green">
 				同步官方分类 <i class="icon-cloud"></i>
 				</button>
+				<div id="loadingbar-frame">
+					<img src="/static/metronic1.4/assets/img/ajax-loader.gif"/>
+				</div>
 			</div>
 			
 		</div>
@@ -78,11 +80,29 @@
 {% block scripts %}
 <script>
 $('#sync_genre').click(function(){
-	var ajax = NG.Ajax();
-	ajax.Get('{{ url_for('admin_genre_sync') }}', function(res){
-		location.reload();
+	// var ajax = NG.Ajax();
+	// ajax.Get('{{ url_for('admin_genre_sync') }}', function(res){
+	// 	location.reload();
+	// });
+	var jqxhr = $.ajax('{{ url_for('admin_genre_sync') }}')
+	  .done(function() {
+	   	location.reload(); 
 	});
 });
+
+
+
+$('#loadingbar-frame').hide();
+jQuery.ajaxSetup({
+  beforeSend: function() {
+     $('#loadingbar-frame').show();
+  },
+  complete: function(){
+     $('#loadingbar-frame').hide();
+  },
+  success: function() {}
+});
+
 </script>
 {% endblock %}
 
