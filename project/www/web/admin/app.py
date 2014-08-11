@@ -37,12 +37,12 @@ class ListView(View):
 
     @route('/ajaxlist', endpoint='admin_app_ajaxlist')
     def ajax(self):
-
         page = request.args.get('page', 1)
         track_name = request.args.get('trackName', '')
         track_id = request.args.get('trackId', '')
         bundle_id = request.args.get('bundleId', '')
         use = request.args.get('use', 'default')
+        version = request.args.get("version", "")
 
         where = {}
         if track_name != '':
@@ -52,6 +52,8 @@ class ListView(View):
             where = {'trackId': int(track_id)}
         if bundle_id != '':
             where = {'bundleId': bundle_id}
+        if version != "":
+            where = {"sign": 0} if version == "pb" else {"sign": 1}
 
         app_list, page_info = self.app.get_base_apps(where, ('sort', -1), int(page), 10)
 
