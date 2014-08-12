@@ -26,14 +26,22 @@ class ListView(View):
     '''
     @route('/list', endpoint='admin_app_topic_list')
     def get(self):
-
-        res = DB.app_topic.find()
-
+        language = request.args.get("language", "")
+        if language != "":
+            res = DB.app_topic.find({"language": language})
+        else:
+            res = DB.app_topic.find()
+        #语言选项
+        lang_options = []
+        langs = DB.client_support_language.find()
+        for lang in langs:
+            lang_options.append((lang['name'],lang['code']))
         self._view.assign('create_pic_url', create_pic_url)
         self._view.assign('language_code_to_name', language_code_to_name)
         self._view.assign('country_code_to_name', country_code_to_name)
+        self._view.assign('lang_options', lang_options)
 
-        return self._view.render('app_topic_list', topic_list=list(res))
+        return self._view.render('app_topic_list', topic_list=list(res), lang=language)
 
 
 class AppTopicInfoBaseView(View):
@@ -68,6 +76,7 @@ class AppTopicInfoBaseView(View):
         self._form.add_field('checkbox', '投放国家', 'country', data={'value': '', 'option': country_options})
         self._form.add_field('file', '专题图标', 'pic', data={'attributes': {}})
         self._form.add_field('radio', '状态', 'status', data={'value': '0', 'option':[('发布','1'), ('未发布','0')]})
+        self._form.add_field('radio', '版本', 'prisonbreak', data={'value': '0', 'option':[('正版','1'), ('越狱','0')]})
         #self._form.add_validator(AppTopicAddValidator)
 
 
@@ -114,6 +123,7 @@ class AddView(AppTopicInfoBaseView):
                 'country': country,
                 'items': [],
                 'status': int(request.form['status']),
+                'prisonbreak': int(request.form['prisonbreak']),
                 'update_time': datetime.datetime.now()
             }
             try:
@@ -189,6 +199,7 @@ class EditView(AppTopicInfoBaseView):
                 if country:
                     data['country'] = country
                 data['status'] = int(request.form['status'])
+                data['prisonbreak'] = int(request.form['prisonbreak'])
                 DB.app_topic.update({'_id': ObjectId(self._id)}, {'$set': data})
                 message = {'status': 'success', 'message': '编辑成功'}
             except Exception, ex:

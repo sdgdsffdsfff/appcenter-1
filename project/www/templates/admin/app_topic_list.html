@@ -35,7 +35,21 @@
 			<div class="btn-group">
 				<a class="btn green" data-toggle="modal" href="{{ url_for('admin_app_topic_add', layout=layout) }}">添加新专题 <i class="icon-plus"></i></a>
 			</div>
+			
 		</div>
+		<form action="" id="app-topic-filter-form">
+				<div class="form-horizontal">
+					<label>
+						语言
+						<select size="1" onchange="changeLangForm()" id="language" name="language" aria-controls="language" class="m-wrap small">
+							<option value="" selected="selected">全部</option>
+							{% for language in lang_options %}
+								<option value="{{ language[1] }}" {%if lang== language[1] %}selected="selected"{% endif %}>{{ language[0] }}</option>
+							{% endfor %}
+						</select> 
+					</label>
+				</div>
+			</form>
 		<table class="table table-striped table-hover table-bordered">
 			<thead>
 				<tr>
@@ -44,6 +58,7 @@
 					<th style="width: 15%">语言</th>
 					<th style="width: 15%">国家</th>
 					<th style="width: 5%">状态</th>
+					<th style="width: 5%">版本</th>
 					<th style="width: 21%">操作</th>
 				</tr>
 			</thead>
@@ -68,6 +83,12 @@
 						<span class="label label-success">已发布</span>
 						{% else %}
 						<span class="label label-danger">未发布</span>
+						{% endif %}
+					</td>
+					<td>{% if app_topic['prisonbreak'] == 1 %}
+						<span class="label label-success">正版</span>
+						{% else %}
+						<span class="label label-danger">越狱</span>
 						{% endif %}
 					</td>
 					<td>
@@ -106,6 +127,12 @@ function deleteAppTopic(_id){
 			alert(res)
 		}
 	});
+}
+
+function changeLangForm() {
+	$('#loading').css({"visibility":"visible"});
+	var url = "{{url_for('admin_app_topic_list')}}?language="+ $("#language").val();
+	window.location.href=url;
 }
 </script>
 {% endblock %}
