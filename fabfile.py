@@ -4,8 +4,8 @@ from fabric.api import *
 env.roledefs['web_server'] = ['zsf@61.155.215.53:58422', 'zsf@61.155.215.54:58422']
 
 env.passwords = {
-    'zsf@61.155.215.53:58422': 'aPp6vv_c7om',
-    'zsf@61.155.215.54:58422': 'aPp6vv_c7om'
+    'zsf@61.155.215.53:58422': 'BDj7u38CYsz',
+    'zsf@61.155.215.54:58422': 'BDj7u38CYsz'
 }
 
 def pcode():
