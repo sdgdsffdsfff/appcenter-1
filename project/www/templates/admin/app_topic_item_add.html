@@ -45,6 +45,18 @@
 						<div id="loading" style="visibility:hidden;"><img src="/static/metronic1.4/assets/img/loading.gif" /></div>
 					</div>
 				</div>
+				<form action="" id="app-topic-filter-version-form">
+					<div class="form-horizontal">
+						<label>
+							版本区分
+							<select size="1" onchange="changeVersionForm()" id="version" name="version" aria-controls="version" class="m-wrap small">
+								<option value="" selected="selected">全部</option>
+								<option value="ge">正版</option>
+								<option value="pb">越狱</option>
+							</select> 
+						</label>
+					</div>
+				</form>
 				<div id="app_data_grad"></div>
 			</div>
 		</div>
@@ -111,6 +123,21 @@ function updateSort(){
 		}
 	});
 }
+
+function changeVersionForm() {
+	$('#loading').css({"visibility":"visible"});
+	var url = "{{url_for('admin_app_ajaxlist')}}?use=collection&version="+ $("#version").val();
+	var ajax = NG.Ajax();
+	ajax.Get(url, function(res){
+		if(res.data){
+			$('#app_data_grad').html(res.data);
+		}
+		$('#loading').css({"visibility":"hidden"});
+		//重新渲染
+		App.initUniform();
+	});
+}
+
 //加载可选应用列表
 ajaxAppListLoad("{{ url_for('admin_app_ajaxlist', use='topic') }}");
 //加载集合应用列表

@@ -37,12 +37,12 @@ class ListView(View):
 
     @route('/ajaxlist', endpoint='admin_app_ajaxlist')
     def ajax(self):
-
         page = request.args.get('page', 1)
         track_name = request.args.get('trackName', '')
         track_id = request.args.get('trackId', '')
         bundle_id = request.args.get('bundleId', '')
         use = request.args.get('use', 'default')
+        version = request.args.get("version", "")
 
         where = {}
         if track_name != '':
@@ -52,6 +52,8 @@ class ListView(View):
             where = {'trackId': int(track_id)}
         if bundle_id != '':
             where = {'bundleId': bundle_id}
+        if version != "":
+            where = {"sign": 0} if version == "pb" else {"sign": 1}
 
         app_list, page_info = self.app.get_base_apps(where, ('sort', -1), int(page), 10)
 
@@ -126,7 +128,7 @@ class AddView(View):
 
         if self._form.validate():
             try:
-                r = re.search(r"""itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?mt""", request.form['apple_url'])
+                r = re.search(r"""itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?.*?""", request.form['apple_url'])
                 track_id = int(r.group(2))
                 url = 'http://itunes.apple.com/%s/lookup?id=%s' % (r.group(1), track_id)
                 apple_data = requests.get(url)
@@ -164,7 +166,7 @@ class AppAddValidator(FormValidatorAbstract):
         }
 
     def validate_url(self, url):
-        r = re.search('itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?mt', url)
+        r = re.search('itunes\.apple\.com\/(.*?)\/app\/.*?\/id(.*?)\?.*?', url)
         if r == None:
             return '地址格式不正确'
         return True
@@ -353,11 +355,20 @@ class EditView(AppDetailBaseView):
         if data:
             data["supportIphone"]= self.supportIphone
             data["supportIpad"] = self.supportIpad
+            app_cn = DB.AppBase_CN.find_one({"trackId": data["trackId"]})
+            if app_cn:
+                data["trackName_CN"] = app_cn["trackName"]
+                data["description_cn"] = app_cn.get("description", "")
+                data["releaseNotes_cn"] = app_cn.get("releaseNotes", "")
+
 
         self._form = Form('app_edit_form', request, session)
         self._form.add_field('file', '上传图标', 'pic', data={'attributes': {}})
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '应用中文名称', 'trackName_CN', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '编辑翻译(中文)', 'cnname', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '编辑翻译(阿拉伯)', 'arname', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方应用地址', 'trackViewUrl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
@@ -367,7 +378,9 @@ class EditView(AppDetailBaseView):
         self._form.add_field('radio', '支持iPad', 'supportIpad', data={'option': [("是", "1"), ("否", "0")]})
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={'option': lang_options})
         self._form.add_field('textarea', '描述', 'description', data={'attributes':{'class':'m-wrap large','rows':'10'}})
+        self._form.add_field('textarea', '描述(中)', 'description_cn', data={'attributes':{'class':'m-wrap large','rows':'10'}})
         self._form.add_field('textarea', '更新介绍', 'releaseNotes', data={'attributes':{'class':'m-wrap large','rows':'10'}})
+        self._form.add_field('textarea', '更新介绍(中)', 'releaseNotes_cn', data={'attributes':{'class':'m-wrap large','rows':'10'}})
         self._form.add_field('radio', '审核', 'review', data={'option': [("审核通过", "1"), ("未审核", "0")]})
         self._form.set_value(data)
         self._form.add_validator(AppInfoValidator)
@@ -393,6 +406,8 @@ class EditView(AppDetailBaseView):
             data = {
                 'trackId':int(request.form['trackId']),
                 'trackName':request.form['trackName'],
+                'cnname': request.form["cnname"],
+                'arname': request.form["arname"],
                 'bundleId':request.form['bundleId'],
                 'trackViewUrl':request.form['trackViewUrl'],
                 'version':request.form['version'],
@@ -406,6 +421,23 @@ class EditView(AppDetailBaseView):
                 data["supportIphone"] = int(request.form["supportIphone"])
             if int(request.form["supportIpad"]) != self.supportIpad:
                 data["supportIpad"] = int(request.form["supportIpad"])
+
+            data_cn = {
+                "trackName": request.form["trackName_CN"],
+                "description": request.form["description_cn"],
+                "releaseNotes": request.form["releaseNotes_cn"]
+            }
+            app_cn = DB.AppBase_CN.find_one({"trackId": int(request.form["trackId"])})
+            if app_cn:
+                DB.AppBase_CN.update({"_id": app_cn["_id"]}, {"$set": data_cn})
+            else:
+                data_cn = {
+                    "trackId": int(request.form["trackId"]),
+                    "trackName": request.form["trackName_CN"],
+                    "description": request.form["description_cn"],
+                    "releaseNotes": request.form["releaseNotes_cn"]
+                }
+                DB.AppBase_CN.insert(data_cn)
 
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
@@ -502,19 +534,57 @@ class ScreenshotView(View):
         if bundle_id is None:
             return self._view.error('参数不正确')
         device = request.args.get('device', 'iphone')
+        lang = request.args.get("lang", "en")
 
         app = DB.AppBase.find_one({'bundleId': bundle_id})
+        app_cn = DB.AppBase_CN.find_one({"bundleId": bundle_id})
         apple_screenshot = []
         if device == 'iphone':
-            if 'screenshotUrls' in app:
-                apple_screenshot = app['screenshotUrls']
+            if lang == "en" and 'screenshotUrls' in app:
+                apple_screenshot = app['screenshotUrls'] if app else []
+            else:
+                apple_screenshot = app_cn.get("screenshotUrls", "") if app_cn else []
         else:
-            if 'ipadScreenshotUrls' in app:
-                apple_screenshot = app['ipadScreenshotUrls']
+            if lang == "en" and 'ipadScreenshotUrls' in app:
+                apple_screenshot = app['ipadScreenshotUrls'] if app else []
+            else:
+                apple_screenshot = app_cn.get('ipadScreenshotUrls', "") if app_cn else []
         self._view.assign('device', device)
+        self._view.assign('lang', lang)
         self._view.assign('screenshot', apple_screenshot)
         self._view.assign('create_pic_url', create_pic_url)
         return self._view.ajax_render('app_screenshot_list')
+
+    @route('/screenshot/sync', methods=['POST'], endpoint='admin_app_screenshot_sync')
+    def sync_screenshot(self):
+        langs = ["us", "cn"]
+        bundle_id = request.form.get('bundleId', None)
+        if bundle_id is None:
+            status, message = 'error', '参数不正确'
+            return self._view.ajax_response(status, message)
+
+        app = DB.AppBase.find_one({'bundleId': bundle_id})
+        app_cn = DB.AppBase_CN.find_one({"bundleId": bundle_id})
+        url = 'http://itunes.apple.com/%s/lookup?bundleId=%s'
+        try:
+            for lang in langs:
+                apple_data = requests.get(url % (lang, bundle_id))
+                data = apple_data.json()
+                if len(data["results"]) == 0:
+                    status, message = 'error', u'找不到苹果官方数据，可能此应用已经下架'
+                else:
+                    data = data["results"][0]
+                    if lang == "us":
+                        DB.AppBase.update({"bundleId": bundle_id}, {"$set": {"ipadScreenshotUrls": data["ipadScreenshotUrls"],
+                                                                             "screenshotUrls": data["screenshotUrls"]}}, upsert=True)
+                    elif lang == "cn":
+                        DB.AppBase_CN.update({"bundleId": bundle_id}, {"$set": {"ipadScreenshotUrls": data["ipadScreenshotUrls"],
+                                                                               "screenshotUrls": data["screenshotUrls"]}}, upsert=True)
+                    status, message = 'success', '更新截图成功'
+        except Exception:
+            status, message = 'error', str(ex)
+            pass
+        return self._view.ajax_response(status, message)
 
     def allowed_file(self, filename):
         return '.' in filename and filename.rsplit('.', 1)[1] in ['jpg', 'png', 'jpeg']
@@ -541,7 +611,14 @@ class ScreenshotView(View):
                     data = {'screenshotUrls': pic_url}
                 if request.form['device'] == 'ipad':
                     data = {'ipadScreenshotUrls': pic_url}
-                DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
+                if request.form["lang"] == "en":
+                    DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
+                else:
+                    try:
+                        DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data})
+                    except Exception:
+                        data = data.update({'bundleId': bundle_id})
+                        DB.AppBase_CN.insert(data)
                 status, message = 'success', u'上传成功'
             else:
                 raise Exception(u'必须是jpg,png文件')
@@ -554,15 +631,17 @@ class ScreenshotView(View):
         try:
             bundle_id = request.form['bundleId']
             device = request.form['device']
+            lang = request.form["lang"]
             url = request.form['url']
             app = DB.AppBase.find_one({'bundleId': bundle_id})
+            app_cn = DB.AppBase_CN.find_one({'bundleId': bundle_id})
             if not app:
                 raise Exception("应用不存在")
             pic_array = []
-            if device == 'iphone':
-                pic_array = app['screenshotUrls']
-            if device == 'ipad':
-                pic_array = app['ipadScreenshotUrls']
+            if lang == "en":
+                pic_array = app["screenshotUrls"] if device=="iphone" else app["ipadScreenshotUrls"]
+            elif lang == "cn":
+                pic_array = app["screenshotUrls"] if device=="iphone" else app["ipadScreenshotUrls"]
             if len(pic_array) == 0:
                 raise Exception("没有该截图")
             print pic_array
@@ -574,7 +653,10 @@ class ScreenshotView(View):
             if device == 'ipad':
                 data = {'ipadScreenshotUrls': pic_array}
             if data:
-                DB.AppBase.update({'bundleId': bundle_id}, {'$set': data})
+                if lang == "en":
+                    DB.AppBase.update({'bundleId': bundle_id}, {'$set': data})
+                else:
+                    DB.AppBase_CN.update({'bundleId': bundle_id}, {'$set': data})
             status, message = 'success', u'删除成功'
         except Exception, ex:
             import traceback

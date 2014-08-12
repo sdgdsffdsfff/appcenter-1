@@ -45,14 +45,17 @@
 				<img src="{{ icon['local'] }}" />
 				{% endif %}
 				<span class="help-inline"></span>
-				<button id="syncIcon" class="btn green"><i class="icon-ok"></i> 同步官方图标</button>
+				<!--<button id="syncIcon" class="btn green"><i class="icon-ok"></i> 同步官方图标</button>-->
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">对比官方信息</label>
 			<div class="controls">
 				<span class="help-inline"></span>
-				<button id="syncInfo" class="btn green"><i class="icon-ok"></i> 同步应用信息</button>
+				<button id="syncInfo" class="btn green ajax-call"><i class="icon-ok"></i>一键同步应用所有信息</button>
+				<div id="loadingbar-frame">
+					<img src="/static/metronic1.4/assets/img/ajax-loader.gif"/>
+				</div>
 			</div>
 		</div>
 		 {% for field in form.field_list() %}
@@ -75,7 +78,10 @@
 <!-- END  FORM-->
 {% endblock %}
 {% block scripts %}
+
 <script type="text/javascript">
+$('#loadingbar-frame').hide();
+
 	$("#syncIcon").click(function(e){
 		e.preventDefault();
 		var ajax = NG.Ajax()
@@ -89,13 +95,27 @@
 
 	$("#syncInfo").click(function(e){
 		e.preventDefault();
-		var ajax = NG.Ajax()
+		//var ajax = NG.Ajax()
 		var _id = getParameterByName('_id');
 		var trackId = $("input[name='trackId']").val()
-		ajax.Get("{{url_for('admin_app_sync_info')}}" + "?_id=" + _id + "&trackId=" + trackId, function(res) {
-			alert(res.message)
-			location.reload()
-		})
+		// ajax.Get("{{url_for('admin_app_sync_info')}}" + "?_id=" + _id + "&trackId=" + trackId, function(res) {
+		// 	alert(res.message)
+		// 	location.reload()
+		// })
+		var jqxhr = $.ajax('{{ url_for('admin_app_sync_info') }}' + "?_id=" + _id + "&trackId=" + trackId)
+		  .done(function(res) {
+		   	location.reload(); 
+		});
 	})
+
+jQuery.ajaxSetup({
+  beforeSend: function() {
+     $('#loadingbar-frame').show();
+  },
+  complete: function(){
+     $('#loadingbar-frame').hide();
+  },
+  success: function() {}
+});
 </script>
 {% endblock %}

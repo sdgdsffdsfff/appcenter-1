@@ -1,3 +1,9 @@
+{% block head %}
+<!-- BEGIN X-EDITABLE PLUGIN-->
+    <link rel="stylesheet" type="text/css" href="/static/metronic1.4/assets/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/metronic1.4/assets/plugins/bootstrap-editable/inputs-ext/address/address.css"/>
+<!-- END X-EDITABLE PLUGIN-->
+{% endblock %}
 {% if layout == 'default' %}
     {% extends "admin/_layout.html" %}
 
@@ -35,7 +41,22 @@
             <div class="btn-group">
                 <a class="btn green" data-toggle="modal" href="{{ url_for('admin_advertising_item_add', identifier=ad['identifier']) }}{% if layout != 'default' %}&layout=tiny{% endif%}">新添加广告 <i class="icon-plus"></i></a>
             </div>
-            <div class="btn-group pull-right">
+            <div class="btn-group">
+                <form action="#" method="">
+                    <select id="country">
+                        <option value="">All</option>
+                        {% for country in country_options %}
+                            <option value="{{country[1]}}" {% if count == country[1] %} selected {% endif %}>{{country[0]}}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="lang">
+                        <option value="">All</option>
+                        {% for lang in lang_options %}
+                            <option value="{{lang[1]}}" {% if lan == lang[1] %} selected {% endif %}>{{lang[0]}}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn blue" id="ad_search">搜索</button>
+                </form>
             </div>
         </div>
         <div id="data_grad">
@@ -45,7 +66,7 @@
                         <td>图片</td>
                         <th>标题</th>
                         <th>链接</th>
-                        <th>排序</th>
+                        <th>排序(点击修改)</th>
                         <th>投放语言</th>
                         <th>投放国家</th>
                         <th>操作</th>
@@ -64,7 +85,7 @@
                         </td>
                         <td>{{ a['title'] }}</td>
                         <td>{{ a['link'] }}</td>
-                        <td>{{ a['order'] }}</td>
+                        <td><a href="#" id="order" data-type="text" data-pk="{{ a['id'], identifier }}" data-original-title="Enter order" class="editable editable-click order" style="display: inline;">{{ a['order']|int }}</a></td>
                         <td>{% for lang in a['language'] %} {{lang}} {% endfor %}</td>
                         <td>{% for country in a['country'] %} {{country}} {% endfor %}</td>
                         <td>
@@ -88,9 +109,21 @@
 </div>
 <!-- END  TABLE PORTLET-->
 {% endblock %}
-
 {% block scripts %}
+<!-- BEGIN X-EDITABLE PLUGIN -->
+    <script type="text/javascript" src="/static/metronic1.4/assets/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+    <script type="text/javascript" src="/static/metronic1.4/assets/plugins/bootstrap-editable/inputs-ext/address/address.js"></script>
+    <script type="text/javascript" src="/static/metronic1.4/assets/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js"></script>
+    <script type="text/javascript" src="/static/metronic1.4/assets/scripts/my_form_editable.js"></script>    
+    <!-- END X-EDITABLE PLUGIN -->
+
 <script>
+jQuery(document).ready(function() {
+    // initiate layout and plugins
+    App.init();
+    FormEditable.init();
+});
+
 function deleteAdvertisingItem(identifier, id){
     var ajax = NG.Ajax();
     var url = "{{url_for('admin_advertising_item_delete')}}?identifier="+identifier+"&id="+id;
@@ -99,6 +132,13 @@ function deleteAdvertisingItem(identifier, id){
     });
 }
 
+$("#ad_search").click(function(event) {
+    event.preventDefault();
+    var country = $("#country").val()
+    var lang = $("#lang").val()
+    var url = "{{url_for('admin_advertising_item_list')}}?identifier="+"{{ad['identifier']}}"+"&lang=" + lang + "&country="+country;
+    window.location.href = url;
+})
 </script>
 {% endblock %}
 

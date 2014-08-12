@@ -37,17 +37,26 @@
 	<div class="tab-content">
         <div class="table-toolbar">
             <div class="btn-group">
-                <a class="btn green" data-toggle="modal" href="#screenshot_upload_modal">上传截图<i class="icon-upload"></i></a>
+                <a class="btn green" data-toggle="modal" href="#screenshot_upload_modal">上传截图<i class="icon-upload"></i></a> 
             </div>
+            <a class="btn blue" onclick="syncIcon('{{app['bundleId']}}')">同步官方截图<i class="icon-cloud"></i></a>
         </div>
         <hr class="clearfix">
         <div class="row-fluid">
-            <h4>iphone</h4>
-            <div id="iphone_screenshot"></div>
+            <h4>iphone(中)</h4>
+            <div id="iphone_screenshot_cn"></div>
         </div>
         <div class="row-fluid">
-            <h4>ipad</h4>
-            <div id="ipad_screenshot"></div>
+            <h4>iphone(英)</h4>
+            <div id="iphone_screenshot_en"></div>
+        </div>
+        <div class="row-fluid">
+            <h4>ipad(中)</h4>
+            <div id="ipad_screenshot_cn"></div>
+        </div>
+        <div class="row-fluid">
+            <h4>ipad(英)</h4>
+            <div id="ipad_screenshot_en"></div>
         </div>
 	</div>
 </div>
@@ -71,6 +80,19 @@
                     <label class="radio">
                     <input type="radio" name="device" value="ipad" />
                     ipad
+                    </label>  
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">语言</label>
+                <div class="controls">
+                    <label class="radio">
+                    <input type="radio" name="lang" value="en" checked />
+                    EN
+                    </label>
+                    <label class="radio">
+                    <input type="radio" name="lang" value="cn" />
+                    CN
                     </label>  
                 </div>
             </div>
@@ -110,8 +132,10 @@
     };
 
     $(function() {
-        loadScreenShot('iphone');
-        loadScreenShot('ipad');
+        loadScreenShot('iphone', "cn");
+        loadScreenShot('iphone', "en");
+        loadScreenShot('ipad', "cn");
+        loadScreenShot('ipad', "en");
         $('#screenshot').uploadify({
             'auto'     : false,
             'buttonText' : '选择文件',
@@ -121,8 +145,10 @@
             'onUploadSuccess' : function(file, data, response) {
                 var res = $.parseJSON(data);
                 $('#upload_info').html(res.message);
-                loadScreenShot('iphone');
-                loadScreenShot('ipad');
+                loadScreenShot('iphone', "cn");
+                loadScreenShot('iphone', "en");
+                loadScreenShot('ipad', "cn");
+                loadScreenShot('ipad', "en");
                 $('#screenshot').uploadify('upload');
             },
             'onUploadError' : function(file, errorCode, errorMsg, errorString) {
@@ -135,10 +161,11 @@
         $('#screenshot').uploadify('settings','formData',form_data);
         $('#screenshot').uploadify('upload');
     }
-    function loadScreenShot(device){
-        $.getJSON('{{url_for('admin_app_screenshot_list')}}?bundleId={{app['bundleId']}}&device='+device, {}, function(res){
+    function loadScreenShot(device, lang){
+        $('#'+device+'_screenshot_'+lang).html("");
+        $.getJSON('{{url_for('admin_app_screenshot_list')}}?bundleId={{app['bundleId']}}&device='+device+'&lang='+lang, {}, function(res){
             if(res.status == 'success'){
-                $('#'+device+'_screenshot').html(res.data);
+                $('#'+device+'_screenshot_'+lang).html(res.data);
                 App.initFancybox();
             }else{
                 alert(res.message);
@@ -146,13 +173,32 @@
         });
 
     }
-    function removePic(pic_url, device){
+    function removePic(pic_url, device, lang){
         var url = '{{ url_for('admin_app_screenshot_delete') }}';
-        $.post(url, {'url': pic_url, 'device': device, 'bundleId': '{{app['bundleId']}}'}, function(res){
+        $.post(url, {'url': pic_url, 'lang':lang, 'device': device, 'bundleId': '{{app['bundleId']}}'}, function(res){
             res = $.parseJSON(res);
             if (res.status == 'success'){
-                loadScreenShot('iphone');
-                loadScreenShot('ipad');
+                location.reload()
+                loadScreenShot('iphone', "cn");
+                loadScreenShot('iphone', "en");
+                loadScreenShot('ipad', "cn");
+                loadScreenShot('ipad', "en");
+            }else{
+                alert(res.message);
+            }
+        });
+    }
+
+    function syncIcon(bundleId) {
+        var url = "{{ url_for('admin_app_screenshot_sync') }}";
+        $.post(url, {'url': url, 'bundleId': '{{app['bundleId']}}'}, function(res){
+            res = $.parseJSON(res);
+            if (res.status == 'success'){
+                location.reload()
+                loadScreenShot('iphone', "cn");
+                loadScreenShot('iphone', "en");
+                loadScreenShot('ipad', "cn");
+                loadScreenShot('ipad', "en");
             }else{
                 alert(res.message);
             }

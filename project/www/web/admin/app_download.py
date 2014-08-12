@@ -36,6 +36,18 @@ class ListView(View):
         return self._view.render('app_download', download_list=download_list, app=app)
 
 
+class DownloadView(View):
+    """download app """
+
+    @route("/download", endpoint='admin_app_download')
+    def get(self):
+        ha = request.args.get("ha", None)
+        if ha:
+            print(self.app_download.get_download_url(ha))
+            return redirect(self.app_download.get_download_url(ha), code=302)
+
+
+
 class DeleteView(View):
 
     @route('/delete', endpoint='admin_app_download_delete')

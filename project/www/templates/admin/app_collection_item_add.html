@@ -6,7 +6,7 @@
     {% endblock %}
 
     {% block page_title %} 分类 {% endblock %}
-    {% block title %} 应用集合 <small>自定义应用集合</small> {% endblock %}
+    {% block title %} 首页推荐 <small>自定义首页推荐</small> {% endblock %}
 
     {% block breadcrumb %}
     <ul class="breadcrumb">
@@ -16,7 +16,7 @@
             <i class="icon-angle-right"></i>
         </li>
         <li>
-            <a href="{{ url_for('admin_app_collection_list') }}">应用集合</a>
+            <a href="{{ url_for('admin_app_collection_list') }}">首页推荐</a>
             <i class="icon-angle-right"></i>
         </li>
         <li>{{ app_collection['name'] }}</li>
@@ -45,6 +45,18 @@
 						<div id="loading" style="visibility:hidden;"><img src="/static/metronic1.4/assets/img/loading.gif" /></div>
 					</div>
 				</div>
+				<form action="" id="app-collection-filter-version-form">
+						<div class="form-horizontal">
+							<label>
+								版本区分
+								<select size="1" onchange="changeVersionForm()" id="version" name="version" aria-controls="version" class="m-wrap small">
+									<option value="" selected="selected">全部</option>
+									<option value="ge">正版</option>
+									<option value="pb">越狱</option>
+								</select> 
+							</label>
+						</div>
+						</form>
 				<div id="app_data_grad"></div>
 			</div>
 		</div>
@@ -107,6 +119,7 @@ function loadCollection() {
 		}
 	});
 }
+
 function addToCollection(_id) {
 	var form = $('#'+_id+"_form");
 	var data = form.serialize().replace(new RegExp(_id+'_', 'g'), '');
@@ -128,6 +141,21 @@ function deleteCollectionItem(identifier, id){
 function changeForm(){
 	loadCollection();
 }
+
+function changeVersionForm() {
+	$('#loading').css({"visibility":"visible"});
+	var url = "{{url_for('admin_app_ajaxlist')}}?use=collection&version="+ $("#version").val();
+	var ajax = NG.Ajax();
+	ajax.Get(url, function(res){
+		if(res.data){
+			$('#app_data_grad').html(res.data);
+		}
+		$('#loading').css({"visibility":"hidden"});
+		//重新渲染
+		App.initUniform();
+	});
+}
+
 function updateSort(){
 	var url = '{{ url_for("admin_app_collection_item_sort", identifier=app_collection["identifier"]) }}';
 	var data = $('#app-collection-form').serialize();

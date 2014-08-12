@@ -48,6 +48,23 @@ class AddView(View):
         return self._view.ajax_response(status, message)
 
 
+class AdOrderUpdateView(View):
+    '''
+    广告排序修改
+    '''
+    @route('/order/update', methods=['POST'], endpoint='admin_advertising_order_update')
+    def post(self):
+        try:
+            #dangers to use eval, but since we use internal, that's would be find.
+            pk, identifier = eval(request.form["pk"])
+            value = request.form["value"]
+            DB.advertising.update({"identifier": identifier, "items.id": int(pk)}, {"$set": {"items.$.order": int(value)}})
+            status, message = 'success', '添加成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
+
+        return self._view.ajax_response(status, message)
+
 class DeleteView(View):
 
     @route('/delete', endpoint='admin_advertising_delete')
@@ -69,14 +86,32 @@ class ItemListView(View):
     @route('/item/list', endpoint='admin_advertising_item_list')
     def get(self):
         identifier = request.args.get('identifier')
+        lang = request.args.get("lang", "")
+        country = request.args.get("country", "")
         res = DB.advertising.find_one({'identifier':identifier})
         ad_list = []
         if res and 'items' in res:
             tmp_ad_list = res['items']
             ad_list = sorted(tmp_ad_list, key=lambda k: k.get("order", ""))
+            if lang != "" or country != "":
+                ad_list = [item for item in ad_list if lang in item["language"] or country in item["country"]]
+        #语言选项
+        lang_options = []
+        langs = DB.client_support_language.find()
+        for lang in langs:
+            lang_options.append((lang['name'],lang['code']))
+        #国家选项
+        country_options = []
+        countries = DB.country.find()
+        for country in countries:
+            country_options.append((country['name'], country['code']))
         self._view.assign('create_pic_url', create_pic_url)
+        self._view.assign("lang_options", lang_options)
+        self._view.assign("country_options", country_options)
+        self._view.assign("count", country)
+        self._view.assign("lan", lang)
 
-        return self._view.render('advertising_item_list', ad_list=ad_list, ad=res)
+        return self._view.render('advertising_item_list', ad_list=ad_list, ad=res, identifier=identifier)
 
 
 class ItemAddView(View):
@@ -117,7 +152,7 @@ class ItemAddView(View):
         self._form.add_field('text', '排序', 'order', data={'attributes':{'class':'m-wrap large', 'placeholder': '排序'}})
         self._form.add_field('checkbox', '投放语言', 'language', data={ 'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家（优先）', 'country', data={ 'value': '', 'option': country_options})
-        self._form.add_field('file', '上传图片', 'pic', data={ 'attributes': {}})
+        self._form.add_field('file', '上传图片(jpg格式，iPhone 640*251，iPad 408*178)', 'pic', data={ 'attributes': {}})
         self._form.add_validator(AdvertisingItemValidator)
 
     @route('/item/add', methods=['GET', 'POST'], endpoint='admin_advertising_item_add')

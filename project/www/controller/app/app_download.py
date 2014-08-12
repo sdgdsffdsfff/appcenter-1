@@ -39,6 +39,10 @@ class AppDownloadController(ControllerBase):
         """
         mongo_db.AppDownload.remove({'_id': ObjectId(_id)})
 
+    def get_download_url(self, ha):
+        """get download link of an ipa hash"""
+        return create_ipa_url(ha)
+
     def add(self, file_path, sign=0, bundle_id=None):
         """
         ipa文件入库
