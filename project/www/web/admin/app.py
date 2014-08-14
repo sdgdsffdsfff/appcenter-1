@@ -19,6 +19,8 @@ from www.controller.app.header import artworkUrl512_to_114_icon, sha1_of_file, h
 from www.lib.form import Form, FormElementField, FormException, FormValidatorAbstract
 from bson.objectid import ObjectId
 
+country = ["us", "cn"]
+
 class View(FlaskView):
 
     route_base = '/app'
@@ -497,19 +499,24 @@ class SyncInfoView(View):
         try:
             trackId = request.args.get("trackId", "")
             _id = request.args.get("_id", "")
-            url = 'http://itunes.apple.com/us/lookup?id=%s' % (trackId)
-            apple_data = requests.get(url)
-            data = apple_data.json()
-            if len(data["results"]) == 0:
-                status, message = 'error', u'找不到苹果官方数据，可能此应用已经下架'
-            else:
-                data = data["results"][0]
-                app = DB.AppBase.find_one({'trackId':int(trackId)})
-                if app is None:
-                    _id = DB.AppBase.insert(data)
+            for coun in country:
+                url = 'http://itunes.apple.com/%s/lookup?id=%s' % (coun, trackId)
+                apple_data = requests.get(url)
+                data = apple_data.json()
+                if len(data["results"]) == 0:
+                    status, message = 'error', u'找不到苹果官方数据，可能此应用已经下架'
                 else:
-                    _id = app['_id']
-                    DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':data})
+                    data = data["results"][0]
+                    if coun == "us":
+                        db = DB.AppBase
+                    elif coun == "cn":
+                        db = DB.AppBase_CN
+                    app = db.find_one({'trackId':int(trackId)})
+                    if app is None:
+                        _id = db.insert(data)
+                    else:
+                        _id = app['_id']
+                        db.update({'_id':ObjectId(_id)}, {'$set':data})
                 status, message = 'success', '更新应用信息成功'
         except Exception, ex:
             status, message = 'error', str(ex)
