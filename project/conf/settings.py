@@ -18,7 +18,7 @@ settings = {
         ]
     },
     'mongodb': {
-        'host': 'mongodb://10.2.0.37:27017',
+        'host': 'mongodb://10.2.0.40:27018',
         'ids_name': 'ids'
     },
     'elasticsearch': {
