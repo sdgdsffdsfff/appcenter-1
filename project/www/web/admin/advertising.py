@@ -11,6 +11,7 @@ from www.lib.form import Form, FormElementField, FormElementSubmit, FormExceptio
 from www.controller.app.header import create_pic_url
 from bson.objectid import ObjectId
 
+
 class View(FlaskView):
 
     route_base = '/app_advertising'
@@ -27,6 +28,26 @@ class ListView(View):
     def get(self):
         advertising_list = DB.advertising.find()
         return self._view.render('advertising_list', advertising_list=list(advertising_list))
+
+
+class ItemSearchView(View):
+    '''
+    search for app or topic by query type
+    '''
+    @route('/query', endpoint="admin_advertising_item_query")
+    def get(self):
+        tp = request.args.get("type", "app")
+        q = request.args.get("q", "")
+        limit = int(request.args.get("page_limit", 10))
+        status = "success"
+        items = None
+        if tp == "app":
+            apps = DB.AppBase.find({"trackId": int(q)}, { "trackName": 1, "trackId": 1, "_id":1 }).limit(limit)
+            items = [{"name": app["trackName"], "trackId": app["trackId"], "_id": app["_id"]} for app in apps]
+        elif tp == "topic":
+            topics = DB.app_topic.find({"name": q} , { "name": 1, "_id":1 })
+            items = [topic for topic in topics]
+        return self._view.ajax_response(status=status, data={"items": items})
 
 
 class AddView(View):
@@ -148,7 +169,9 @@ class ItemAddView(View):
         self._form = Form('advertising_add_form', request, session)
         self._form.add_field('text', '标题', 'title', data={'attributes':{'class':'m-wrap large', 'placeholder': '标题'}})
         self._form.add_field('select', '所属广告位', 'identifier', data={'value':identifier, 'option': identifier_options, 'attributes':{'class':'m-wrap large'}})
-        self._form.add_field('text', '链接', 'link', data={'attributes':{'class':'m-wrap large', 'placeholder': '链接'}})
+        self._form.add_field('radio', '广告类型', 'adtype', data={'value': '1', 'option': [("应用", "1"), ("专题", "0")]})
+        #self._form.add_field('text', '链接', 'link', data={'attributes':{'class':'m-wrap large', 'placeholder': 'id=应用ID/topic_id=专题ID'}})
+        self._form.add_field('text', '链接', 'link', data={'attributes':{'class':'m-wrap large', 'id': 'adlink'}})
         self._form.add_field('text', '排序', 'order', data={'attributes':{'class':'m-wrap large', 'placeholder': '排序'}})
         self._form.add_field('checkbox', '投放语言', 'language', data={ 'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家（优先）', 'country', data={ 'value': '', 'option': country_options})
@@ -175,12 +198,18 @@ class ItemAddView(View):
             pass
 
         if self._form.validate():
+            if request.form["adtype"] == "1":
+                #it's a app
+                link = "ID=" + request.form["link"]
+            elif request.form["adtype"] == "0":
+                #it's a topic
+                link = "TOPIC_ID=" + request.form["link"]
             item_id = '%s%s' % (int(time.time()), random.randint(1000, 9999))
             #入库 
             items = {
                 'id': int(item_id),
                 'title': request.form['title'],
-                'link': request.form['link'],
+                'link': link,
                 'order': request.form["order"],
                 'hash': hash_str,
                 'store_path': save_file,

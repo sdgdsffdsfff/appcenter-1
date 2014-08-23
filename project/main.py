@@ -38,6 +38,7 @@ def register_view():
     admin.advertising.ItemAddView.register(app, route_prefix='/admin/')
     admin.advertising.ItemDeleteView.register(app, route_prefix='/admin/')
     admin.advertising.AdOrderUpdateView.register(app, route_prefix='/admin/')
+    admin.advertising.ItemSearchView.register(app, route_prefix='/admin/')
     admin.app.ListView.register(app, route_prefix='/admin/')
     admin.app.CreateView.register(app, route_prefix='/admin/')
     admin.app.AddView.register(app, route_prefix='/admin/')

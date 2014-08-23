@@ -4,6 +4,7 @@
 import os
 import cjson, json
 from flask import render_template
+from bson.json_util import dumps
 
 
 class WebView(object):
@@ -14,7 +15,10 @@ class WebView(object):
 
     def ajax_response(self, status, message='', data={}):
         data = {'status': status, 'message': message, 'data': data}
-        return json.dumps(data)
+        try:
+            return json.dumps(data)
+        except TypeError:
+            return dumps(data)
 
     def ajax_render(self, template, **kwargs):
         tpl_data = self.render(template, **kwargs)

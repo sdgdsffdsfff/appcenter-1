@@ -2,7 +2,7 @@
     {% extends "admin/_layout.html" %}
 
     {% block head %}
-
+    <link href="/static/metronic1.4/assets/css/select2.css" rel="stylesheet" type="text/css"/>
     {% endblock %}
 
     {% block page_title %} 分类 {% endblock %}
@@ -58,7 +58,53 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="/static/metronic1.4/assets/scripts/select2.min.js"></script>
 <script type="text/javascript">
+
+
+function FormatResult(item) {
+    return item.name
+}
+
+function FormatSelection(item) {
+    return item.name;
+}
+
+	$(document).ready(function() {
+		$("input:radio[name=adtype]").click(function() {
+		    var value = $(this).val() == "1" ? "app": "topic";
+		    window.adtype = value;
+		});
+		$("#adlink").select2({
+			placeholder: "Search for a app or topic",
+		    minimumInputLength: 2,
+		    id: function(e){return e},
+		    ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+		        url: "{{ url_for('admin_advertising_item_query') }}",
+		        dataType: 'json',
+		        data: function (term, page) {
+		            return {
+		                q: term, // search term
+		                page_limit: 10,
+		                type: window.adtype
+		            };
+		        },
+		        results: function (data, page) { // parse the results into the format expected by Select2.
+		            // since we are using custom formatting functions we do not need to alter remote JSON data
+		            return {results: data.data.items};
+		        },
+		    },
+		    formatResult: FormatResult, // omitted for brevity, see the source of this page
+		    formatSelection: FormatSelection,  // omitted for brevity, see the source of this page
+		    dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
+		    escapeMarkup: function (m) { return m; } // we do not want to escape markup since we are displaying html in results
+		})
+
+		$("#adlink").change(function(){
+			var oid = $("#adlink").select2('data')._id["$oid"]
+			$(this).val(oid)
+		})
+	});
 	//redirect to list page when add successful
 	function getParameterByName(name) {
 	    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
