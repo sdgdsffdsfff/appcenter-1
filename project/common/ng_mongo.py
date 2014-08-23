@@ -5,7 +5,7 @@
 import random
 import types
 
-from pymongo import Connection
+from pymongo import Connection, MongoClient
 from pymongo.database import Database
 from pymongo.collection import Collection
 from pymongo.errors import AutoReconnect
@@ -22,7 +22,11 @@ class NGMongoConnect(object):
         self.connect()
 
     def connect(self):
-        self.conn = Connection(*self.args, **self.kwargs)
+        replica_set = self.kwargs.get("replica_set", None)
+        if replica_set:
+            self.conn = MongoClient(replica_set["connection_str"], replicaSet=replica_set['replica_set_name'])
+        else:
+            self.conn = Connection(*self.args, **self.kwargs)
 
     def disconnect(self):
         return self.conn.disconnect()

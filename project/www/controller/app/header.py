@@ -14,7 +14,7 @@ from common.ng_mongo import NGMongoConnect
 from common.ng_redis import NGRedis
 from collections import OrderedDict
 
-mongo = NGMongoConnect(settings['mongodb']['host'])
+mongo = NGMongoConnect(settings['mongodb']['host'], replica_set=settings["mongodb"].get("replica_set", None))
 mongo_db = mongo.get_database('appcenter')
 
 redis = NGRedis(settings['new_app_redis'])

@@ -6,7 +6,7 @@ except ImportError:
 
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
-mongo = NGMongoConnect(settings['mongodb']['host'])
+mongo = NGMongoConnect(settings['mongodb']['host'], replica_set=settings["mongodb"].get("replica_set", None))
 mongo_db = mongo.get_database('appcenter')
 
 host_url = "http://54.183.93.130/"
