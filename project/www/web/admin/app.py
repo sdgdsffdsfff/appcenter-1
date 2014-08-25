@@ -144,6 +144,7 @@ class AddView(View):
                     app = DB.AppBase.find_one({'trackId':track_id})
                     if app is None:
                         _id = DB.AppBase.insert(data)
+                        app = DB.AppBase.find_one({'trackId':track_id})
                     else:
                         _id = app['_id']
                         DB.AppBase.update({'_id':ObjectId(_id)}, {'$set':data})
