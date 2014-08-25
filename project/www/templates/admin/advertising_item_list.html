@@ -85,7 +85,7 @@
                         </td>
                         <td>{{ a['title'] }}</td>
                         <td>{{ a['link'] }}</td>
-                        <td><a href="#" id="order" data-type="text" data-pk="{{ a['id'], identifier }}" data-original-title="Enter order" class="editable editable-click order" style="display: inline;">{{ a['order']|int }}</a></td>
+                        <td><a href="#" id="order" data-type="text" data-pk="{{ a['id'], identifier }}" data-original-title="Enter order" class="editable editable-click order" style="display: inline;">{{ a.get('order', 1000)|int }}</a></td>
                         <td>{% for lang in a['language'] %} {{lang}} {% endfor %}</td>
                         <td>{% for country in a['country'] %} {{country}} {% endfor %}</td>
                         <td>
