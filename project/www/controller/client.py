@@ -8,7 +8,7 @@ from collections import OrderedDict
 from conf.settings import settings, DOMAIN_URL
 from common.ng_mongo import NGMongoConnect
 
-mongo = NGMongoConnect(settings['mongodb']['host'])
+mongo = NGMongoConnect(settings['mongodb']['host'], replica_set=settings["mongodb"].get("replica_set", None))
 mongo_db = mongo.get_database('appcenter')
 
 class ClientController(object):

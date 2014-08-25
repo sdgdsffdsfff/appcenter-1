@@ -6,17 +6,14 @@ from bson.objectid import ObjectId
 
 from conf.settings import settings
 
-client = MongoClient(settings["mongodb"]["host"])
-
-apple_url = "https://itunes.apple.com/cn/lookup?id="
-db = client.appcenter
-
-collection = db["AppBase"]
-collection_cn = db["AppBase_CN"]
-
-size = 100
 
 def fetch_appbase():
+        client = MongoClient(settings["mongodb"]["host"])
+        apple_url = "https://itunes.apple.com/cn/lookup?id="
+        db = client.appcenter
+        collection = db["AppBase"]
+        collection_cn = db["AppBase_CN"]
+        size = 100
 	ids = []
 	for app in collection.find().skip(470089):
 		if "trackId" in app:

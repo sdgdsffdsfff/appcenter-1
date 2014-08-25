@@ -10,7 +10,7 @@ from www.controller.app.app import AppController
 from www.controller.app.header import artworkUrl512_to_114_icon, file_size_format
 import threading, multiprocessing
 
-mongo = NGMongoConnect(settings['mongodb']['host'])
+mongo = NGMongoConnect(settings['mongodb']['host'], replica_set=settings["mongodb"].get("replica_set", None))
 mongo_db = mongo.get_database('appcenter')
 
 

@@ -21,8 +21,8 @@ settings = {
         'host': 'mongodb://10.2.0.40:27018',
         'ids_name': 'ids',
         'replicaset': {
-            "connection_str": "mongodb://appcenter:BDj7u38CYsz@10.2.0.40:27018/appcenter",
-            "replica_set_name": "appcenter"
+            "connection_str": "mongodb://appcenter:BDj7u38CYsz@10.2.0.40:27018,10.2.0.45:3000/appcenter",
+            "replica_set_name": "cluster1"
         }
     },
     'elasticsearch': {

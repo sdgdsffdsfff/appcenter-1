@@ -8,7 +8,7 @@ from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
 import multiprocessing
 
-mongo = NGMongoConnect(settings['mongodb']['host'])
+mongo = NGMongoConnect(settings['mongodb']['host'], replica_set=settings["mongodb"].get("replica_set", None))
 mongo_db = mongo.get_database('appcenter')
 
 def worker(_id):
