@@ -11,6 +11,6 @@ env.passwords = {
 def deploy_test():
     project_dir = '/data0/wwwroot/appcenter/project'
     with cd(project_dir):
-        run('git pull')
+        run('git pull > /dev/null')
         run("pkill -f 'python manager.py runserver'")
         run("nohup python manager.py runserver --threaded --host 0.0.0.0 --port 5000 &")
