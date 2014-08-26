@@ -1,10 +1,8 @@
 #encoding=UTF-8
 #code by LP
 #2013-11-4
-
 from __header__ import FlaskView, ApiView, route, request
 from www.controller.app.app_genre import AppGenreController
-
 
 class View(FlaskView):
     route_base = '/app_genre'
