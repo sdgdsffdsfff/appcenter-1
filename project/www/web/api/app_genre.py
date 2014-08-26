@@ -7,15 +7,12 @@ from www.controller.app.app_genre import AppGenreController
 
 
 class View(FlaskView):
-
     route_base = '/app_genre'
-
     def before_request(self, name):
         self._view = ApiView()
 
 
 class ListView(View):
-
     @route('/list', endpoint='api_app_genre_list')
     def get(self):
         genre_id = request.args.get('parent_genre', 0)
