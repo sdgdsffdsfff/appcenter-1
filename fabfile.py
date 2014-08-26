@@ -12,4 +12,4 @@ def deploy_test():
     project_dir = '/data0/wwwroot/appcenter/project'
     with cd(project_dir):
         run('git pull')
-        run("sudo supervisorctl restart")
+        run("supervisorctl restart appcenter")

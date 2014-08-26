@@ -5,20 +5,20 @@
 settings = {
     'new_app_redis': {
         'redis_master': {
-            'host': '10.2.0.53',
+            'host': '10.2.0.40',
             'port': 6379,
             'password': 'fuckall'
         },
         'redis_slave': [
             {
-                'host': '10.2.0.54',
+                'host': '10.2.0.45',
                 'port': 6379,
                 'password': 'fuckall'
             }
         ]
     },
     'mongodb': {
-        'host': 'mongodb://10.2.0.40:27018',
+        'host': 'mongodb://10.2.0.40:27017',
         'ids_name': 'ids',
         'replicaset': {
             "connection_str": "mongodb://appcenter:BDj7u38CYsz@10.2.0.40:27018,10.2.0.45:3000/appcenter",
