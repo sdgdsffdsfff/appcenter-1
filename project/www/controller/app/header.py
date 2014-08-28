@@ -97,6 +97,7 @@ def build_download_url(host,  hash_str, secret, expire):
     '''
     构造下载地址
     '''
+
     expire = int(time.time()) + expire
     file_path = '/%s.ipa' % hash_str
     md5_str = secret + file_path + str(expire)
@@ -104,7 +105,7 @@ def build_download_url(host,  hash_str, secret, expire):
     obj.update(md5_str)
     md5_str = obj.digest()
     md5_str = base64.encodestring(md5_str)
-    md5_str = md5_str.replace('+', '-').replace('/','_').replace('=', '')
+    md5_str = md5_str.replace('+', '-').replace('/','_').replace('=', '').strip()
     
     return '%s%s?st=%s&e=%s' % (host, file_path, md5_str, expire) 
 
