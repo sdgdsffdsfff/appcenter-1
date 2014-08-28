@@ -174,13 +174,13 @@ class AppController(ControllerBase):
 
         apps = mongo_db.AppBase.find(where).limit(limit).sort(sort[0], sort[1])
         res = []
-        collection = 'AppExt_' + lang
+        collection = 'AppBase_' + lang
 
         for app in apps:
             try:
-                ext_data = mongo_db[collection].find_one({'application_id': str(app['trackId'])})
+                ext_data = mongo_db[collection].find_one({'trackId': app['trackId']})
                 if ext_data:
-                    app['trackName'] = ext_data['title']
+                    app['trackName'] = ext_data['trackName']
             except Exception, ex:
                 print ex
 
@@ -340,9 +340,6 @@ class AppController(ControllerBase):
         获取有app数据的语言
         """
         langs = ["CN"]
-        # for collection_name in mongo_db.collection_names():
-        #     if collection_name.startswith('AppExt_'):
-        #         langs.append(collection_name.replace('AppExt_', ''))
         return langs
 
     def get_app_downloads(self, bundle_id):
