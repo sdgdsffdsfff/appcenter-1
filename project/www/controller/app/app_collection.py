@@ -65,8 +65,7 @@ class AppCollectionController(ControllerBase):
                         'ID': tmp_item['ID'], 'averageUserRating': rating,
                         'bundleId': tmp_item.get('bundleId',''),
                         'icon': tmp_item['icon'], 'version': tmp_item.get('version', ''),
-                        'size': tmp_item.get('size', ''), 'sort': tmp_item['sort'],
-                        'dwonload': download_info
+                        'size': tmp_item.get('size', ''), 'sort': tmp_item['sort']
                     })
                 else:
                     filter_items.append({
@@ -77,9 +76,9 @@ class AppCollectionController(ControllerBase):
                         'country': tmp_item['country'],
                         'id': tmp_item['id'], 'language': tmp_item['language'],
                         'version': tmp_item.get('version', ''),
-                        'size': tmp_item.get('size', ''),
-                        'dwonload': download_info
+                        'size': tmp_item.get('size', '')
                     })
+            filter_items.update(download_info)
             data = sort_items(filter_items)
             return {'title': title, 'identifier': res['identifier'], 'data': data if num is None else data[0:num]}
         except Exception, ex:
