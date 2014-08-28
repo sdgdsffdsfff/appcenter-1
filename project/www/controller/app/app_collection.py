@@ -60,15 +60,17 @@ class AppCollectionController(ControllerBase):
                 download_info.pop("ipaHistoryDownloads")
                 download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
                 if front:
-                    filter_items.append({
+                    temp_d1 = {
                         'trackName': tmp_item['trackName'],
                         'ID': tmp_item['ID'], 'averageUserRating': rating,
                         'bundleId': tmp_item.get('bundleId',''),
                         'icon': tmp_item['icon'], 'version': tmp_item.get('version', ''),
                         'size': tmp_item.get('size', ''), 'sort': tmp_item['sort']
-                    })
+                    }
+                    temp_d1.update(download_info)
+                    filter_items.append(temp_d1)
                 else:
-                    filter_items.append({
+                    temp_d2 = {
                         'trackName': tmp_item['trackName'],
                         'ID': tmp_item['ID'], 'averageUserRating': rating,
                         'bundleId': tmp_item.get('bundleId',''),
@@ -77,8 +79,9 @@ class AppCollectionController(ControllerBase):
                         'id': tmp_item['id'], 'language': tmp_item['language'],
                         'version': tmp_item.get('version', ''),
                         'size': tmp_item.get('size', '')
-                    })
-            filter_items.update(download_info)
+                    }
+                    temp_d2.update(download_info)
+                    filter_items.append(temp_d2)
             data = sort_items(filter_items)
             return {'title': title, 'identifier': res['identifier'], 'data': data if num is None else data[0:num]}
         except Exception, ex:
