@@ -234,3 +234,6 @@ def convertAppIpaHashToIpaURL(app):
         pass
     return app
 
+def language_to_dbname(language):
+    result = {"zh-Hans": "CN"}
+    return result.get(language, "CN")

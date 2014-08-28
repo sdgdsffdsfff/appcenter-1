@@ -26,7 +26,7 @@ class AppController(ControllerBase):
     #列表缓存长度
     limit = 600
     #默认语言
-    default_language = 'EN'
+    default_language = 'CN'
 
     def __init__(self, language='EN'):
         #语言
@@ -62,61 +62,7 @@ class AppController(ControllerBase):
             data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id), 'review': 1})
             data = self.filter_app_output(data)
             downloads = self.get_app_downloads(data['bundleId'])
-            en_data = mongo_db['AppExt_' + self.default_language].find_one({'application_id': str(data['trackId'])})
-            
-            data['systemRequirements'] = 'IOS5.0+' #temp
-
-            new_data = {'description': {}, 'trackName': {}, 'releaseNotes': {}}
             for lang in self._get_ext_data_language():
-
-                collection = 'AppExt_' + lang
-                ext_data = mongo_db[collection].find_one({'application_id': str(data['trackId'])})
-
-                try:
-                    new_data['description'] = ext_data['description']
-                except:
-                    try:
-                        if en_data and 'description' in en_data:
-                            new_data['description'] = en_data['description']
-                        else:
-                            new_data['description'] = data['description']
-                    except:
-                        new_data['description'] = ''
-
-                try:
-                    new_data['trackName'] = ext_data['title']
-                except:
-                    try:
-                        if en_data and 'title' in en_data:
-                            new_data['trackName'] = en_data['title']
-                        else:
-                            new_data['trackName'] = data['trackName']
-                    except:
-                        new_data['trackName'] = ''
-
-                try:
-                    new_data['releaseNotes'] = ext_data['release_notes']
-                except:
-                    try:
-                        if en_data and 'release_notes' in en_data:
-                            new_data['releaseNotes'] = en_data['release_notes']
-                        else:
-                            new_data['releaseNotes'] = data['releaseNotes']
-                    except:
-                        new_data['releaseNotes'] = ''
-
-                try:
-                    del data['description']
-                except:
-                    pass
-                try:
-                    del data['trackName']
-                except:
-                    pass
-                try:
-                    del data['releaseNotes']
-                except:
-                    pass
                 try:
                     rating = data['averageUserRating']
                 except:
@@ -125,13 +71,13 @@ class AppController(ControllerBase):
                     size = file_size_format(data['fileSizeBytes'])
                 except:
                     size = 'unknown'
+                collection = 'AppBase_' + lang
                 try:
                     download_version = downloads['ipaVersion']
                 except:
                     download_version = {'jb':'0', 'signed': '0'}
-                #merge data
-                data = dict(data, **new_data)
                 dict_merged = dict(downloads, **data)
+
                 json_str = json.dumps(super(AppController, self)._output_format(dict_merged))
                 redis_master_pipeline.hset(self.app_info_redis_key % lang, object_id, json_str)
                 #use for app update
@@ -164,7 +110,8 @@ class AppController(ControllerBase):
         """
         获取应用缓存
         """
-        cache_key = self.app_info_redis_key % self.request_language
+        cache_key = self.app_info_redis_key % language_to_dbname(self.request_language)
+
         try:
             json_str = redis_master.hget(cache_key, object_id)
 
@@ -405,10 +352,10 @@ class AppController(ControllerBase):
         """
         获取有app数据的语言
         """
-        langs = []
-        for collection_name in mongo_db.collection_names():
-            if collection_name.startswith('AppExt_'):
-                langs.append(collection_name.replace('AppExt_', ''))
+        langs = ["CN"]
+        # for collection_name in mongo_db.collection_names():
+        #     if collection_name.startswith('AppExt_'):
+        #         langs.append(collection_name.replace('AppExt_', ''))
         return langs
 
     def get_app_downloads(self, bundle_id):
