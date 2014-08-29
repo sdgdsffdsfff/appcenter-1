@@ -29,5 +29,6 @@ class ListView(View):
 
     @route('/list', endpoint='api_app_topic_list')
     def get(self):
-        res = self.app_topic.get_list()
+        jb = request.args.get('jb', 1)
+        res = self.app_topic.get_list(int(jb))
         return self._view.render(1000, res)
