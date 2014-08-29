@@ -374,6 +374,7 @@ class AppController(ControllerBase):
         ipaHash = "" #最新版
         ipaVersion = "" #最新版本号
         ipaHistoryDownloads = "" #历史版本
+
         #直接下载数据
         download = AppDownloadController()
         res = download.get_by_bundleid(bundle_id, sign)

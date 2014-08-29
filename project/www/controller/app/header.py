@@ -155,15 +155,14 @@ def sort_downloads(data):
     items排序
     '''
     length = len(data)
-    if length == 0:
-        return data
-    for i in range(len(data) - 1):
-        for j in range(len(data) - 1):
-            if LooseVersion(data[j]['version']) < LooseVersion(data[j+1]['version']):
-                tmp = data[j]
-                data[j] = data[j+1]
-                data[j+1] = tmp
-    return data
+    if length == 0: return data
+    # for i in range(len(data) - 1):
+    #     for j in range(len(data) - 1):
+    #         if LooseVersion(data[j].get('version', '0')) < LooseVersion(data[j+1].get('version', '0')):
+    #             tmp = data[j]
+    #             data[j] = data[j+1]
+    #             data[j+1] = tmp
+    return sorted(data, key = lambda x: LooseVersion('0' if x.get('version', '') == "" else x["version"]), reverse=True)
 
 def sort_dict_keys(data):
     '''
