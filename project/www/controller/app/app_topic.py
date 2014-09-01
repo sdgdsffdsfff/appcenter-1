@@ -47,15 +47,14 @@ class AppTopicController(ControllerBase):
             except: pass
         return res
 
-    def get_list(self):
+    def get_list(self, jb=0):
         try:
-            res = mongo_db.app_topic.find({'status': 1})
+            res = mongo_db.app_topic.find({'status': 1, 'prisonbreak': jb})
             if not res:
                 return []
             output = []
 
             for item in res:
-
                 tmp_item = None
 
                 if 'language' in item and self._language in item['language']:
@@ -80,6 +79,7 @@ class AppTopicController(ControllerBase):
 
                 output.append({'topicID': str(tmp_item['_id']), 'name': tmp_item['name'], 'appCount': count,
                                'update_time': update_time,'icon': create_pic_url(tmp_item['icon_store_path'])})
+
             return output
         except Exception, ex:
             print ex

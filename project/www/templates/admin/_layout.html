@@ -99,6 +99,20 @@
 	  <!--     <span class="title">首页</span> -->
 	  <!--   </a> -->
 	  <!-- </li> -->
+          
+          <li>
+	    <a href="{{ url_for('admin_app_collection_list') }}">
+	      <i class="icon-th"></i>
+	      <span class="title">首页推荐</span>
+	    </a>
+	  </li>
+	  <li>
+	    <a class="active" href="{{ url_for("admin_advertising_list") }}">
+	      <i class="icon-adn"></i> 
+	      <span class="title">广告位置</span>
+	    </a>
+	  </li>
+
 	  <li>
 	    <a href="{{ url_for('admin_genre_list') }}">
 	      <i class="icon-sitemap"></i> 
@@ -127,12 +141,6 @@
 	      </li>
 	    </ul>
 	  </li>
-	  <li>
-	    <a class="active" href="{{ url_for("admin_advertising_list") }}">
-	      <i class="icon-adn"></i> 
-	      <span class="title">广告位置</span>
-	    </a>
-	  </li>
           <li>
 	    <a class="active" href="{{ url_for("admin_other_ad_list") }}">
 	      <i class="icon-tumblr-sign"></i> 
@@ -140,12 +148,6 @@
 	    </a>
 	  </li>
 
-	  <li>
-	    <a href="{{ url_for('admin_app_collection_list') }}">
-	      <i class="icon-th"></i>
-	      <span class="title">首页推荐</span>
-	    </a>
-	  </li>
 	  <li>
 	    <a href="{{ url_for('admin_app_topic_list') }}">
 	      <i class="icon-copy"></i>

@@ -82,7 +82,7 @@ class ItemListView(View):
     def do_request(self):
         identifier = request.args.get('identifier')
         col = AppCollectionController(identifier, language=request.form['language'], country=request.form['country'])
-        collection = col.get(None)
+        collection = col.get()
         print(collection)
         #res = DB.app_collection.find_one({'identifier':identifier})
         #collection_list = []

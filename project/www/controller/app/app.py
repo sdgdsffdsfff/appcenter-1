@@ -63,47 +63,35 @@ class AppController(ControllerBase):
             data = self.filter_app_output(data)
             downloads = self.get_app_downloads(data['bundleId'])
             for lang in self._get_ext_data_language():
-                try:
-                    rating = data['averageUserRating']
-                except:
-                    rating = 0
-                try:
-                    size = file_size_format(data['fileSizeBytes'])
-                except:
-                    size = 'unknown'
-                collection = 'AppBase_' + lang
-                try:
-                    download_version = downloads['ipaVersion']
-                except:
-                    download_version = {'jb':'0', 'signed': '0'}
+                data['systemRequirements'] = 'IOS5.0+' #temp
+                try: rating = data['averageUserRating']
+                except: rating = 0
+                try: size = file_size_format(data['fileSizeBytes'])
+                except: size = 'unknown'
+                try: download_version = downloads['ipaVersion']
+                except: download_version = {'jb':'0', 'signed': '0'}
                 dict_merged = dict(downloads, **data)
-
                 json_str = json.dumps(super(AppController, self)._output_format(dict_merged))
                 redis_master_pipeline.hset(self.app_info_redis_key % lang, object_id, json_str)
-                #use for app update
                 version_data = json.dumps({
-                    'ID': str(object_id),
-                    'trackName': data['trackName'],
-                    'icon': data['icon'],
-                    'ipaVersion': download_version,
-                    'bundleId': data['bundleId'],
-                    'ipaHash': downloads['ipaHash'],
-                    'averageUserRating': rating,
-                    'size': size
+                    'ID': str(object_id), 'trackName': data['trackName'],
+                    'icon': data['icon'], 'ipaVersion': download_version,
+                    'bundleId': data['bundleId'], 'ipaHash': downloads['ipaHash'],
+                    'averageUserRating': rating, 'size': size
                     })
                 redis_master_pipeline.hset(self.app_version_redis_key % lang, data['bundleId'], version_data)
             redis_master_pipeline.execute()
         except Exception, ex:
             traceback.print_exc()
             pass
+
     def get_app_version_cache(self, bundle_id, lang='EN'):
         key = self.app_version_redis_key % lang
         app = None
         try:
             json_str = redis_master.hget(key, bundle_id)
             app = cjson.decode(json_str)
-        except:
-            pass
+        except: pass
         return app
 
     def get_app_cache(self, object_id, refresh_cache=False):
@@ -111,7 +99,6 @@ class AppController(ControllerBase):
         获取应用缓存
         """
         cache_key = self.app_info_redis_key % language_to_dbname(self.request_language)
-
         try:
             json_str = redis_master.hget(cache_key, object_id)
 
@@ -387,6 +374,7 @@ class AppController(ControllerBase):
         ipaHash = "" #最新版
         ipaVersion = "" #最新版本号
         ipaHistoryDownloads = "" #历史版本
+
         #直接下载数据
         download = AppDownloadController()
         res = download.get_by_bundleid(bundle_id, sign)
