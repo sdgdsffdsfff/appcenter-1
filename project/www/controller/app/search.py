@@ -4,9 +4,19 @@ from datetime import datetime
 import math
 
 import pyes
+import time
+import cjson
+import json
+import traceback
+import random
+import datetime
+from header import *
+from bson.objectid import ObjectId
 
 from conf.settings import settings
 from www.controller.app.header import mongo_db
+from www.controller.app.header import *
+from www.controller.app.app_download import AppDownloadController
 
 
 class AppSearch(object):
@@ -125,16 +135,57 @@ class AppSearch(object):
         next_page = (page + 1) if page + 1 < total_page else total_page
         items = []
         for item in results:
-          if sign == 1:
-            item['version'] = item['ipaVersionSigned']
-          else:
-            item['version'] = item['ipaVersionJb']
-          del item['ipaVersionJb']
-          del item['ipaVersionSigned']
-          items.append(item)
+            if item.get("bundleId", "") != "":
+                downloads = self.get_downloads(item["bundleId"], sign)
+                ipa = create_ipa_url(downloads['ipaHash'])
+            else:
+                ipa = ""
+            if sign == 1:
+                item['version'] = item['ipaVersionSigned']
+            else:
+                item['version'] = item['ipaVersionJb']
+            item["ipaDownloadUrl"]= ipa
+            del item['ipaVersionJb']
+            del item['ipaVersionSigned']
+            items.append(item)
         return {'results': items,
                 'pageInfo': {'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
                              'nextPage': next_page}}
+
+    def get_downloads(self, bundle_id, sign):
+
+        ipaHash = "" #最新版
+        ipaVersion = "" #最新版本号
+        ipaHistoryDownloads = "" #历史版本
+
+        #直接下载数据
+        download = AppDownloadController()
+        res = download.get_by_bundleid(bundle_id, sign)
+        tmp_download_list = {}
+        if res:
+            for down in res:
+                try:
+                    tmp = {'ipaHash': down['hash'], 'version': down['version'],
+                           'addTime': str(down['addTime'])}
+                    if down['version'] not in tmp_download_list:
+                        tmp_download_list[down['version']] = []
+                    tmp_download_list[down['version']].append(tmp)
+                except Exception, ex:
+                    print ex
+                    pass
+            try:
+                ipaHistoryDownloads = sort_dict_keys(tmp_download_list)
+            except Exception, ex:
+                print ex
+            try:
+                key = ipaHistoryDownloads.keys()[0]
+                ipaHash = ipaHistoryDownloads[key][0]['ipaHash']
+                ipaVersion = ipaHistoryDownloads[key][0]['version']
+            except Exception, ex:
+                traceback.print_exc()
+                pass
+
+        return {'ipaHash': ipaHash, 'ipaVersion': ipaVersion, 'ipaHistoryDownloads': ipaHistoryDownloads}
 
     def refresh(self):
         self.es.indices.refresh([self.index])
