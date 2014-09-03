@@ -285,7 +285,8 @@ class ItemAddView(View):
                 'ID': str(app['_id']),
                 'averageUserRating': rating,
                 'size': file_size_format(app['fileSizeBytes']),
-                'version': download_version
+                'version': download_version,
+                "bundleId": app["bundleId"]
             }
 
             DB.app_topic.update({'_id': ObjectId(request.args.get('_id'))}, 

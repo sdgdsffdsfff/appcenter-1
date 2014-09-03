@@ -19,9 +19,10 @@ class DetailView(View):
     @route('/detail', endpoint='api_app_topic_detail')
     def get(self):
         object_id = request.args.get('id', None)
+        jb = request.args.get("jb", 0)
         if object_id is None:
             self._view.render_error('error')
-        res = self.app_topic.get(object_id, front=True)
+        res = self.app_topic.get(object_id, jb, front=True)
         return self._view.render(1000, res)
 
 
