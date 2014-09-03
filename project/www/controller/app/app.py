@@ -26,7 +26,7 @@ class AppController(ControllerBase):
     #列表缓存长度
     limit = 600
     #默认语言
-    default_language = 'CN'
+    default_language = 'EN'
 
     def __init__(self, language='EN'):
         #语言

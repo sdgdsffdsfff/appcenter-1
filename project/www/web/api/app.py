@@ -50,6 +50,7 @@ class ListView(View):
 
         if device == 'ipad' or device == "2": device = 'ipad'
         else: device = 'iphone'
+        self.app = AppController()
 
         data = self.app.get_apps_cache(device, self._view._sign, genre_id, int(page), xsort)
 
