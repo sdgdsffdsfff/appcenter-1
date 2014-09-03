@@ -187,6 +187,7 @@ class AppController(ControllerBase):
             list_data = {}
             downloads = self.get_app_downloads(app['bundleId'])
             list_data['ipaHash'] = downloads['ipaHash']
+            print downloads["ipaHash"]
             try:
                 list_data['icon'] = artworkUrl512_to_114_icon(app['artworkUrl512'])
             except:
