@@ -26,7 +26,7 @@ class AppController(ControllerBase):
     #列表缓存长度
     limit = 600
     #默认语言
-    default_language = 'EN'
+    default_language = 'CN'
 
     def __init__(self, language='EN'):
         #语言
@@ -186,8 +186,10 @@ class AppController(ControllerBase):
 
             list_data = {}
             downloads = self.get_app_downloads(app['bundleId'])
-            list_data['ipaHash'] = downloads['ipaHash']
-            print downloads["ipaHash"]
+            if "sign" in where and where["sign"] == 1:
+                list_data['ipaHash'] = downloads['ipaHash']["signed"]
+            else:
+                list_data['ipaHash'] = downloads['ipaHash']["jb"]
             try:
                 list_data['icon'] = artworkUrl512_to_114_icon(app['artworkUrl512'])
             except:
@@ -296,7 +298,7 @@ class AppController(ControllerBase):
         end = start + page_size
 
         lists = redis_master.lrange(key, start, end-1)
-        lists = [cjson.decode(x) for x in lists]
+        lists = [convertAppIpaHashToIpaURL(cjson.decode(x)) for x in lists]
         return {'results': lists,
                 'pageInfo': {'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
                              'nextPage': next_page}}

@@ -196,19 +196,25 @@ def datetime_format(date_time):
     return date_time.strftime('%Y-%m-%d')
 
 def convertAppIpaHashToIpaURL(app):
-    try:
-        jb = create_ipa_url(app['ipaHash']['jb'])
-    except:
-        jb = None
-    try:
-        signed = create_ipa_url(app['ipaHash']['signed'])
-    except:
-        signed = None
-        
-    app['ipaURL'] = {
-        'jb': jb,
-        'signed': signed
-    }
+    if type(app["ipaHash"])== str:
+        try:
+            ipa = create_ipa_url(app['ipaHash'])
+        except:
+            ipa = None
+        app['ipaURL'] = ipa
+    else:
+        try:
+            jb = create_ipa_url(app['ipaHash']['jb'])
+        except:
+            jb = None
+        try:
+            signed = create_ipa_url(app['ipaHash']['signed'])
+        except:
+            signed = None
+        app['ipaURL'] = {
+            'jb': jb,
+            'signed': signed
+        }
 
     try:
         for key in app['ipaHistoryDownloads']['jb'].keys():
