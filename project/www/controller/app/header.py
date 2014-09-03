@@ -201,7 +201,7 @@ def convertAppIpaHashToIpaURL(app):
             ipa = create_ipa_url(app['ipaHash'])
         except:
             ipa = None
-        app['ipaURL'] = ipa
+        app['ipaDownloadUrl'] = ipa
     else:
         try:
             jb = create_ipa_url(app['ipaHash']['jb'])
@@ -211,7 +211,7 @@ def convertAppIpaHashToIpaURL(app):
             signed = create_ipa_url(app['ipaHash']['signed'])
         except:
             signed = None
-        app['ipaURL'] = {
+        app['ipaDownloadUrl'] = {
             'jb': jb,
             'signed': signed
         }
@@ -221,7 +221,7 @@ def convertAppIpaHashToIpaURL(app):
             tmp = app['ipaHistoryDownloads']['jb'][key]
             items = []
             for down in tmp:
-                down['ipaURL'] = create_ipa_url(down['ipaHash'])
+                down['ipaDownloadUrl'] = create_ipa_url(down['ipaHash'])
                 items.append(down)
             app['ipaHistoryDownloads']['jb'][key] = items
     except:
@@ -232,7 +232,7 @@ def convertAppIpaHashToIpaURL(app):
             tmp = app['ipaHistoryDownloads']['signed'][key]
             items = []
             for down in tmp:
-                down['ipaURL'] = create_ipa_url(down['ipaHash'])
+                down['ipaDownloadUrl'] = create_ipa_url(down['ipaHash'])
                 items.append(down)
             app['ipaHistoryDownloads']['signed'][key] = items
     except:
