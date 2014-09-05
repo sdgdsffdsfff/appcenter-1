@@ -492,7 +492,10 @@ class AppController(ControllerBase):
             res = json.loads(res)
         apps = []
         for i in xrange(0, num):
-            apps.append(random.choice(res))
+            try:
+                apps.append(random.choice(res))
+            except IndexError:
+                pass
         return apps
 
     def get_cached_appinfo_count(self, lang='EN'):
