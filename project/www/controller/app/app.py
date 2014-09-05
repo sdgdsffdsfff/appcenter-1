@@ -491,7 +491,11 @@ class AppController(ControllerBase):
         else:
             res = json.loads(res)
         apps = []
-        for i in xrange(0, num):
+        if len(res) < num:
+            res_len = len(res)
+        else:
+            res_len = num
+        for i in xrange(0, res_len):
             try:
                 apps.append(random.choice(res))
             except IndexError:
