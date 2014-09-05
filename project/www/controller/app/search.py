@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Created by pengchangliang on 14-3-22.
-from datetime import datetime
+
 import math
 
 import pyes
@@ -16,6 +16,7 @@ from conf.settings import settings
 from www.controller.app.header import mongo_db
 from www.controller.app.header import *
 from www.controller.app.app_download import AppDownloadController
+from datetime import datetime
 
 
 class AppSearch(object):
