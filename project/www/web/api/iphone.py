@@ -2,7 +2,7 @@
 #code by LP
 #2013-11-27
 
-
+from flask import request
 from __header__ import FlaskView, ApiView, route
 from www.controller.app.app import AppController
 from www.controller.app.advertising import AdvertisingController
@@ -26,9 +26,9 @@ class View(FlaskView):
         col = AppCollectionController(identifier, language=self._view._language, ip=self._view._ip, country=self._view._country)
         return col.get(num=30, front=True)
 
-    def _get_app_topic(self):
+    def _get_app_topic(self, jb):
         topic = AppTopicController(self._view._language, self._view._ip)
-        return topic.get_list()
+        return topic.get_list(jb)
 
 
 class HomePageView(View):
@@ -38,12 +38,13 @@ class HomePageView(View):
     @route('/home_page', endpoint='api_iphone_home_page')
     def get(self):
         data = {}
+        jb = request.args.get("jb", 0)
         #滚动幻灯片
         data['slider'] = self._get_advertising('iphone_index_flash')
         #今日推荐
         data['apps'] = self._get_app_collection('iphone_index_app_list')
         #topic
-        data['topic'] = self._get_app_topic()
+        data['topic'] = self._get_app_topic(int(jb))
         return self._view.render(1000, data)
 
 # class HomeAdImageView(View):

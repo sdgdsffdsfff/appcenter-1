@@ -23,7 +23,7 @@ class AppTopicController(ControllerBase):
 
     def get(self, object_id, jb, front=False):
 
-        res = mongo_db.app_topic.find_one({'_id': ObjectId(object_id)})
+        res = mongo_db.app_topic.find_one({'_id': ObjectId(object_id), 'prisonbreak': int(jb)})
         if not res:
             return {}
         del res['_id']
