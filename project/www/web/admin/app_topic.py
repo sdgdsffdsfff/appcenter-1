@@ -76,7 +76,7 @@ class AppTopicInfoBaseView(View):
         self._form.add_field('checkbox', '投放国家', 'country', data={'value': '', 'option': country_options})
         self._form.add_field('file', '专题图标', 'pic', data={'attributes': {}})
         self._form.add_field('radio', '状态', 'status', data={'value': '0', 'option':[('发布','1'), ('未发布','0')]})
-        self._form.add_field('radio', '版本', 'prisonbreak', data={'value': '0', 'option':[('正版','1'), ('越狱','0')]})
+        self._form.add_field('radio', '版本', 'prisonbreak', data={'value': '0', 'option':[('正版','0'), ('越狱','1')]})
         #self._form.add_validator(AppTopicAddValidator)
 
 
