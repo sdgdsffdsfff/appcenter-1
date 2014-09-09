@@ -115,7 +115,7 @@ class AppSearch(object):
         if sign == 1:
           must.append(pyes.TermQuery('sign', 1))
         must_not = []
-        if device == 'iphone':
+        if device == 1:
             must_not.append(pyes.TermQuery('supportIphone', 0))
 
         results = self.es.search(
@@ -123,10 +123,10 @@ class AppSearch(object):
                         fields=['trackName', 'icon', 'ID', 'bundleId', 'averageUserRating',  
                         'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount'],
                         start=start,
-                        size=page_size,
-                        sort = [
-                            { "downloadCount" : "desc" },
-                        ]
+                        size=page_size
+                        # sort = [
+                        #     { "downloadCount" : "desc" },
+                        # ]
             ))
 
         count = results.count()
