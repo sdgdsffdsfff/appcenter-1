@@ -51,8 +51,11 @@
 								版本区分
 								<select size="1" onchange="changeVersionForm()" id="version" name="version" aria-controls="version" class="m-wrap small">
 									<option value="" selected="selected">全部</option>
-									<option value="ge">正版</option>
-									<option value="pb">越狱</option>
+									{% if "jb" in app_collection["identifier"] %}
+										<option value="pb">越狱</option>
+									{% else %}
+										<option value="ge">正版</option>
+									{% endif %}
 								</select> 
 							</label>
 						</div>

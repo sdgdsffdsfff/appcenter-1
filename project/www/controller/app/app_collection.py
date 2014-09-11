@@ -25,9 +25,9 @@ class AppCollectionController(ControllerBase):
             if not res or 'items' not in res:
                 return {}
             try:
-                title = res['title']['EN']
+                title = res['title']['en']
             except:
-                title = res['title']['ZH']
+                title = res['title']['zh-Hans']
             try:
                 title = res['title'][self._language]
             except:
