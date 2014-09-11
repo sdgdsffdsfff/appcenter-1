@@ -22,7 +22,7 @@ class View(FlaskView):
         ad = AdvertisingController(identifier, self._view._language, self._view._ip)
         return ad.get(5)
 
-    def _get_app_collection(self, identifier, jb):
+    def _get_app_collection(self, identifier):
         col = AppCollectionController(identifier, language=self._view._language, ip=self._view._ip, country=self._view._country)
         return col.get(num=30, front=True)
 
