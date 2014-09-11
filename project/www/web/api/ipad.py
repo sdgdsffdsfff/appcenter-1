@@ -35,8 +35,12 @@ class HomePageView(View):
     @route('/home_page', endpoint='api_ipad_home_page')
     def get(self):
         data = {}
+        jb = request.args.get("jb", 0)
         #滚动幻灯片
         data['slider'] = self._get_advertising('ipad_index_flash')
         #今日推荐
-        data['apps'] = self._get_app_collection('ipad_index_app_list')
+        if int(jb) == 0:
+            data['apps'] = self._get_app_collection('ipad_index_app_list')
+        else:
+            data['apps'] = self._get_app_collection('ipad_index_app_list_jb')
         return self._view.render(1000, data)

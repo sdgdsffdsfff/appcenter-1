@@ -22,7 +22,7 @@ class View(FlaskView):
         ad = AdvertisingController(identifier, self._view._language, self._view._ip)
         return ad.get(5)
 
-    def _get_app_collection(self, identifier):
+    def _get_app_collection(self, identifier, jb):
         col = AppCollectionController(identifier, language=self._view._language, ip=self._view._ip, country=self._view._country)
         return col.get(num=30, front=True)
 
@@ -42,7 +42,10 @@ class HomePageView(View):
         #滚动幻灯片
         data['slider'] = self._get_advertising('iphone_index_flash')
         #今日推荐
-        data['apps'] = self._get_app_collection('iphone_index_app_list')
+        if int(jb) == 0:
+            data['apps'] = self._get_app_collection('iphone_index_app_list')
+        else:
+            data['apps'] = self._get_app_collection('iphone_index_app_list_jb')
         #topic
         data['topic'] = self._get_app_topic(int(jb))
         return self._view.render(1000, data)
