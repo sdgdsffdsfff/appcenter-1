@@ -2,7 +2,7 @@
 #code by LP
 #2013-11-27
 
-
+from flask import request
 from __header__ import FlaskView, ApiView, route
 from www.controller.app.app import AppController
 from www.controller.app.advertising import AdvertisingController
