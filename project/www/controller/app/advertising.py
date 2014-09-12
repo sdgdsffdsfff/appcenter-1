@@ -37,8 +37,8 @@ class AdvertisingController(ControllerBase):
 
             if tmp_item == None:
                 continue
-            filter_items.append({'title':tmp_item['title'], 'link':tmp_item['link'], 'picURL':create_pic_url(tmp_item['store_path'])})
-
+            filter_items.append({'title':tmp_item['title'], 'order': tmp_item['order'], 'link':tmp_item['link'], 'picURL':create_pic_url(tmp_item['store_path'])})
+            
         return filter_items[0:num]
 
 
