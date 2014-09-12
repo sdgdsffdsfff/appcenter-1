@@ -47,15 +47,20 @@ class ListView(View):
         version = request.args.get("version", "")
 
         where = {}
+        sign = 0
+        if version != "":
+            sign = 1 if version == "pb" else 0
         if track_name != '':
             regex = re.compile(track_name, re.IGNORECASE)
-            where = {'trackName': regex}
+            where = {'trackName': regex, "sign": sign}
         if track_id != '':
-            where = {'trackId': int(track_id)}
+            where = {'trackId': int(track_id), "sign": sign}
         if bundle_id != '':
-            where = {'bundleId': bundle_id}
-        if version != "":
-            where = {"sign": 0} if version == "pb" else {"sign": 1}
+            where = {'bundleId': bundle_id, "sign": sign}
+
+        if track_id == "" and track_name == "" and bundle_id == "":
+            if version != "":
+                where = {'sign': sign}
 
         app_list, page_info = self.app.get_base_apps(where, ('sort', -1), int(page), 10)
 
