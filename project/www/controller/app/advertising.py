@@ -20,7 +20,8 @@ class AdvertisingController(ControllerBase):
             return []
 
         filter_items = []
-        for item in res['items']:
+        #sorted(tmp_ad_list, key=lambda k: k.get("order", ""))
+        for item in sorted(res['items'], key=lambda k: k.get("order", "")):
             tmp_item = None
             if 'language' in item and self._language in item['language']:
                     tmp_item = item
@@ -38,7 +39,7 @@ class AdvertisingController(ControllerBase):
             if tmp_item == None:
                 continue
             filter_items.append({'title':tmp_item['title'], 'order': tmp_item['order'], 'link':tmp_item['link'], 'picURL':create_pic_url(tmp_item['store_path'])})
-            
+
         return filter_items[0:num]
 
 

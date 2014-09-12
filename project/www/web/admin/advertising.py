@@ -210,7 +210,7 @@ class ItemAddView(View):
                 'id': int(item_id),
                 'title': request.form['title'],
                 'link': link,
-                'order': request.form["order"],
+                'order': int(request.form["order"]),
                 'hash': hash_str,
                 'store_path': save_file,
                 'language': language,
