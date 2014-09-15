@@ -36,11 +36,11 @@ class HomePageView(View):
     def get(self):
         data = {}
         jb = request.args.get("jb", 0)
-        #滚动幻灯片
-        data['slider'] = self._get_advertising('ipad_index_flash')
-        #今日推荐
+        #今日推荐|#滚动幻灯片
         if int(jb) == 0:
             data['apps'] = self._get_app_collection('ipad_index_app_list')
+            data['slider'] = self._get_advertising('ipad_index_flash')
         else:
             data['apps'] = self._get_app_collection('ipad_index_app_list_jb')
+            data['slider'] = self._get_advertising('ipad_index_flash_jb')
         return self._view.render(1000, data)
