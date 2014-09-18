@@ -20,7 +20,7 @@ settings = {
     'mongodb': {
         'host': 'mongodb://10.2.0.40:27017',
         'ids_name': 'ids',
-        'replicaset': {
+        'replica_set': {
             "connection_str": "mongodb://appcenter:tuj62_Iga1e4_a@54.76.98.58:37017,61.155.215.40:37017,61.155.215.45:37017/appcenter",
             "replica_set_name": "appvv"
         }
