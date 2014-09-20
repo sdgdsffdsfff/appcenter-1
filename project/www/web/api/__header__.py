@@ -30,12 +30,10 @@ class ApiView(WebView):
         #国家
         self._country = request.args.get('country', None)
         #渠道包类型
-        self._client_type = request.args.get('country', 'jb')
+        self._client_type = request.args.get('client_type', 'common')
         #用于判断签名和越狱
-        try:
-            self._sign = 1 - int(request.args.get('jb', 1))
-        except:
-            self._sign = 0
+        try: self._sign = 1 - int(request.args.get('jb', 1))
+        except: self._sign = 0
 
     def render(self, code, data, status_code=200, output_format=None):
 
