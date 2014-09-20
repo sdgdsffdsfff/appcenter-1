@@ -83,12 +83,6 @@ class ItemListView(View):
         identifier = request.args.get('identifier')
         col = AppCollectionController(identifier, language=request.form['language'], country=request.form['country'])
         collection = col.get()
-        print(collection)
-        #res = DB.app_collection.find_one({'identifier':identifier})
-        #collection_list = []
-        #if res and 'items' in res:
-        #    collection_list = self.sort_item(res['items'], filters)
-
         return self._view.ajax_render('app_collection_item_list_ajax', collection_list=collection['data'], identifier=collection['identifier'])
 
     def sort_item(self, items, filters):

@@ -87,7 +87,7 @@
 					<td>{{ collection['identifier'] }}</td>
 					<td>
 						<a class=" btn green" data-toggle="modal" href="{{ url_for('admin_app_collection_item_add') }}?identifier={{collection['identifier']}}">管理</a>
-                                                {% if collection['identifier'] != 'iphone_index_app_list' and collection['identifier'] != 'ipad_index_app_list' %}
+                                                {% if "index_app" not in collection['identifier']  %}
 						<a class=" btn red" data-toggle="modal" href="#confirm_box_{{collection['_id']}}">删除</a>
                                                 {% endif %}
 						<div id="confirm_box_{{collection['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">

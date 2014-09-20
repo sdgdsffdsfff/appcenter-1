@@ -72,7 +72,7 @@
 	  <td>{{ advertising['identifier'] }}</td>
 	  <td>
 	    <a class=" btn green" data-toggle="modal" href="{{ url_for('admin_advertising_item_list', identifier=advertising['identifier']) }}">管理</a>
-            {% if advertising['identifier'] != 'iphone_index_flash' and   advertising['identifier'] != 'ipad_index_flash' %}
+            {% if 'index_flash' not in advertising['identifier'] %}
 	    <a class=" btn red" data-toggle="modal" href="#confirm_box_{{advertising['_id']}}">删除</a>
             {% endif %}
 	    <div id="confirm_box_{{advertising['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">

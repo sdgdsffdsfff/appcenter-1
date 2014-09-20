@@ -24,7 +24,7 @@ class NGRedis(object):
                 conn_slave_redis_group.append(r)      
         return conn_slave_redis_group
     
-    def get_redis(self, source=False):
+    def get_redis(self, source=True):
         '''
         提供一个可使用的redis对象。
         参数 source : True为master / Flase为slave随即对象

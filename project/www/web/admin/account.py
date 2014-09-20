@@ -29,7 +29,7 @@ class LoginView(FlaskView):
             user = User.find_one(username=username)
             if user and user.verify_password(password):
                 login_user(user)
-                return redirect(url_for('admin_genre_list'))
+                return redirect(url_for('admin_app_collection_list'))
         flash(u"错误的用户名或者密码")
         return self._view.render('login', title="维享管理系统", form=self.login_form)
 
