@@ -14,6 +14,7 @@ from www.web.base import WebView
 from flask.ext.classy import FlaskView, route
 from flask import redirect, session, request, url_for
 from flask.ext.login import current_user
+import uuid
 
 DB = mongo_db
 
@@ -22,10 +23,11 @@ def upload_hash_file(file, target_dir, allow_ext=['png', 'jpg']):
     上传文件
     '''
     if file:
-        filename = secure_filename(file.filename)
-        filename = filename.lower()
+        #filename = secure_filename(file.filename)
+        filename = file.filename.lower()
         if '.' not in filename or filename.rsplit('.', 1)[1] not in set(allow_ext):
             raise Exception('文件类型不允许上传')
+        filename = str(uuid.uuid1()) + "." + filename.rsplit('.', 1)[1]
         tmpfile = os.path.join(settings['tmp_dir'], filename)
         file.save(tmpfile)
         hash_str = sha1_of_file(tmpfile)
