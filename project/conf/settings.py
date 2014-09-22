@@ -8,7 +8,14 @@ settings = {
             'host': '54.183.152.170',
             'port': 6379,
             'password': 'jm*7yrt@13'
-        }
+        },
+        'redis_slave': [
+            {
+                'host': '198.100.110.18',
+                'port': 6379,
+                'password': 'jm*7yrt@13'
+            }
+        ]
     },
     'mongodb': {
         'host': '',
