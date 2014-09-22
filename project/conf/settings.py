@@ -7,7 +7,7 @@ settings = {
         'redis_master': {
             'host': '54.183.152.170',
             'port': 6379,
-            'password': 'Brit_pop2014'
+            'password': 'jm*7yrt@13'
         }
     },
     'mongodb': {
