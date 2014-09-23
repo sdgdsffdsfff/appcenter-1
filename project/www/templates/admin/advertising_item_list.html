@@ -38,29 +38,42 @@
     </div>
     <div class="portlet-body">
         <div class="table-toolbar">
-            <div class="btn-group">
-                <a class="btn green" data-toggle="modal" href="{{ url_for('admin_advertising_item_add', identifier=ad['identifier']) }}{% if layout != 'default' %}&layout=tiny{% endif%}">新添加广告 <i class="icon-plus"></i></a>
-            </div>
-            <div class="btn-group">
-                <form action="#" method="">
-                    <select id="country">
-                        <option value="">All</option>
-                        {% for country in country_options %}
-                            <option value="{{country[1]}}" {% if count == country[1] %} selected {% endif %}>{{country[0]}}</option>
-                        {% endfor %}
-                    </select>
+          <div class="">
+            <form action="#" method="" class="form-horizontal">
+              <div class="control-group">
+                <label class="control-label">国家</label>
+                <div class="controls">
+                  <select id="country" width="300">
+                    <option value="">All</option>
+                    {% for country in country_options %}
+                    <option value="{{country[1]}}" {% if country[1] == country_s %} selected {% endif %}>{{country[0]}}</option>
+                    {% endfor %}
+                  </select>
+                </div> 
+              </div>
+              <div class="control-group">
+                  <label class="control-label">语言</label>
+                  <div class="controls">
                     <select id="lang">
-                        <option value="">All</option>
-                        {% for lang in lang_options %}
-                            <option value="{{lang[1]}}" {% if lan == lang[1] %} selected {% endif %}>{{lang[0]}}</option>
-                        {% endfor %}
-                    </select>
-                    <button class="btn blue" id="ad_search">搜索</button>
-                </form>
+                      <option value="">All</option>
+                      {% for lang in lang_options %}
+                      <option value="{{lang[1]}}" {% if lang_s == lang[1] %} selected {% endif %}>{{lang[0]}}</option>
+                      {% endfor %}
+                    </div>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button class="btn blue" id="ad_search">搜索</button>
+                </div>
+              </form>
             </div>
+          <a class="btn green" data-toggle="modal" href="{{ url_for('admin_advertising_item_add', identifier=ad['identifier']) }}{% if layout != 'default' %}&layout=tiny{% endif%}">新添加广告 <i class="icon-plus"></i></a>
+          <br />
+          <br />
         </div>
+
         <div id="data_grad">
-            <table class="table table-striped table-hover table-bordered">
+            <table class="table table-striped table-hover table-bordered" style="font-size: 14px">
                 <thead>
                     <tr>
                         <td>图片</td>

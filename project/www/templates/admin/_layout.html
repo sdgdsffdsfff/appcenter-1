@@ -85,11 +85,11 @@
 	  <li>
 	    <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
 	    <form class="sidebar-search">
-	      	<div class="input-box">
-				<a href="javascript:;" class="remove"></a>
-				<input type="text" id="searchQ" placeholder="TrackId" />
-				<input type="button" class="submit" value=" " />
-	      	</div>
+	      <div class="input-box">
+		<a href="javascript:;" class="remove"></a>
+		<input type="text" id="searchQ" placeholder="TrackId" />
+		<input type="button" class="submit" value=" " />
+	      </div>
 	    </form>
 	    <!-- END RESPONSIVE QUICK SEARCH FORM -->
 	  </li>
@@ -118,14 +118,18 @@
 	      <span class="title">应用专题</span>
 	    </a>
 	  </li>
-
+          <li>
+	    <a class="active" href="{{ url_for("admin_other_ad_list") }}">
+	      <i class="icon-tumblr-sign"></i> 
+	      <span class="title">第三方广告</span>
+	    </a>
+	  </li>
 	  <li>
 	    <a href="{{ url_for('admin_genre_list') }}">
 	      <i class="icon-sitemap"></i> 
 	      <span class="title">应用分类</span>
 	    </a>
 	  </li>
-
 	  <li>
 	    <a href="javascript:;">
 	      <i class="icon-apple"></i> 
@@ -133,10 +137,6 @@
 	      <span class="arrow "></span>
 	    </a>
 	    <ul class="sub-menu">
-              <!-- <li > -->
-	      <!--   <a href="{{ url_for('admin_visual_editor_simulator') }}" target="_blank"> -->
-	      <!--     可视化编辑</a> -->
-	      <!-- </li> -->
 	      <li >
 		<a href="{{ url_for('admin_app_add') }}">
 		  添加新应用</a>
@@ -147,70 +147,76 @@
 	      </li>
 	    </ul>
 	  </li>
-          
           <li>
-	    <a class="active" href="{{ url_for("admin_other_ad_list") }}">
-	      <i class="icon-tumblr-sign"></i> 
-	      <span class="title">第三方广告</span>
+	    <a href="javascript:;">
+	      <i class="icon-info-sign"></i> 
+	      <span class="title">客户端信息管理</span>
+	      <span class="arrow "></span>
 	    </a>
-	  </li>
-	  <li>
-	    <a href="{{ url_for('admin_clienttype_list') }}">
-	      <i class="icon-file-text"></i>
-	      <span class="title">包类型管理</span>
-	    </a>
-	  </li>
-	  <li>
-	    <a href="{{ url_for('admin_client_list') }}">
-	      <i class=" icon-bitbucket-sign"></i>
-	      <span class="title">客户端管理</span>
-	    </a>
-	  </li>
-          <li>
-	    <a href="{{ url_for('admin_language_list') }}">
-	      <i class="icon-asterisk"></i>
-	      <span class="title">语言管理</span>
-	    </a>
-	  </li>
-          <li>
-	    <a href="{{ url_for('admin_country_list') }}">
-	      <i class="icon-map-marker"></i>
-	      <span class="title">国家管理</span>
-	    </a>
+	    <ul class="sub-menu">
+              <li>
+	        <a href="{{ url_for('admin_clienttype_list') }}">
+	          <span class="title">包类型管理</span>
+	        </a>
+	      </li>
+	      <li>
+	        <a href="{{ url_for('admin_client_list') }}">
+	          <span class="title">客户端管理</span>
+	        </a>
+	      </li>
+              <li>
+	        <a href="{{ url_for('admin_language_list') }}">
+	          <span class="title">语言管理</span>
+	        </a>
+	      </li>
+              <li>
+	        <a href="{{ url_for('admin_country_list') }}">
+	          <span class="title">国家管理</span>
+	        </a>
+	      </li>
+	    </ul>
 	  </li>
           <li>
-	    <a href="{{ url_for('admin_dirty_word_list') }}">
-	      <i class="icon-won"></i>
-	      <span class="title">敏感词管理</span>
+	    <a href="javascript:;">
+	      <i class="icon-search"></i> 
+	      <span class="title">搜索管理</span>
+	      <span class="arrow "></span>
 	    </a>
-	  </li>
-	  <li>
-	    <a href="{{ url_for('admin_search_list') }}">
-	      <i class="icon-cny"></i>
-	      <span class="title">搜索词列表</span>
-	    </a>
-	  </li>
-	  <li>
-	    <a href="{{ url_for('admin_hotword_list') }}">
-	      <i class="icon-font"></i>
-	      <span class="title">热词列表</span>
-	    </a>
-	  </li>
+	    <ul class="sub-menu">
+              <li>
+	        <a href="{{ url_for('admin_dirty_word_list') }}">
+	          <span class="title">敏感词管理</span>
+	        </a>
+	      </li>
+              <li>
+	        <a href="{{ url_for('admin_search_list') }}">
+	          <span class="title">搜索词列表</span>
+	        </a>
+	      </li>
+	      <li>
+	        <a href="{{ url_for('admin_hotword_list') }}">
+	          <span class="title">热词列表</span>
+	        </a>
+	      </li>
 
+            </ul>
+          </li>
 
-      {% if current_user.role.role == "Admin" %}
-          <!-- <li> -->
-	  <!--   <a href="{{ url_for('admin_cache_app_info') }}"> -->
-	  <!--     <i class="icon-cny"></i> -->
-	  <!--     <span class="title">缓存状态</span> -->
-	  <!--   </a> -->
-	  <!-- </li> -->
+          {% if current_user.role.role == "Admin" %}
           <li>
-	    <a href="{{ url_for('admin_user_list') }}">
-	      <i class="icon-group"></i>
-	      <span class="title">用户管理</span>
+	    <a href="javascript:;">
+	      <i class="icon-truck"></i> 
+	      <span class="title">系统管理</span>
+	      <span class="arrow "></span>
 	    </a>
-	  </li>
+	    <ul class="sub-menu">
+              <li>
+	        <a href="{{ url_for('admin_user_list') }}">
+	          <span class="title">用户管理</span>
+	        </a>
+	      </li>
+            </ul>
+          </li>
           {% endif %}
 	</ul>
 	<!-- END SIDEBAR MENU -->
