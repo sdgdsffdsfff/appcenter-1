@@ -59,7 +59,7 @@ class AppController(ControllerBase):
         设置应用缓存
         """
         try:
-            data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id), 'review': 1})
+            data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id)})
             data = self.filter_app_output(data)
             downloads = self.get_app_downloads(data['bundleId'])
             for lang in self._get_ext_data_language():
