@@ -30,15 +30,15 @@ def transfer_app_download():
     to_db.AppDownload.insert(temp_docs)
 
 def update_appbase():
-    for app in to_db.AppBase.find():
-        bundle_id = app.get("bundleId", None)
+    for app in from_db.app.find({}, {"bundleid": 1, "sign": 1, "icon": 1, "review": 1, "appid":1}):
+        bundle_id = app.get("bundleid", None)
         if not bundle_id: continue
-        f_app = from_db.app.find_one({"bundleid": bundle_id})
+        print bundle_id
         temp_info = {}
-        if not f_app: continue
-        temp_info["sign"] = f_app.get("sign", 0)
-        temp_info["icon"] = f_app.get("icon", "")
-        temp_info["review"] = f_app.get("review", 0)
+        temp_info["sign"] = app.get("sign", 0)
+        temp_info["icon"] = app.get("icon", "")
+        temp_info["review"] = app.get("review", 0)
+        temp_info["appid"] = app.get("appid", 0)
         to_db.AppBase.update({"bundleId": bundle_id}, {"$set": temp_info})
         to_db.AppBase_CN.update({"bundleId": bundle_id}, {"$set": temp_info})
 
