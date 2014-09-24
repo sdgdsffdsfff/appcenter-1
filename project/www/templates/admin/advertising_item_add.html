@@ -71,6 +71,7 @@ function FormatSelection(item) {
 }
 
 	$(document).ready(function() {
+                window.adtype = "app";
 		$("input:radio[name=adtype]").click(function() {
 		    var value = $(this).val() == "1" ? "app": "topic";
 		    window.adtype = value;
