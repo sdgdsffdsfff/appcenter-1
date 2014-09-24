@@ -1,8 +1,8 @@
 from pymongo import MongoClient
 from datetime import datetime
 
-FROM_MONGO_SEVRER_URL = "mongodb://appdb:cdj6u58CtSa@54.72.191.195:27017/appdb"
-TO_MONGO_SEVRER_URL = "mongodb://appcenter:tuj62_Iga1e4_a@54.76.98.58:37017,61.155.215.40:37017,61.155.215.45:37017/appcenter"
+FROM_MONGO_SEVRER_URL = "mongodb://appdb:cdj6u58CtSa@54.72.191.195:27017/appdb?slaveok=true"
+TO_MONGO_SEVRER_URL = "mongodb://appcenter:tuj62_Iga1e4_a@54.183.152.170:37017,54.72.191.195:37017,61.155.215.40:37017/appcenter"
 from_client = MongoClient(FROM_MONGO_SEVRER_URL)
 to_client = MongoClient(TO_MONGO_SEVRER_URL)
 from_db = from_client["appdb"]
