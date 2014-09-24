@@ -14,15 +14,17 @@ def transfer_app_download():
     where = {"addtime": {"$lt": now}, "soft_delete": {"$ne": 1}}
     for app_download in from_db.app_download.find(where):
         app_id = app_download.get("appid", None)
+        print app_id
         if not app_id: continue
-        app = from_db.app.find_one({"app_id": app_id})
+        app = from_db.app.find_one({"appid": app_id})
+        if not app: continue
         temp_docs.append({
-            "bundleId": app["bundleid"], "version" : app["bundle_version"],
-            "minOsVersion": app.get("min_os_version", ""),
-            "addTime": app.get("addTime", datetime.now()),
-            "hash": app["hash"], "appid": app["appid"], "sign" : abs(app["jb"]-1)
+            "bundleId": app_download["bundleid"], "version" : app_download["bundleversion"],
+            "minOsVersion": app_download.get("min_os_version", ""),
+            "addTime": app_download.get("addTime", datetime.now()),
+            "hash": app_download["hash"], "appid": app_download["appid"], "sign" : abs(app_download["jb"]-1)
         })
-        if len(temp_docs) % 500 == 0:
+        if len(temp_docs) % 1 == 0:
             to_db.AppDownload.insert(temp_docs)
             temp_docs = []
     to_db.AppDownload.insert(temp_docs)
