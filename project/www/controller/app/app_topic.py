@@ -89,8 +89,7 @@ class AppTopicController(ControllerBase):
                 except:
                     update_time = datetime_format(datetime.datetime.now())
 
-                output.append({'topicID': str(tmp_item['_id']), 'name': tmp_item['name'], 'appCount': count,
-                               'update_time': update_time,'icon': create_pic_url(tmp_item['icon_store_path'])})
+                output.append({'description': tmp_item['description'], 'topicID': str(tmp_item['_id']), 'name': tmp_item['name'], 'appCount': count, 'update_time': update_time,'icon': create_pic_url(tmp_item['icon_store_path'])})
 
             return output
         except Exception, ex:
