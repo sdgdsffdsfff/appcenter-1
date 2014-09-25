@@ -9,7 +9,7 @@ from www.controller.app.app import AppController
 from www.controller.app.advertising import AdvertisingController
 from www.controller.app.app_collection import AppCollectionController
 from www.controller.app.app_topic import AppTopicController
-
+from conf.settings import CACHE_TIME
 
 class View(FlaskView):
 
@@ -35,7 +35,7 @@ class View(FlaskView):
 class HomePageView(View):
     """iphone home page feture"""
     @route('/home_page', endpoint='api_iphone_home_page')
-    @main.cache.cached(timeout=60*10, key_prefix='home_page')
+    @main.cache.cached(timeout=CACHE_TIME, key_prefix='home_page')
     def get(self):
         data = {}
         jb = 1 - self._view._sign

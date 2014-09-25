@@ -18,7 +18,7 @@ import uuid
 
 DB = mongo_db
 
-def upload_hash_file(file, target_dir, allow_ext=['png', 'jpg']):
+def upload_hash_file(file, target_dir, allow_ext=['png', 'jpg', 'jpeg']):
     '''
     上传文件
     '''
