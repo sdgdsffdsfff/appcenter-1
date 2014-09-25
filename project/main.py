@@ -5,6 +5,9 @@
 from flask import Flask, url_for
 from flask.ext.login import LoginManager
 from jinja2 import Environment
+from flask.ext.cache import Cache
+from conf.settings import settings
+
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -14,6 +17,16 @@ app.debug = True
 app.secret_key = 'a2V*js%W$xd89saye3qhn&A32lk@'
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+MASTER_REDIS_CONF = settings['new_app_redis']['redis_master']
+
+cache = Cache(app, config = {
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_HOST': MASTER_REDIS_CONF['host'],
+    'CACHE_REDIS_PORT': MASTER_REDIS_CONF['port'],
+    'CACHE_REDIS_PASSWORD': MASTER_REDIS_CONF['password']
+})
+cache.init_app(app)
 
 login_manager.login_view = "/admin/login/"
 

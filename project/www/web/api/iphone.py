@@ -2,6 +2,7 @@
 #code by LP
 #2013-11-27
 
+import main
 from flask import request
 from __header__ import FlaskView, ApiView, route
 from www.controller.app.app import AppController
@@ -33,8 +34,8 @@ class View(FlaskView):
 
 class HomePageView(View):
     """iphone home page feture"""
-
     @route('/home_page', endpoint='api_iphone_home_page')
+    @main.cache.cached(timeout=60*10, key_prefix='home_page')
     def get(self):
         data = {}
         jb = 1 - self._view._sign
