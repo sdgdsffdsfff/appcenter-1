@@ -10,33 +10,29 @@ to_db = to_client["appcenter"]
 
 def transfer_app_download():
     now = datetime.now()
+    temp_docs = []
     where = {"addtime": {"$lt": now}, "soft_delete": {"$ne": 1}}
-    app_downloads = from_db.app_download.find(where)
-    app_downloads_list = []
-    for app_download in app_downloads:
-        try:
-            app_downloads_list.append({
-                "bundleId": app_download["bundleid"],
-                "version" : app_download["bundleversion"],
-                "minOsVersion": app_download.get("min_os_version", ""),
-                "addTime": app_download.get("addTime", datetime.now()),
-                "hash": app_download["hash"],
-                "appid": app_download["appid"],
-                "sign" : abs(app_download["jb"]-1)
-            })
-        except: continue
-    print len(app_downloads_list)
-    for app_download in app_downloads_list:
+    for app_download in from_db.app_download.find(where):
         app_id = app_download.get("appid", None)
-        hash_v = app_download.get("hash", None)
-        if not app_id or not hash_v: continue
-        print hash_v
-        to_db.AppDownload.update({"hash": hash_v}, {"$set": app_download}, True)
-
+        print app_id
+        if not app_id: continue
+        app = from_db.app.find_one({"appid": app_id})
+        if not app: continue
+        temp_docs.append({
+            "bundleId": app_download["bundleid"], "version" : app_download["bundleversion"],
+            "minOsVersion": app_download.get("min_os_version", ""),
+            "addTime": app_download.get("addTime", datetime.now()),
+            "hash": app_download["hash"], "appid": app_download["appid"], "sign" : abs(app_download["jb"]-1)
+        })
+        if len(temp_docs) % 1 == 0:
+            to_db.AppDownload.insert(temp_docs)
+            temp_docs = []
+    to_db.AppDownload.insert(temp_docs)
 
 def update_appbase():
-    app_list = from_db.app.find({}, {"bundleid": 1, "sign": 1, "icon": 1, "review": 1, "appid":1, "_id": 0})
+    app_list = from_db.app.find({"review": 1}, {"bundleid": 1, "sign": 1, "icon": 1, "review": 1, "appid":1, "_id": 0})
     app_list = list(app_list)
+    print len(app_list)
     for app in app_list:
         bundle_id = app.get("bundleid", None)
         if not bundle_id: continue

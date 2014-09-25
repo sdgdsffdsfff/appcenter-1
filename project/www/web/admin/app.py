@@ -46,7 +46,7 @@ class ListView(View):
         use = request.args.get('use', 'default')
         version = request.args.get("version", "")
 
-        where = {}
+        where = {'review': 1}
         sign = 0
         if version != "":
             sign = 1 if version == "pb" else 0
