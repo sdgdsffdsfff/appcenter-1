@@ -1,13 +1,14 @@
 #encoding=UTF-8
 #code by LP
 #2013-11-27
-
+import main
 from flask import request
 from __header__ import FlaskView, ApiView, route
 from www.controller.app.app import AppController
 from www.controller.app.advertising import AdvertisingController
 from www.controller.app.app_collection import AppCollectionController
 from www.controller.app.app_topic import AppTopicController
+from conf.settings import CACHE_TIME
 
 
 class View(FlaskView):
