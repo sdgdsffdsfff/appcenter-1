@@ -50,7 +50,7 @@ class ListView(View):
         sign = 0
         if version != "":
             sign = 1 if version == "pb" else 0
-        if sign = 1: where["sign"] = 1
+        if sign == 1: where["sign"] = 1
         if track_name != '':
             regex = re.compile(track_name, re.IGNORECASE)
             where["trackName"] = regex
