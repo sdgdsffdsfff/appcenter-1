@@ -13,7 +13,6 @@ from www.controller.app.header import *
 from www.controller.app.app_download import AppDownloadController
 from www.controller.app.app_download_netdisk import AppDownloadNetDiskController
 
-
 class AppController(ControllerBase):
     """
     APP 基本信息数据
@@ -373,6 +372,68 @@ class AppController(ControllerBase):
             }
         }
         return data
+
+    def get_downloads_of_allbundleids(self, bundle_ids, sign):
+        """add by kq for bundle search"""
+
+        download_direct = AppDownloadController()
+        reses = download_direct.get_by_bundleids(bundle_ids, sign)
+        download_netdisk = AppDownloadNetDiskController()
+        reses2 = download_netdisk.get_by_bundleids(bundle_ids, sign)
+
+        result_for_download = {}
+        for bundle_id in bundle_ids:
+
+            ipaHash = "" #最新版
+            ipaVersion = "" #最新版本号
+            ipaHistoryDownloads = "" #历史版本
+            res = reses.get(bundle_id, None)
+            tmp_download_list = {}
+            if res:
+                for down in res:
+                    try:
+                        tmp = {
+                            'ipaHash': down['hash'],
+                            'version': down['version'],
+                            'addTime': str(down['addTime'])
+                        }
+                        if down['version'] not in tmp_download_list:
+                            tmp_download_list[down['version']] = []
+                        tmp_download_list[down['version']].append(tmp)
+                    except Exception, ex: continue
+                try:
+                    ipaHistoryDownloads = sort_dict_keys(tmp_download_list)
+                except Exception, ex:
+                    print ex
+                try:
+                    key = ipaHistoryDownloads.keys()[0]
+                    ipaHash = ipaHistoryDownloads[key][0]['ipaHash']
+                    ipaVersion = ipaHistoryDownloads[key][0]['version']
+                except Exception, ex:
+                    traceback.print_exc()
+                    pass
+            res2 = reses2.get(bundle_id, None)
+            if res2:
+                for down in res2:
+                    try:
+                        tmp = {
+                            'webURL': down['downloadUrl'],
+                            'version': down['version'],
+                            'addTime': str(down['addTime'])
+                        }
+                        if down['version'] not in tmp_download_list:
+                            tmp_download_list[down['version']] = []
+                        tmp_download_list[down['version']].append(tmp)
+                    except Exception, ex: continue
+                try:
+                    ipaHistoryDownloads = sort_dict_keys(tmp_download_list)
+                except Exception, ex:
+                    print ex
+            result_for_download[bundle_id] = {
+                'ipaHash': ipaHash, 'ipaVersion': ipaVersion,
+                'ipaHistoryDownloads': ipaHistoryDownloads
+            }
+        return result_for_download
 
     def get_downloads(self, bundle_id, sign):
 

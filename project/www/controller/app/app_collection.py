@@ -35,6 +35,8 @@ class AppCollectionController(ControllerBase):
 
             filter_items = []
             app_controller = AppController()
+            bundleids = [itemq.get('bundleId', '') for itemq in res['items']]
+            download_infos = app_controller.get_downloads_of_allbundleids(bundleids, sign)
             for item in res['items']:
                 tmp_item = None
                 if self._language == "":
@@ -56,7 +58,7 @@ class AppCollectionController(ControllerBase):
                     rating = item['averageUserRating']
                 except:
                     rating = 0
-                download_info = app_controller.get_downloads(tmp_item.get('bundleId', ''), sign)
+                download_info = download_infos[tmp_item.get('bundleId', '')]
                 download_info.pop("ipaHistoryDownloads")
                 download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
                 if front:
