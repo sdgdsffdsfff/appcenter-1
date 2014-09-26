@@ -47,7 +47,7 @@ class ListView(View):
         version = request.args.get("version", "")
 
         where = {'review': 1}
-        sign = 0
+        sign = 0w
         if version != "":
             sign = 1 if version == "pb" else 0
         if sign == 1: where["sign"] = 1
@@ -55,7 +55,7 @@ class ListView(View):
             regex = re.compile(track_name, re.IGNORECASE)
             where["trackName"] = regex
         if track_id != '':
-            where['trackId'] = track_id
+            where['trackId'] = int(track_id)
         if bundle_id != '':
             where['bundleId'] = bundle_id
 
