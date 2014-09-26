@@ -34,7 +34,7 @@ class HomePageView(View):
     iphone home page feture
     """
     @route('/home_page', endpoint='api_ipad_home_page')
-    @main.cache.cached(timeout=CACHE_TIME, key_prefix='view/%(request.path)s?%(request.query_string)s')
+    @main.cache.cached(timeout=CACHE_TIME)
     def get(self):
         data = {}
         jb = request.args.get("jb", 0)
