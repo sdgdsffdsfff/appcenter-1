@@ -121,11 +121,9 @@
           <td>
             {% for name in hw['device'] if '1' in name %}
             <img src="/static/img/iphone.png" alt="{{ name }}">
-            {% break %}
             {% endfor %}
             {% for name in hw['device'] if '2' in name %}
             <img src="/static/img/ipad.png" alt="{{ name }}">
-            {% break %}
             {% endfor %}
           </td>
           <td>{{ hw['order']}}</td>
