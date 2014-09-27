@@ -41,6 +41,9 @@
 				<span class="help-inline">
 					{% if field.is_error() %}{{ field.error() | safe }}{% endif %}
 				</span>
+                                {%if  field._name == "trackId" %}
+                                <input id="produce_trackid" class="btn blue" value='生成TrackId' />
+                                {% endif %}
 			</div>
 		</div>
 		{% endfor %}
@@ -55,3 +58,15 @@
 
 {% block menuName %}添加新应用{% endblock %}
 {% block titleType %}a{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" >
+  $(function(){
+    $("#produce_trackid").click(function(){
+      $('input[name="trackId"]').val(parseInt( Math.random() * 100000000));
+    });
+  });
+</script>
+
+
+{% endblock %}
