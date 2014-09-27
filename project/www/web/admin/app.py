@@ -208,6 +208,8 @@ class CreateView(View):
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '主分类', 'primaryGenreId', data={'option': genre_options})
+        self._form.add_field('checkbox', '支持设备', 'supportedDevices', data={'value': '', 'option': [("iPad", "iPad"), ("iPhone", "iPhone")]})
+
         self._form.add_field('checkbox', '语言', 'languageCodesISO2A', data={ 'value': '', 'option': lang_options})
         self._form.add_field('textarea', '描述', 'description', data={'attributes':{'class':'m-wrap huge'}})
         self._form.add_field('textarea', '更新介绍', 'releaseNotes', data={'attributes':{'class':'m-wrap huge'}})
@@ -223,7 +225,6 @@ class CreateView(View):
             if self._form.validate():
                 #_id = MongoId()
                 data = {
-                #    '_id': _id,
                     'trackId':int(request.form['trackId']),
                     'trackName':request.form['trackName'],
                     'bundleId':request.form['bundleId'],
@@ -231,7 +232,8 @@ class CreateView(View):
                     'primaryGenreId':int(request.form['primaryGenreId']),
                     'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                     'description':request.form['description'],
-                    'releaseNotes':request.form['releaseNotes']
+                    'releaseNotes':request.form['releaseNotes'],
+                    'supportedDevices': request.form.getlist('supportedDevices')
                 }
                 DB.AppBase.update({'bundleId':request.form['bundleId']}, {'$set':data}, upsert=True)
                 app = DB.AppBase.find_one({"trackId": int(request.form["trackId"])})
@@ -341,6 +343,8 @@ class EditView(AppDetailBaseView):
             elif genre['genreId'] == 6021: name = "报刊杂志"
             genre_options.append((name, str(genre['genreId'])))
         #check device support, check if supportIphone or supportIpad
+        self.supportIphone = 0
+        self.supportIpad = 0
         if "supportIphone" in self.app_data:
             self.supportIphone = self.app_data["supportIphone"]
         else:
