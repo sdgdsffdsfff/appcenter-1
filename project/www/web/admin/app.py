@@ -12,6 +12,7 @@ import cjson
 import re
 import shutil
 import requests
+import random
 from __header__ import AdminView, FlaskView, DB, route, request, session, redirect, url_for
 from conf.settings import settings
 from www.controller.app.app import AppController
