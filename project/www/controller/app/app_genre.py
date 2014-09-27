@@ -12,7 +12,7 @@ class AppGenreController(ControllerBase):
     def get_list(self, parent_genre=None):
 
             if parent_genre is None:
-                where = {}  
+                where = {"genreId": {"$ne": 36}}
             elif parent_genre == 0:
                 #把分类自定义输出为 软件 游戏 杂志
                 root_genre=[
@@ -54,7 +54,7 @@ class AppGenreController(ControllerBase):
                 game_genre = self._get_genres(where)
                 where = {'parentGenre':6021}
                 newsstand_genre = self._get_genres(where)
-                where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021]}}
+                where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021, 36]}}
                 soft_genre = self._get_genres(where)
 
                 output = []
@@ -73,7 +73,7 @@ class AppGenreController(ControllerBase):
                 return output
             else:
                 if parent_genre == 1000:
-                    where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021]}}
+                    where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021, 36]}}
                 else:
                     where = {'parentGenre':int(parent_genre)}
 
