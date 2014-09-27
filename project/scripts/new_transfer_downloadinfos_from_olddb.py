@@ -8,10 +8,11 @@ to_client = MongoClient(TO_MONGO_SEVRER_URL)
 from_db = from_client["appdb"]
 to_db = to_client["appcenter"]
 
+def update_new_appbase():
+    pass
+
 def transfer_app_download():
-    now = datetime.now()
-    temp_docs = []
-    where = {"addtime": {"$lt": now}, "soft_delete": {"$ne": 1}}
+    where = {"soft_delete": {"$ne": 1}}
     for app_download in from_db.app_download.find(where):
         app_id = app_download.get("appid", None)
         print app_id
