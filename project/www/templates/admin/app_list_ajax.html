@@ -122,7 +122,7 @@
 	<tbody>
 		{% for app in app_list %}
 		<tr>
-			<td><img style="width:40px; height:40px" src="{{ icon(app['artworkUrl512']) }}" /></td>
+			<td><img style="width:40px; height:40px" src="{{ icon(app.get('artworkUrl512', '')) }}" /></td>
 			<td><strong>{{ app['trackName'] }}</strong><br/>{{ app['bundleId'] }}</td>
 			<td>
 				<a data-toggle="modal" href="#confirm_box_{{app['_id']}}" class="btn blue icn-only" title="添加">
