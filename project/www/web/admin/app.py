@@ -459,7 +459,7 @@ class AppInfoValidator(FormValidatorAbstract):
     '''
     def rules(self):
         return {
-            'trackId':{'required':True, 'max_length':12, 'min_length':8},
+            'trackId':{'required':True, 'max_length':12, 'min_length':5},
             'trackName':{'required':True, 'max_length':200, 'min_length':1},
             'version':{'required':True},
             'bundleId':{'required':True},
