@@ -447,7 +447,19 @@ class EditView(AppDetailBaseView):
                     "releaseNotes": request.form["releaseNotes_cn"]
                 }
                 DB.AppBase_CN.insert(data_cn)
-
+            file = request.files["pic"]
+            ext = file.filename.split('.')[-1]
+            name = str(time.time()) + '_' + file.filename
+            tmp_file = os.path.join(settings['tmp_dir'], name)
+            file.save(tmp_file)
+            sha1 = sha1_of_file(tmp_file)
+            pic_path = hash_to_path(sha1) + '.' +ext
+            pic_path = os.path.join(settings['pic_upload_dir'], pic_path)
+            dir_path = os.path.dirname(pic_path)
+            if not os.path.isdir(dir_path):os.makedirs(dir_path)
+            shutil.move(tmp_file, pic_path)
+            pic_url = settings['pic_url_host'] + '/%s.%s' % (hash_to_path(sha1), ext)
+            data["artworkUrl512"] = pic_url
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
         else:
