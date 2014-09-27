@@ -449,11 +449,11 @@ class EditView(AppDetailBaseView):
                 DB.AppBase_CN.insert(data_cn)
             file = request.files["pic"]
             ext = file.filename.split('.')[-1]
-            name = str(time.time()) + '_' + file.filename
+            name = str(time.time()) + '_' + str(random.randint(1000000, 9000000))
             tmp_file = os.path.join(settings['tmp_dir'], name)
             file.save(tmp_file)
             sha1 = sha1_of_file(tmp_file)
-            pic_path = hash_to_path(sha1) + '.' +ext
+            pic_path = hash_to_path(sha1) + ".114x114-75." +ext
             pic_path = os.path.join(settings['pic_upload_dir'], pic_path)
             dir_path = os.path.dirname(pic_path)
             if not os.path.isdir(dir_path):os.makedirs(dir_path)
@@ -626,7 +626,7 @@ class ScreenshotView(View):
                 tmp_file = os.path.join(settings['tmp_dir'], name)
                 file.save(tmp_file)
                 sha1 = sha1_of_file(tmp_file)
-                pic_path = hash_to_path(sha1) + ".114x114-75" + '.' +ext
+                pic_path = hash_to_path(sha1) + '.' +ext
                 pic_path = os.path.join(settings['pic_upload_dir'], pic_path)
                 dir_path = os.path.dirname(pic_path)
                 if not os.path.isdir(dir_path):
