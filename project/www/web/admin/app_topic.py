@@ -196,8 +196,12 @@ class EditView(AppTopicInfoBaseView):
                     data['icon_store_path'] = save_file
                 if language:
                     data['language'] = language
+                else:
+                    data['language'] = []
                 if country:
                     data['country'] = country
+                else:
+                    data['country'] = []
                 data['status'] = int(request.form['status'])
                 data['prisonbreak'] = int(request.form['prisonbreak'])
                 DB.app_topic.update({'_id': ObjectId(self._id)}, {'$set': data})

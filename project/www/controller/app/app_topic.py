@@ -16,7 +16,7 @@ from www.controller.app.app_download import AppDownloadController
 
 class AppTopicController(ControllerBase):
 
-    def __init__(self, language='EN', ip=None):
+    def __init__(self, language='en', ip=None):
 
         self._language = language
         self._country = get_country_code(ip)
@@ -80,6 +80,7 @@ class AppTopicController(ControllerBase):
                     tmp_item = item
                 if tmp_item is None:
                     continue
+
                 try:
                     count = len(item['items'])
                 except:
