@@ -14,7 +14,7 @@ def transfer():
         data = {"review": 1}
         if sign == 1: data["sign"] = sign
         print index
-        app_base = to_db.AppBase.update({"bundleId": bundle_id}, {"$set": data})
+        to_db.AppBase.update({"bundleId": bundle_id}, {"$set": data})
 
 if __name__ == "__main__":
     transfer()
