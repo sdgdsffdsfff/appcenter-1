@@ -11,10 +11,11 @@ to_db = to_client["appcenter"]
 
 def update_app_download_netdisk():
     temp_docs = []
-    for app_d_n in from_db.app_download_netdisk.find({"uploader": "cloudl4files"}):
+    for index, app_d_n in enumerate(from_db.app_download_netdisk.find({"uploader": "cloudl4files"})):
         app_id = app_d_n["appid"]
         f_app = from_db.app.find_one({"appid": app_id})
         if not f_app: continue
+        print index
         bundle_id = f_app["bundleid"]
         temp_docs.append({
             "downloadUrl": app_d_n["download_url"],
