@@ -31,7 +31,7 @@ class ListView(View):
             return self._view.error("参数错误")
 
         app = self.app.get_by_bundleid(bundle_id)
-        download_list = self.app_download.get_by_bundleid(bundle_id)
+        download_list = self.app_download.get_by_bid(bundle_id)
 
         return self._view.render('app_download', download_list=download_list, app=app)
 

@@ -40,6 +40,19 @@ class AppDownloadController(ControllerBase):
         #按版本排序
         return list(res)
 
+    def get_by_bid(self, bundleid):
+        """
+        通过bundleid获取app的所有下载地址
+        """
+
+        where = {'bundleId': bundleid}
+        res = mongo_db.AppDownload.find(where)
+        if res:
+            res = list(res)
+            res = sort_downloads(res)
+        #按版本排序
+        return list(res)
+
     def delete_by_hash(self, hash_str):
         """
         通过hash值删除
