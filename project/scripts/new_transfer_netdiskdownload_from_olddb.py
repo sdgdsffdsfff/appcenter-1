@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime
+import multiprocessing
 
 FROM_MONGO_SEVRER_URL = "mongodb://appdb:cdj6u58CtSa@54.72.191.195:27017/appdb?slaveok=true"
 TO_MONGO_SEVRER_URL = "mongodb://appcenter:tuj62_Iga1e4_a@54.183.152.170:37017,54.72.191.195:37017,61.155.215.40:37017/appcenter"
@@ -8,6 +9,9 @@ to_client = MongoClient(TO_MONGO_SEVRER_URL)
 from_db = from_client["appdb"]
 to_db = to_client["appcenter"]
 
+
+def update_netdisk():
+    pass
 
 def update_app_download_netdisk():
     temp_docs = []
@@ -30,4 +34,5 @@ def update_app_download_netdisk():
             temp_docs = []
     to_db.AppDownloadNetDisk.insert(temp_docs)
 
-if __name__ == "__main__": update_app_download_netdisk()
+if __name__ == "__main__":
+    update_app_download_netdisk()
