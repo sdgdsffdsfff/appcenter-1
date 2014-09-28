@@ -13,6 +13,7 @@ import re
 import shutil
 import requests
 import random
+import uuid
 from __header__ import AdminView, FlaskView, DB, route, request, session, redirect, url_for
 from conf.settings import settings
 from www.controller.app.app import AppController
@@ -621,9 +622,10 @@ class ScreenshotView(View):
         try:
             bundle_id = request.form['bundleId']
             file = request.files['Filedata']
-            if file and self.allowed_file(file.filename):
-                ext = file.filename.split('.')[-1]
-                name = str(time.time()) + '_' + file.filename
+            filename = str(uuid.uuid1()) + "." + file.filename.rsplit('.', 1)[1]
+            if file and self.allowed_file(filename):
+                ext = filename.split('.')[-1]
+                name = str(time.time()) + '_' + filename
                 tmp_file = os.path.join(settings['tmp_dir'], name)
                 file.save(tmp_file)
                 sha1 = sha1_of_file(tmp_file)
