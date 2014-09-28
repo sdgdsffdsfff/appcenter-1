@@ -58,7 +58,7 @@
                             <td>{{ down['version'] }}</td>
                             <td>{{ down['hash'] }}</td>
                             <td>{{ down['bundleId'] }}</td>
-                            <td>{% if down['sign'] == 0 %}正版签名包{% else %}越狱包{% endif %}</td>
+                            <td>{% if down['sign'] == 1 %}正版签名包{% else %}越狱包{% endif %}</td>
                             <td>{{ down['addTime'] }}</td>
                             <td>
                                 <a class="btn red" data-toggle="modal" href="#confirm_box_{{down['_id']}}">删除</a>
