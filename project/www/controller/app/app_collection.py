@@ -20,6 +20,9 @@ class AppCollectionController(ControllerBase):
         Get app collection
         num 获取数量  front是否前端显示
         '''
+        #create a dict to map the language and collection,
+        # need to find a better way to avoid hard code the language and  database name
+        lang_collection = {"zh-Hans": "AppBase_CN", "en": "AppBase"}
         try:
             res = mongo_db.app_collection.find_one({'identifier': self._identifier})
             if not res or 'items' not in res:
@@ -61,9 +64,14 @@ class AppCollectionController(ControllerBase):
                 download_info = download_infos[tmp_item.get('bundleId', '')]
                 download_info.pop("ipaHistoryDownloads")
                 download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
+                app_trackName = tmp_item['trackName']
+                if self._language in lang_collection:
+                    t_item = mongo_db[lang_collection[self._language]].find_one({"bundleId": tmp_item["bundleId"]})
+                    if t_item:
+                        app_trackName = t_item["trackName"]
                 if front:
                     temp_d1 = {
-                        'trackName': tmp_item['trackName'],
+                        'trackName': app_trackName,
                         'ID': tmp_item['ID'], 'averageUserRating': rating,
                         'bundleId': tmp_item.get('bundleId',''),
                         'icon': tmp_item['icon'], 'version': tmp_item.get('version', ''),
@@ -73,7 +81,7 @@ class AppCollectionController(ControllerBase):
                     filter_items.append(temp_d1)
                 else:
                     temp_d2 = {
-                        'trackName': tmp_item['trackName'],
+                        'trackName': app_trackName,
                         'ID': tmp_item['ID'], 'averageUserRating': rating,
                         'bundleId': tmp_item.get('bundleId',''),
                         'icon': tmp_item['icon'], 'sort': tmp_item['sort'],
