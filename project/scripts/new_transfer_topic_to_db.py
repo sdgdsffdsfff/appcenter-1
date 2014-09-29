@@ -39,7 +39,10 @@ def update_app_topic():
                 bundleId = app_instance.get("bundleid", None)
                 if not bundleId: continue
                 downloads = app_download_c.get_by_bundleid(bundleId, topic_data["prisonbreak"])
-                temp_item["version"] = downloads[-1]["version"]
+                if downloads:
+                    temp_item["version"] = downloads[-1]["version"]
+                else:
+                    temp_item["version"] = ""
                 new_app_instance = to_db.AppBase.find_one({"bundleId": bundleId})
                 new_app_instance_cn = to_db.AppBase_CN.find_one({"bundleId": bundleId})
                 if not new_app_instance_cn or (not new_app_instance): continue
