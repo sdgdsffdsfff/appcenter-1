@@ -178,7 +178,6 @@ class AppController(ControllerBase):
         }).limit(limit).sort(sort[0], sort[1])
         res = []
         collection = 'AppBase_' + lang
-
         for app in apps:
             try:
                 ext_data = mongo_db[collection].find_one({'trackId': app['trackId']})

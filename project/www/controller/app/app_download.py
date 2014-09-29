@@ -24,7 +24,10 @@ class AppDownloadController(ControllerBase):
         for down in res:
             results[down["bundleId"]].append(down)
         for key, value in results.items():
-            results2[key] = list(sort_downloads(list(value)))
+            try:
+                results2[key] = list(sort_downloads(list(value)))
+            except:
+                results2[key] = list(value)
         return results2
 
     def get_by_bundleid(self, bundleid, sign=0):
