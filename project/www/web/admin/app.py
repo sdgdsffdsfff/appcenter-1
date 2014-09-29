@@ -644,7 +644,7 @@ class ScreenshotView(View):
                     DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
                 else:
                     try:
-                        DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data})
+                        DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data}, upsert=True)
                     except Exception:
                         data = data.update({'bundleId': bundle_id})
                         DB.AppBase_CN.insert(data)
