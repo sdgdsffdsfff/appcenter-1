@@ -171,10 +171,13 @@ class AppController(ControllerBase):
         获取应用
         """
 
-        apps = mongo_db.AppBase.find(where).limit(limit).sort(sort[0], sort[1])
+        apps = mongo_db.AppBase.find(where, {
+            "trackId":1, "trackName": 1, "bundleId": 1, "artworkUrl512": 1,
+            "averageUserRating": 1, "screenshotUrls": 1, "ipadScreenshotUrls": 1,
+            "fileSizeBytes": 1
+        }).limit(limit).sort(sort[0], sort[1])
         res = []
         collection = 'AppBase_' + lang
-
         for app in apps:
             try:
                 ext_data = mongo_db[collection].find_one({'trackId': app['trackId']})
