@@ -28,7 +28,12 @@ def update_netdisk(app_d_n):
 
 
 def update_app_download_netdisk():
+    pool = multiprocessing.Pool(processes=10)
     for index, app_d_n in enumerate(from_db.app_download_netdisk.find({"uploader": "cloudl4files"})):
+        print index
+        pool.apply_async(update_netdisk, (app_d_n, ))
+    pool.close()
+    pool.join()
 
 
 if __name__ == "__main__":
