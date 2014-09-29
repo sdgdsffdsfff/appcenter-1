@@ -456,11 +456,11 @@ class EditView(AppDetailBaseView):
             file.save(tmp_file)
             sha1 = sha1_of_file(tmp_file)
             pic_path = hash_to_path(sha1) + ".114x114-75." +ext
-            pic_path = os.path.join(settings['pic_upload_dir'], pic_path)
-            dir_path = os.path.dirname(pic_path)
+            full_pic_path = os.path.join(settings['pic_upload_dir'], pic_path)
+            dir_path = os.path.dirname(full_pic_path)
             if not os.path.isdir(dir_path):os.makedirs(dir_path)
-            shutil.move(tmp_file, pic_path)
-            pic_url = settings['pic_url_host'] + '/%s.%s' % (hash_to_path(sha1), ext)
+            shutil.move(tmp_file, full_pic_path)
+            pic_url = settings['pic_url_host'] + '/%s' % (pic_path)
             data["artworkUrl512"] = pic_url
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
