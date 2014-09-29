@@ -35,7 +35,8 @@ class AppDownloadController(ControllerBase):
         通过bundleid获取app
         """
 
-        where = {'bundleId': bundleid, 'sign': sign}
+        where = {'bundleId': bundleid, 'sign': int(sign)}
+
         res = mongo_db.AppDownload.find(where)
         if res:
             res = list(res)

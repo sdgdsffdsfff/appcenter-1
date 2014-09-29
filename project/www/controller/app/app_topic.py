@@ -34,6 +34,7 @@ class AppTopicController(ControllerBase):
             res['update_time'] = datetime_format(res['update_time'])
         except:
             return {}
+
         if front:
             tmp = []
             for item in res['items']:
@@ -44,7 +45,7 @@ class AppTopicController(ControllerBase):
                     ipa = ""
                 tmp.append({'trackName': item['trackName'],
                     'averageUserRating': item['averageUserRating'],
-                    'icon': item['icon'], 'version': item['version'],
+                    'icon': item['icon'], 'ipaVersion': downloads['ipaVersion'],
                     "ipaDownloadUrl": ipa,
                     'size': item['size'], 'ID': item['ID']})
                 res['items'] = tmp
