@@ -62,6 +62,7 @@ class AppCollectionController(ControllerBase):
                 except:
                     rating = 0
                 download_info = download_infos[tmp_item.get('bundleId', '')]
+                d_version = download_info.get("version", "")
                 download_info.pop("ipaHistoryDownloads")
                 download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
                 app_trackName = tmp_item['trackName']
@@ -74,7 +75,7 @@ class AppCollectionController(ControllerBase):
                         'trackName': app_trackName,
                         'ID': tmp_item['ID'], 'averageUserRating': rating,
                         'bundleId': tmp_item.get('bundleId',''),
-                        'icon': tmp_item['icon'], 'version': tmp_item.get('version', ''),
+                        'icon': tmp_item['icon'], 'version': d_version,
                         'size': tmp_item.get('size', ''), 'sort': tmp_item['sort']
                     }
                     temp_d1.update(download_info)
@@ -87,7 +88,7 @@ class AppCollectionController(ControllerBase):
                         'icon': tmp_item['icon'], 'sort': tmp_item['sort'],
                         'country': tmp_item['country'],
                         'id': tmp_item['id'], 'language': tmp_item['language'],
-                        'version': tmp_item.get('version', ''),
+                        'version': d_version,
                         'size': tmp_item.get('size', '')
                     }
                     temp_d2.update(download_info)
