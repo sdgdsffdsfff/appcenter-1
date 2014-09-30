@@ -1,5 +1,5 @@
 #coding: utf8
-import random, time, requests
+import random, time, requests, uuid
 from pymongo import MongoClient
 from datetime import datetime
 from www.controller.app.app_download import AppDownloadController
