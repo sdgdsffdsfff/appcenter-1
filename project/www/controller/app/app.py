@@ -246,26 +246,23 @@ class AppController(ControllerBase):
         设置应用列表缓存 50页 每页12个
         """
         genre_id = int(genre_id)
-
         if (7000 <= genre_id < 8000) or (13000 <= genre_id < 14000):
             where = {'review': 1, 'genreIds': {'$all': [str(genre_id)]}}
         else:
             where = {'review': 1, 'primaryGenreId': genre_id}
-
         for lang in self._get_ext_data_language():
             keys = {}
             keys['iphone_jb_key'] = self.app_list_redis_key % ('iphone', 0, lang, genre_id, self.limit, sort[0])
-            keys['iphone_signed_key'] = self.app_list_redis_key % ('iphone', 1, lang, genre_id, self.limit, sort[0])
+            keys['iphone_signed_key'] = self.app_list_redis_key % ('iphone', 1, lang,genre_id,self.limit, sort[0])
             keys['ipad_jb_key'] = self.app_list_redis_key % ('ipad', 0, lang, genre_id, self.limit, sort[0])
             keys['ipad_signed_key'] = self.app_list_redis_key % ('ipad', 1, lang, genre_id, self.limit, sort[0])
-            
+
             sign = {'signed': 1, 'jb': 0}
 
             for s in sign.keys():
                 print 'Push to redis, lang:%s, genre: %s, sign: %s' % (lang, genre_id, s)
                 #查询签名的
-                if sign[s] == 1:
-                    where['sign'] = 1
+                if sign[s] == 1: where['sign'] = 1
                 apps = self.get_apps(where, lang, sort, self.limit)
 
                 redis_master.delete(keys['iphone_'+ s +'_key'])

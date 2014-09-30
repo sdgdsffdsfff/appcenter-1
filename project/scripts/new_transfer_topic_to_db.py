@@ -1,7 +1,9 @@
-import random, time
+import random, time, requests
 from pymongo import MongoClient
 from datetime import datetime
 from www.controller.app.app_download import AppDownloadController
+from www.web.admin.__header__ import upload_hash_file
+from conf.settings import settings
 
 FROM_MONGO_SEVRER_URL = "mongodb://appdb:cdj6u58CtSa@54.72.191.195:27017/appdb?slaveok=true"
 TO_MONGO_SEVRER_URL = "mongodb://appcenter:tuj62_Iga1e4_a@54.183.152.170:37017,54.72.191.195:37017,61.155.215.40:37017/appcenter"
@@ -11,6 +13,17 @@ from_db = from_client["appdb"]
 to_db = to_client["appcenter"]
 
 app_download_c = AppDownloadController()
+
+def save_icon_and_return_hash(app_topic):
+    icon_hash = app_topic.get("icon", None)
+    if not icon_hash: return
+    imag_url = "http://pic.appvv.com/%s/114.jpg" % icon_hash
+    content = requests.get(image_url).read()
+    with open("/tmp/%s.jpg" % icon_hash, "w") as tmp_image:
+        tmp_image.write(content)
+    fi = open("/tmp/%s.jpg" % icon_hash, "r")
+    hash_str, abs_save_file, save_file= upload_hash_file(fi, settings['pic_upload_dir'], ['png', 'jpg'])
+    return hash_str
 
 def update_app_topic():
     old_app_topics = from_db.app_topic.find({})
@@ -45,7 +58,9 @@ def update_app_topic():
                 app_instance = from_db.app.find_one({"appid": appid})
                 if not app_instance: continue
                 bundleId = app_instance.get("bundleid", None)
+                trackId = app_instance.get("trackid", "")
                 if not bundleId: continue
+                with open("trackids.txt", "w") as fb: fb.write("%s\n" % str(trackId))
                 temp_item["bundleId"] = bundleId
                 downloads = app_download_c.get_by_bundleid(bundleId, topic_data["prisonbreak"])
                 if downloads:
@@ -72,7 +87,9 @@ def update_app_topic():
                 items.append(temp_item)
             topic_data["items"] = items
             topic_data["country"] = []
-            topic_data["icon_store_path"] =""
-            topic_data["icon_hash"] =""
+            icon_hash = save_icon_and_return_hash(app_topic)
+            topic_data["icon_store_path"] = "%s/%s/%s/%s/%s.jpg" % (
+                icon_hash[0:2], icon_hash[2:4], icon_hash[4:6], icon_hash[6:8], icon_hash[8:40])
+            topic_data["icon_hash"] = icon_hash
             to_db.app_topic.insert(topic_data)
         except Exception, e: raise e
