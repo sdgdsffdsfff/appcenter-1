@@ -15,10 +15,6 @@ to_db = to_client["appcenter"]
 
 app_download_c = AppDownloadController()
 
-class MyFile(file):
-    def __init__(self, qfile, mode, name):
-        super(MyFile, self).__init__(self, qfile, mode)
-        self.filename = name
 
 def upload_hash_file(content, filename, target_dir, allow_ext=['png', 'jpg', 'jpeg']):
     '''
