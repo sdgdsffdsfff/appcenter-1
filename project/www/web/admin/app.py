@@ -426,6 +426,7 @@ class EditView(AppDetailBaseView):
                 'version':request.form['version'],
                 'trackContentRating': request.form["trackContentRating"],
                 'minimumOsVersion': request.form["minimumOsVersion"],
+                'downloadVersion': request.form["downloadVersion"],
                 'primaryGenreId':int(request.form['primaryGenreId']),
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                 'description':request.form['description'],
