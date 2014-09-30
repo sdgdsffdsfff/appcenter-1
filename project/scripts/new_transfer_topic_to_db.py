@@ -14,14 +14,19 @@ to_db = to_client["appcenter"]
 
 app_download_c = AppDownloadController()
 
+class MyFile(file):
+    def __init__(self, qfile, mode, name):
+        super(MyFile, self).__init__(qfile, mode)
+        self.filename = name
+
 def save_icon_and_return_hash(app_topic):
     icon_hash = app_topic.get("icon", None)
     if not icon_hash: return
-    imag_url = "http://pic.appvv.com/%s/114.jpg" % icon_hash
-    content = requests.get(image_url).read()
-    with open("/tmp/%s.jpg" % icon_hash, "w") as tmp_image:
+    image_url = "http://pic.appvv.com/%s/114.jpg" % icon_hash
+    content = requests.get(image_url).content
+    with open("/tmp/%s.jpg" % icon_hash, "wb") as tmp_image:
         tmp_image.write(content)
-    fi = open("/tmp/%s.jpg" % icon_hash, "r")
+    fi = MyFile("/tmp/%s.jpg" % icon_hash, "r", "%s.jpg" % icon_hash)
     hash_str, abs_save_file, save_file= upload_hash_file(fi, settings['pic_upload_dir'], ['png', 'jpg'])
     return hash_str
 
