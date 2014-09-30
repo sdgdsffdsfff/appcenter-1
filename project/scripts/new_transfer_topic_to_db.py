@@ -1,3 +1,4 @@
+#coding: utf8
 import random, time, requests
 from pymongo import MongoClient
 from datetime import datetime
