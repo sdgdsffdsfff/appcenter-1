@@ -14,6 +14,9 @@ app_download_c = AppDownloadController()
 
 def update_app_topic():
     old_app_topics = from_db.app_topic.find({})
+    old_app_topics = list(old_app_topics)
+    print len(old_app_topics)
+    print "load finish"
     for index, app_topic in enumerate(old_app_topics):
         print index
         try:
@@ -21,6 +24,10 @@ def update_app_topic():
             topic_data["update_time"] = app_topic.get("update_time", datetime.now())
             topic_data["name"] = app_topic["caption"]
             topic_data["description"] = app_topic.get("description", "")
+            exists_topic = to_db.app_topic.find_one({"name": topic_data["name"], "description": topic_data["description"]})
+            if exists_topic:
+                print "exists"
+                continue
             topic_data["prisonbreak"] = app_topic.get("jb", 1)
             old_language = app_topic.get("language", "cn")
             if old_language == "cn": language = ["zh-Hans"]
@@ -36,8 +43,10 @@ def update_app_topic():
                 appid = app.get("appid", None)
                 if not appid: continue
                 app_instance = from_db.app.find_one({"appid": appid})
+                if not app_instance: continue
                 bundleId = app_instance.get("bundleid", None)
                 if not bundleId: continue
+                temp_item["bundleId"] = bundleId
                 downloads = app_download_c.get_by_bundleid(bundleId, topic_data["prisonbreak"])
                 if downloads:
                     temp_item["version"] = downloads[-1]["version"]
@@ -64,5 +73,6 @@ def update_app_topic():
             topic_data["items"] = items
             topic_data["country"] = []
             topic_data["icon_store_path"] =""
+            topic_data["icon_hash"] =""
             to_db.app_topic.insert(topic_data)
         except Exception, e: raise e

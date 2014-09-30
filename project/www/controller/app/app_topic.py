@@ -43,11 +43,12 @@ class AppTopicController(ControllerBase):
                     ipa = create_ipa_url(downloads['ipaHash'])
                 else:
                     ipa = ""
+                    downloads = {}
                 tmp.append({'trackName': item['trackName'],
                     'averageUserRating': item['averageUserRating'],
-                    'icon': item['icon'], 'ipaVersion': downloads['ipaVersion'],
-                    "ipaDownloadUrl": ipa,
-                    'size': item['size'], 'ID': item['ID']})
+                    'icon': item['icon'], 'ipaVersion': downloads.get('ipaVersion', ''),
+                    "ipaDownloadUrl": ipa, 'size': item['size'], 'ID': item['ID']}
+                )
                 res['items'] = tmp
             try:
                 del res['country']
