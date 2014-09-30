@@ -24,6 +24,10 @@ def update_app_topic():
             topic_data["update_time"] = app_topic.get("update_time", datetime.now())
             topic_data["name"] = app_topic["caption"]
             topic_data["description"] = app_topic.get("description", "")
+            exists_topic = to_db.app_topic.find_one({"name": topic_data["name"], "description": topic_data["description"]})
+            if exists_topic:
+                print "exists"
+                continue
             topic_data["prisonbreak"] = app_topic.get("jb", 1)
             old_language = app_topic.get("language", "cn")
             if old_language == "cn": language = ["zh-Hans"]
