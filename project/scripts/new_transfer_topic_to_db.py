@@ -46,6 +46,7 @@ def update_app_topic():
                 if not app_instance: continue
                 bundleId = app_instance.get("bundleid", None)
                 if not bundleId: continue
+                temp_item["bundleId"] = bundleId
                 downloads = app_download_c.get_by_bundleid(bundleId, topic_data["prisonbreak"])
                 if downloads:
                     temp_item["version"] = downloads[-1]["version"]
@@ -72,5 +73,6 @@ def update_app_topic():
             topic_data["items"] = items
             topic_data["country"] = []
             topic_data["icon_store_path"] =""
+            topic_data["icon_hash"] =""
             to_db.app_topic.insert(topic_data)
         except Exception, e: raise e
