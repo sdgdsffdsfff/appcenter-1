@@ -14,6 +14,9 @@ app_download_c = AppDownloadController()
 
 def update_app_topic():
     old_app_topics = from_db.app_topic.find({})
+    old_app_topics = list(old_app_topics)
+    print len(old_app_topics)
+    print "load finish"
     for index, app_topic in enumerate(old_app_topics):
         print index
         try:
@@ -36,6 +39,7 @@ def update_app_topic():
                 appid = app.get("appid", None)
                 if not appid: continue
                 app_instance = from_db.app.find_one({"appid": appid})
+                if not app_instance: continue
                 bundleId = app_instance.get("bundleid", None)
                 if not bundleId: continue
                 downloads = app_download_c.get_by_bundleid(bundleId, topic_data["prisonbreak"])
