@@ -25,7 +25,7 @@ def upload_hash_file(content, filename, target_dir, allow_ext=['png', 'jpg', 'jp
         filename = filename.lower()
         filename = str(uuid.uuid1()) + "." + filename.rsplit('.', 1)[1]
         tmpfile = os.path.join(settings['tmp_dir'], filename)
-        with open(tempfile, "w") as tt: tt.write(content)
+        with open(tmpfile, "w") as tt: tt.write(content)
         hash_str = sha1_of_file(tmpfile)
         save_file = '%s.%s' % (hash_to_path(hash_str), filename.rsplit('.', 1)[1])
         abs_save_file = os.path.join(target_dir, save_file)
