@@ -383,6 +383,8 @@ class EditView(AppDetailBaseView):
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方应用地址', 'trackViewUrl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '评分', 'trackContentRating', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '最低系统要求', 'minimumOsVersion', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '可下载版本', 'downloadVersion', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '主分类', 'primaryGenreId', data={'option': genre_options})
         self._form.add_field('radio', '支持iPhone', 'supportIphone', data={'option': [("是", "1"), ("否", "0")]})
@@ -422,6 +424,8 @@ class EditView(AppDetailBaseView):
                 'bundleId':request.form['bundleId'],
                 'trackViewUrl':request.form['trackViewUrl'],
                 'version':request.form['version'],
+                'trackContentRating': request.form["trackContentRating"],
+                'minimumOsVersion': request.form["minimumOsVersion"],
                 'primaryGenreId':int(request.form['primaryGenreId']),
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                 'description':request.form['description'],
