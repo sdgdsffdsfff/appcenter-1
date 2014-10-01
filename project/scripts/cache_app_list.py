@@ -3,7 +3,7 @@
 #2013-12-5
 
 import sys
-import argparse
+import argparse, multiprocessing
 from www.controller.app.app import AppController
 from common.ng_daemon import NGDaemon
 from conf.settings import settings
