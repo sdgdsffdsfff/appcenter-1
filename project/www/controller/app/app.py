@@ -448,11 +448,14 @@ class AppController(ControllerBase):
         if res:
             for down in res:
                 try:
-                    tmp = {'ipaHash': down['hash'], 'version': down['version'],
-                           'addTime': str(down['addTime'])}
-                    if down['version'] not in tmp_download_list:
-                        tmp_download_list[down['version']] = []
-                    tmp_download_list[down['version']].append(tmp)
+                    d_version = "1.0" if down.get("version", "") == "" else: down["version"]
+                    tmp = {
+                        'ipaHash': down['hash'], 'version': d_version,
+                        'addTime': str(down['addTime'])
+                    }
+                    if d_version not in tmp_download_list:
+                        tmp_download_list[d_version] = []
+                    tmp_download_list[d_version].append(tmp)
                 except Exception, ex:
                     print ex
                     pass
