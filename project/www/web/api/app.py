@@ -1,11 +1,11 @@
 #encoding=UTF-8
 #code by LP
 #2013-11-4
-
+import main
 from __header__ import FlaskView, ApiView, route, request
 from www.controller.app.app import AppController
 from www.controller.app.search import AppSearch
-
+from conf.settings import CACHE_TIME
 
 class View(FlaskView):
 
@@ -21,6 +21,7 @@ class DetailView(View):
     获取应用详细
     '''
     @route('/detail', endpoint='api_app_detail')
+    @main.cache.cached(timeout=CACHE_TIME)
     def get(self):
         data = {}
         object_id = request.args.get('id', None)
