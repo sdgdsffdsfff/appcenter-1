@@ -113,4 +113,6 @@ def update_app_topic():
                 icon_hash[0:2], icon_hash[2:4], icon_hash[4:6], icon_hash[6:8], icon_hash[8:40])
             topic_data["icon_hash"] = icon_hash
             to_db.app_topic.insert(topic_data)
-        except Exception, e: raise e
+        except Exception, e:
+            pritn e.message
+            raise e
