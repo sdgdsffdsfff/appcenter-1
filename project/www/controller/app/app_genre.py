@@ -61,7 +61,7 @@ class AppGenreController(ControllerBase):
                 game_genre = self._get_genres(where)
                 where = {'parentGenre':6021}
                 newsstand_genre = self._get_genres(where)
-                where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021, 36]}}
+                where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021, 36, 1000]}}
                 soft_genre = self._get_genres(where)
                 output = []
                 for item in root_genre:
