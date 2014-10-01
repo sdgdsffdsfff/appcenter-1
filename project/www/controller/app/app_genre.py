@@ -3,6 +3,13 @@
 #2013-11-28
 
 from header import *
+LANGUAGE_MAPPING = {
+    "zh-Hans": "ZH",
+    "ja": "JP",
+    "en": "EN",
+    "fr": "FR",
+    "es": "ES",
+}
 
 class AppGenreController(ControllerBase):
 
@@ -56,13 +63,6 @@ class AppGenreController(ControllerBase):
                 newsstand_genre = self._get_genres(where)
                 where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021]}}
                 soft_genre = self._get_genres(where)
-                LANGUAGE_MAPPING = {
-                    "zh-Hans": "ZH",
-                    "ja": "JP",
-                    "en": "EN",
-                    "fr": "FR",
-                    "es": "ES",
-                }
                 output = []
                 for item in root_genre:
                     try:
@@ -95,7 +95,7 @@ class AppGenreController(ControllerBase):
             output = []
             for item in res:
                 try:
-                    name = item['genreName'][self._language]
+                    name = item['genreName'][LANGUAGE_MAPPING[self._language]]
                 except:
                     name = item['genreName']['EN']
                 try:
