@@ -448,7 +448,7 @@ class AppController(ControllerBase):
         if res:
             for down in res:
                 try:
-                    d_version = "1.0" if down.get("version", "") == "" else: down["version"]
+                    d_version = "1.0" if down.get("version", "") == "" else down["version"]
                     tmp = {
                         'ipaHash': down['hash'], 'version': d_version,
                         'addTime': str(down['addTime'])
