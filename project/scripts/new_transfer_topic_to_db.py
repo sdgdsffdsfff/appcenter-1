@@ -81,7 +81,7 @@ def update_app_topic():
                 bundleId = app_instance.get("bundleid", None)
                 trackId = app_instance.get("trackid", "")
                 if not bundleId: continue
-                with open("trackids.txt", "w") as fb: fb.write("%s\n" % str(trackId))
+                with open("trackids.txt", "a") as fb: fb.write("%s\n" % str(trackId))
                 temp_item["bundleId"] = bundleId
                 downloads = app_download_c.get_by_bundleid(bundleId, topic_data["prisonbreak"])
                 if downloads:
@@ -109,9 +109,13 @@ def update_app_topic():
             topic_data["items"] = items
             topic_data["country"] = []
             icon_hash = save_icon_and_return_hash(app_topic)
-            topic_data["icon_store_path"] = "%s/%s/%s/%s/%s.jpg" % (
-                icon_hash[0:2], icon_hash[2:4], icon_hash[4:6], icon_hash[6:8], icon_hash[8:40])
-            topic_data["icon_hash"] = icon_hash
+            if icon_hash:
+                topic_data["icon_store_path"] = "%s/%s/%s/%s/%s.jpg" % (
+                    icon_hash[0:2], icon_hash[2:4], icon_hash[4:6], icon_hash[6:8], icon_hash[8:40])
+                topic_data["icon_hash"] = icon_hash
+            else:
+                topic_data["icon_store_path"] = ""
+                topic_data["icon_hash"] = ""
             to_db.app_topic.insert(topic_data)
         except Exception, e:
             pritn e.message
