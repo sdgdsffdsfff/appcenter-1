@@ -33,6 +33,9 @@ def cache_app_list_run(genreID=None):
         genre_id = int(genreID)
         cache_app_list(genre_id)
     else:
-        for genre in mongo_db.app_genre.find():
+        pool = multiprocessing.Pool(processes=16)
+        for index, genre in enumerate(mongo_db.app_genre.find()):
             print "Cache genre %s" % str(genre['genreId'])
-            cache_app_list(genre['genreId'])
+            pool.apply_async(cache_app_list, (genre['genreId'], ))
+        pool.close()
+        pool.join()
