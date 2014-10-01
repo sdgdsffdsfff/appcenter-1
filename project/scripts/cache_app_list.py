@@ -15,9 +15,6 @@ mongo_db = mongo.get_database('appcenter')
 
 
 def cache_app_list(genre_id):
-    print "Start cache genre: %s app list" % genre_id
-
-    #更新推荐缓存前100页
     app = AppController()
     print 'Cache sort by sort'
     app.set_apps_cache(genre_id, ('sort', -1)) #推荐

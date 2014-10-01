@@ -19,7 +19,7 @@ class AppGenreController(ControllerBase):
     def get_list(self, parent_genre=None):
 
             if parent_genre is None:
-                where = {}  
+                where = {}
             elif parent_genre == 0:
                 #把分类自定义输出为 软件 游戏 杂志
                 root_genre=[
@@ -61,7 +61,7 @@ class AppGenreController(ControllerBase):
                 game_genre = self._get_genres(where)
                 where = {'parentGenre':6021}
                 newsstand_genre = self._get_genres(where)
-                where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021]}}
+                where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021, 36]}}
                 soft_genre = self._get_genres(where)
                 output = []
                 for item in root_genre:
@@ -69,20 +69,35 @@ class AppGenreController(ControllerBase):
                         item['genreName'] = item['genreName'][LANGUAGE_MAPPING[self._language]]
                     except:
                         item['genreName'] = item['genreName']['EN']
+                    current_all_genre = mongo_db.app_genre.find_one(
+                        {"genreId": item["genreId"]},
+                        {"_id": 0}
+                    )
+                    try:
+                        all_genre_name = current_all_genre['genreName'][LANGUAGE_MAPPING[self._language]]
+                    except:
+                        all_genre_name = current_all_genre['genreName']['EN']
+                    current_all_genre_dict = {
+                        'genreName': all_genre_name,
+                        'genreId': item["genreId"],
+                        'icon': create_pic_url(current_all_genre["icon_file"]),
+                        'appCount': 1000
+                    }
+                    item['items'].append(current_all_genre_dict)
                     if item['genreId'] == 6014:
-                        item['items'] = game_genre
+                        item['items'] += game_genre 
                     if item['genreId'] == 6021:
-                        item['items'] = newsstand_genre
+                        item['items'] += newsstand_genre
                     if item['genreId'] == 1000:
-                        item['items'] = soft_genre
+                        item['items'] += soft_genre
+
                     output.append(item)
                 return output
             else:
                 if parent_genre == 1000:
-                    where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021]}}
+                    where = {'parentGenre':{'$nin': [6014, 6021, 36]}, 'genreId':{'$nin':[6014, 6021, 36]}}
                 else:
-                    where = {'parentGenre':int(parent_genre)}
-
+                    where = {'$or': [{'parentGenre':int(parent_genre)}, {'genreId': parent_genre}]}
             return self._get_genres(where)
 
     def _get_genres(self, where):
