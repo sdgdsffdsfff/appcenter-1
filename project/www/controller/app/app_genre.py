@@ -56,11 +56,17 @@ class AppGenreController(ControllerBase):
                 newsstand_genre = self._get_genres(where)
                 where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021]}}
                 soft_genre = self._get_genres(where)
-
+                LANGUAGE_MAPPING = {
+                    "zh-Hans": "ZH",
+                    "ja": "JP",
+                    "en": "EN",
+                    "fr": "FR",
+                    "es": "ES",
+                }
                 output = []
                 for item in root_genre:
                     try:
-                        item['genreName'] = item['genreName'][self._language]
+                        item['genreName'] = item['genreName'][LANGUAGE_MAPPING[self._language]]
                     except:
                         item['genreName'] = item['genreName']['EN']
                     if item['genreId'] == 6014:
