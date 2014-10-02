@@ -12,6 +12,7 @@ from bson.objectid import ObjectId
 from www.controller.app.header import *
 from www.controller.app.app_download import AppDownloadController
 from www.controller.app.app_download_netdisk import AppDownloadNetDiskController
+from itertools import takewhile
 
 class AppController(ControllerBase):
     """
@@ -301,6 +302,46 @@ class AppController(ControllerBase):
         return {'results': lists,
                 'pageInfo': {'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
                              'nextPage': next_page}}
+
+    def check_update_by_all(self, local_packages, sign):
+        app_downloads = mongo_db.AppDownload.find({"bundleId": {"$in": local_packages.keys()}, "sign": sign})
+        app_downloads = list(app_downloads)
+        results = {}
+        to_update_bundleids = []
+        for app_download in app_downloads:
+            bundle_id = app_download["bundleId"]
+            local_version = local_packages[bundle_id]
+            ipa_version = "0" if app_download.get("version", "") == "" else app_download["version"]
+            if version_compare(ipa_version, local_version) != 1: continue
+            to_update_bundleids.append(bundle_id)
+            results[bundle_id] = {
+                'ipaURL': create_ipa_url(app_download["hash"]),
+                'update': 1,
+                'bundleId': bundle_id,
+                'localVersion': local_version,
+                'version': ipa_version,
+            }
+        app_base = list(mongo_db.AppBase.find({"bundleId": {"$in": to_update_bundleids}}))
+        ulti_results = []
+        if self.request_language == "ZH":
+            appbase_cn = list(mongo_db.AppBase_CN.find({"bundleId": {"$in": to_update_bundleids}}))
+        for app_d in app_base:
+            app_d_bundle_id = app_d["bundleId"]
+            if app_d_bundle_id  not in results: continue
+            results[app_d_bundle_id].update({
+                'ID': str(app_d['_id']),
+                'trackName': app_d['trackName'],
+                'icon': app_d['artworkUrl512'],
+                'averageUserRating': app_d['averageUserRating'],
+                'size': file_size_format(app_d['fileSizeBytes'])
+            })
+            temp_r = results[app_d_bundle_id]
+            if self.request_language == "ZH":
+                app_single_cn = takewhile(lambda x: x.get("bundleId", "") ==  app_d_bundle_id, appbase_cn)
+                if app_single_cn:
+                    temp_r["trackName"] = app_single_cn[0]["trackName"]
+            ulti_results.append(temp_r)
+        return ulti_results
 
     def check_update(self, bundle_id, version, sign):
         """

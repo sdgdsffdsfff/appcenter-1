@@ -64,24 +64,20 @@ class CheckUpdateView(View):
     """
     @route('/check_update', methods=['GET','POST'], endpoint='api_app_check_update')
     def do_request(self):
+        local_packages = {}
         try:
             bundle_id = request.form['bid']
         except:
             bundle_id = request.args.get('bid', None)
-
-        if bundle_id is None:
-            return self._view.render(2000)
-        results = []
+        if bundle_id is None: return self._view.render(2000)
         bundle_ids = bundle_id.split(',')
         for row in bundle_ids:
             try:
                 bundle_id, version = row.split('|')
+                local_packages[bundle_id] = version
             except:
                 continue
-            result = self.app.check_update(bundle_id, version, self._view._sign)
-            if result is None:
-                continue
-            results.append(result)
+        results = self.app.check_update_by_all(local_packages, self._view._sign)
         return self._view.render(1000, results)
 
 class RelatedView(View):
