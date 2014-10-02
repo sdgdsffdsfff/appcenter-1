@@ -324,7 +324,7 @@ class AppController(ControllerBase):
             if version_compare(ipa_version, local_version) != 1: continue
             to_update_bundleids.append(bundle_id)
             results[bundle_id] = {
-                'ipaDownloadURL': create_ipa_url(app_download["hash"]),
+                'ipaDownloadUrl': create_ipa_url(app_download["hash"]),
                 'update': 1,
                 'bundleId': bundle_id,
                 'localVersion': local_version,
