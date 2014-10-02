@@ -308,10 +308,22 @@ class AppController(ControllerBase):
         app_downloads = list(app_downloads)
         results = {}
         to_update_bundleids = []
+        max_app_downloads = {}
         for app_download in app_downloads:
             bundle_id = app_download["bundleId"]
+            cur_version = "0" if app_download.get("version", "") == "" else app_download["version"]
+            if bundle_id not in max_app_downloads:
+                max_app_downloads[bundle_id] = [cur_version, app_download]
+            else:
+                if version_compare(cur_version, max_app_downloads[bundle_id][0]) == 1:
+                    max_app_downloads[bundle_id] = [cur_version, app_download]
+        for bundle_id, version_app_download in max_app_downloads.items():
             local_version = local_packages[bundle_id]
-            ipa_version = "0" if app_download.get("version", "") == "" else app_download["version"]
+            app_download = version_app_download[1]
+            ipa_version = version_app_download[0]
+            print bundle_id
+            print ipa_version
+            print local_version
             if version_compare(ipa_version, local_version) != 1: continue
             to_update_bundleids.append(bundle_id)
             results[bundle_id] = {
@@ -327,6 +339,7 @@ class AppController(ControllerBase):
             appbase_cn = list(mongo_db.AppBase_CN.find({"bundleId": {"$in": to_update_bundleids}}))
         for app_d in app_base:
             app_d_bundle_id = app_d["bundleId"]
+            print app_d_bundle_id
             if app_d_bundle_id  not in results: continue
             results[app_d_bundle_id].update({
                 'ID': str(app_d['_id']),

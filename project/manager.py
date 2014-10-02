@@ -9,7 +9,7 @@ from scripts.cache_app import cache_app_run
 from scripts.cache_app_list import cache_app_list_run
 from scripts.compare_update import track_need_to_update
 from scripts.sync_app_CN import fetch_appbase
-from scripts.new_transfer_topic_to_db import update_app_topic
+# from scripts.new_transfer_topic_to_db import update_app_topic
 
 manager = Manager(app)
 register_view()
@@ -37,9 +37,9 @@ def sync_app_info():
 	fetch_appbase()
 
 
-@manager.command
-def update_topic():
-    update_app_topic()
+# @manager.command
+# def update_topic():
+#     update_app_topic()
 
 if __name__ == '__main__':
     manager.run()
