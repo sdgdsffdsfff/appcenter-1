@@ -12,7 +12,6 @@ from bson.objectid import ObjectId
 from www.controller.app.header import *
 from www.controller.app.app_download import AppDownloadController
 from www.controller.app.app_download_netdisk import AppDownloadNetDiskController
-from itertools import takewhile
 
 class AppController(ControllerBase):
     """
@@ -336,7 +335,6 @@ class AppController(ControllerBase):
             appbase_cn = list(mongo_db.AppBase_CN.find({"bundleId": {"$in": to_update_bundleids}}))
         for app_d in app_base:
             app_d_bundle_id = app_d["bundleId"]
-            print app_d_bundle_id
             if app_d_bundle_id  not in results: continue
             results[app_d_bundle_id].update({
                 'ID': str(app_d['_id']),
@@ -347,9 +345,11 @@ class AppController(ControllerBase):
             })
             temp_r = results[app_d_bundle_id]
             if self.request_language == "ZH":
-                app_single_cn = takewhile(lambda x: x.get("bundleId", "") ==  app_d_bundle_id, appbase_cn)
-                if app_single_cn:
-                    temp_r["trackName"] = app_single_cn[0]["trackName"]
+                app_single_cn = None
+                for app_single_cn_t in appbase_cn:
+                    if app_single_cn_t.get("bundleId", "") == app_d_bundle_id:
+                        app_single_cn = app_single_cn_t
+                if app_single_cn: temp_r["trackName"] = app_single_cn["trackName"]
             ulti_results.append(temp_r)
         return ulti_results
 
