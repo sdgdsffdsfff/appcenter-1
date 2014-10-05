@@ -20,10 +20,11 @@ def update_new_appbase(app_download):
         "addTime": app_download.get("addTime", datetime.now()),
         "hash": hash_v, "appid": app_id, "sign": package_sign
     }
-    old_app = from_db.app.find(
+    old_app = from_db.app.find_one(
         {"appid": appid},
         {"bundleid": 1, "sign": 1, "icon": 1, "review": 1, "appid":1, "_id": 0}
     )
+    if not old_app: return
     to_db.AppDownload.update({"hash": hash_v}, {"$set": new_base_download}, True)
     temp_info = {}
     temp_info["review"] = 1
@@ -35,7 +36,9 @@ def update_new_appbase(app_download):
 
 def worker(partial_list):
     for app_download in partial_list:
-        update_new_appbase(app_download)
+        try:
+            update_new_appbase(app_download)
+        except: continue
 
 lists = []
 where = {"soft_delete": {"$ne": 1}}
@@ -46,9 +49,9 @@ for index, app_download in enumerate(from_db.app_download.find(where)):
 thread_num = 20
 length = len(lists)
 import math
-num_per_thread = math.ceil(length / float(thread_num))
+num_per_thread = int(math.ceil(length / float(thread_num)))
 threads = []
 for i in range(thread_num):
-    t = threading.Thread(target=worker, args=(lists[i*num_per_thread: (i+1)*num_per_thread]))
+    t = threading.Thread(target=worker, args=(lists[i*num_per_thread: (i+1)*num_per_thread], ))
     threads.append(t)
     t.start()

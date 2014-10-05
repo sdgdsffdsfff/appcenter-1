@@ -6,13 +6,15 @@ to_client = MongoClient(TO_MONGO_SEVRER_URL)
 to_db = to_client["appcenter"]
 
 def transfer():
-    bases_cn = to_db.AppBase_CN.find({})
-    for app_cn in bases_cn:
-        track_id = app_cn[trackId]
+    bases_cn = to_db.AppBase_CN.find({}, {"_id": 0})
+    for index, app_cn in enumerate(bases_cn):
+        track_id = app_cn["trackId"]
+        print index
         app_base = to_db.AppBase.find_one({"trackId": track_id}, {"_id": 0})
         if not app_base:
             print track_id
-            to_db.AppBase.update({"trackId": track_id}, {"$set": app_base})
+            app_cn["from_db"] = "cn"
+            to_db.AppBase.update({"trackId": track_id}, {"$set": app_cn}, True)
 
 if __name__ == "__main__":
     transfer()

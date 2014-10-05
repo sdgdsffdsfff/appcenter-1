@@ -24,7 +24,7 @@ def update_netdisk(app_d_n):
         "addTime": app_d_n.get("add_time", datetime.now()),
         "bundleId": bundle_id
     }
-    to_db.AppDownloadNetDisk.update({"downloadUrl": download_url}, {"$set": data})
+    to_db.AppDownloadNetDisk.update({"downloadUrl": download_url}, {"$set": data}, True)
 
 
 def update_app_download_netdisk():
