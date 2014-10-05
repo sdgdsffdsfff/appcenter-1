@@ -21,7 +21,7 @@ def update_new_appbase(app_download, bundleids_file):
         "addTime": app_download.get("addtime", datetime.now()),
         "hash": hash_v, "appid": app_id, "sign": package_sign
     }
-    old_app = from_db.app.find(
+    old_app = from_db.app.find_one(
         {"appid": app_id},
         {"bundleid": 1, "sign": 1, "icon": 1, "review": 1, "appid":1, "_id": 0}
     )
