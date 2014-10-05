@@ -21,13 +21,13 @@ def update_new_appbase(app_download, bundleids_file):
         "addTime": app_download.get("addtime", datetime.now()),
         "hash": hash_v, "appid": app_id, "sign": package_sign
     }
-    old_app = from_db.app.find_one(
-        {"appid": app_id},
-        {"bundleid": 1, "sign": 1, "icon": 1, "review": 1, "appid":1, "_id": 0}
-    )
     to_db.AppDownload.update({"hash": hash_v}, {"$set": new_base_download}, True)
     new_app_base = to_db.AppBase.find_one({"bundleId": bundle_id})
     if new_app_base:
+        old_app = from_db.app.find_one(
+            {"appid": app_id},
+            {"bundleid": 1, "sign": 1, "icon": 1, "review": 1, "appid":1, "_id": 0}
+        )
         temp_info = {}
         temp_info["review"] = 1
         temp_info["appid"] = old_app.get("appid", 0)
