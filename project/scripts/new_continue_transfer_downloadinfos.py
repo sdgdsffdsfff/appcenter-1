@@ -45,7 +45,7 @@ def find_new_downloads(begin_date):
     return new_downloads
 
 if __name__ == "__main__":
-    begin_date = datetime(2014, 10, 3, 18, 0, 0)
+    begin_date = datetime(2014, 10, 3, 21, 0, 0)
     while True:
         old_downloads = find_new_downloads(begin_date)
         with open("/tmp/new_bundleids.txt", "w") as bundleids_file:
