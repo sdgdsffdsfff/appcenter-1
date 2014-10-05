@@ -36,7 +36,7 @@ def synchronous_cache_genres():
         cache_app_list(str(genre['genreId']))
 
 def cache_app_list_run(genreID=None):
-    if genreID == -1:
+    if genreID == "-1":
         synchronous_cache_genres()
     elif genreID != None:
         genre_id = int(genreID)
