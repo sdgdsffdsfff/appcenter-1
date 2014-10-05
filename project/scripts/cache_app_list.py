@@ -9,6 +9,9 @@ from common.ng_daemon import NGDaemon
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
 
+import gevent.monkey
+gevent.monkey.patch_socket()
+import gevent
 
 mongo = NGMongoConnect(settings['mongodb']['host'], replica_set=settings["mongodb"].get("replica_set", None))
 mongo_db = mongo.get_database('appcenter')
@@ -16,23 +19,21 @@ mongo_db = mongo.get_database('appcenter')
 
 def cache_app_list(genre_id):
     app = AppController()
-    print 'Cache sort by sort'
+    print "Begin Caching Genre: %s App List" % genre_id
     app.set_apps_cache(genre_id, ('sort', -1)) #推荐
-    print 'Cache sort by downloadCount'
     app.set_apps_cache(genre_id, ('downloadCount', -1)) #最热
-    print 'Cache sort by _id'
     app.set_apps_cache(genre_id, ('_id', -1)) #最新
-    print "Cache %s OK" % genre_id
+    print "Finish Caching Genre: %s App List" % genre_id
 
+
+def asynchronous_cache_genres():
+    threads = []
+    for index, genre in enumerate(mongo_db.app_genre.find()):
+        threads.append(gevent.spawn(cache_app_list, str(genre['genreId'])))
+    gevent.joinall(threads)
 
 def cache_app_list_run(genreID=None):
     if genreID != None:
         genre_id = int(genreID)
         cache_app_list(genre_id)
-    else:
-        pool = multiprocessing.Pool(processes=16)
-        for index, genre in enumerate(mongo_db.app_genre.find()):
-            print "Cache genre %s" % str(genre['genreId'])
-            pool.apply_async(cache_app_list, (genre['genreId'], ))
-        pool.close()
-        pool.join()
+    else: asynchronous_cache_genres()

@@ -170,75 +170,45 @@ class AppController(ControllerBase):
         """
         获取应用
         """
-
         apps = mongo_db.AppBase.find(where, {
             "trackId":1, "trackName": 1, "bundleId": 1, "artworkUrl512": 1,
             "averageUserRating": 1, "screenshotUrls": 1, "ipadScreenshotUrls": 1,
             "fileSizeBytes": 1, "version": 1
         }).limit(limit).sort(sort[0], sort[1])
+        apps = list(apps)
+        if "sign" in where and where["sign"] == 1: sign = 1
+        else: sign = 0
+        bundle_ids = [app["bundleId"] for app in apps if app.get("bundleId", "") != ""]
+        downloads = self.get_downloads_of_allbundleids(bundle_ids, sign)
         res = []
         collection = 'AppBase_' + lang
+        sign_downloads = self.get_downloads_of_allbundleids(bundle_ids, 1)
         for app in apps:
             try:
                 ext_data = mongo_db[collection].find_one({'trackId': app['trackId']})
-                if ext_data:
-                    app['trackName'] = ext_data['trackName']
+                if ext_data: app['trackName'] = ext_data.get('trackName', app.get('trackName', ''))
             except Exception, ex:
-                print ex
-
+                continue
             list_data = {}
-            downloads = self.get_app_downloads(app['bundleId'])
-            if "sign" in where and where["sign"] == 1:
-                list_data['ipaHash'] = downloads['ipaHash']["signed"]
-            else:
-                list_data['ipaHash'] = downloads['ipaHash']["jb"]
-            try:
-                list_data['icon'] = artworkUrl512_to_114_icon(app['artworkUrl512'])
-            except:
-                list_data['icon'] = ''
-            try:
-                list_data['trackName'] = app['trackName']
-            except:
-                list_data['trackName'] = []
-            try:
-                list_data['averageUserRating'] = app['averageUserRating']
-            except:
-                list_data['averageUserRating'] = 0
 
+            list_data['ipaHash'] = downloads[app["bundleId"]]['ipaHash']
+            list_data['ipaVersion'] = downloads[app["bundleId"]]['ipaVersion']
+            try: list_data['icon'] = artworkUrl512_to_114_icon(app['artworkUrl512'])
+            except: list_data['icon'] = ''
+            try: list_data['trackName'] = app['trackName']
+            except: list_data['trackName'] = []
+            try: list_data['averageUserRating'] = app['averageUserRating']
+            except: list_data['averageUserRating'] = 0
             list_data['bundleId'] = app['bundleId']
-
-            if 'screenshotUrls' in app and len(app['screenshotUrls']) > 0:
-                list_data['supportIphone'] = 1
-            else:
-                list_data['supportIphone'] = 0
-
+            if 'screenshotUrls' in app and len(app['screenshotUrls']) > 0: list_data['supportIphone'] = 1
+            else: list_data['supportIphone'] = 0
             if 'ipadScreenshotUrls' in app and len(app['ipadScreenshotUrls']) > 0:
                 list_data['supportIpad'] = 1
-            else:
-                list_data['supportIpad'] = 0
-
-            try:
-                list_data['size'] = file_size_format(app['fileSizeBytes'])
-            except:
-                list_data['size'] = 'unknown'
-
-            try:
-                #从redis中取出最新版本
-                key = self.app_version_redis_key % 'EN'
-                json_str = redis_master.hget(key, app['bundleId'])
-                app_version = cjson.decode(json_str)
-                if 'sign' in where and where['sign'] == 1:
-                    ipa_version = app_version['ipaVersion']['signed']
-                else:
-                    ipa_version = app_version['ipaVersion']['jb']
-                list_data['version'] = ipa_version
-            except:
-                list_data['version'] = 'unknown'
-
+            else: list_data['supportIpad'] = 0
+            try: list_data['size'] = file_size_format(app['fileSizeBytes'])
+            except: list_data['size'] = 'unknown'
             list_data['ID'] = str(app['_id'])
-
             res.append(list_data)
-
         return res
 
     def set_apps_cache(self, genre_id, sort):
@@ -270,12 +240,10 @@ class AppController(ControllerBase):
 
                 for app in apps:
                     data = cjson.encode(app)
-                    #ipad兼容iphone应用
                     if app['supportIpad'] == 1 or app['supportIphone'] == 1:
                         redis_master_pipeline.lpush(keys['ipad_'+ s +'_key'], data)
                     if app['supportIphone'] == 1:
                         redis_master_pipeline.lpush(keys['iphone_'+ s +'_key'], data)
-
             redis_master_pipeline.execute()
 
     def get_apps_cache(self, device, sign, genre_id, page, sort):
@@ -287,7 +255,7 @@ class AppController(ControllerBase):
         if count == 0:
             key = self.app_list_redis_key % (device, sign, self.default_language, genre_id, self.limit, sort)
             count = redis_master.llen(key)
-            
+
         page_size = 12
         total_page = int(math.ceil(count / float(page_size)))
         prev_page = (page - 1) if page - 1 > 0 else 1
@@ -298,9 +266,13 @@ class AppController(ControllerBase):
 
         lists = redis_master.lrange(key, start, end-1)
         lists = [convertAppIpaHashToIpaURL(cjson.decode(x)) for x in lists]
-        return {'results': lists,
-                'pageInfo': {'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
-                             'nextPage': next_page}}
+        return {
+            'results': lists,
+            'pageInfo': {
+                'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
+                'nextPage': next_page
+            }
+        }
 
     def check_update_by_all(self, local_packages, sign):
         app_downloads = mongo_db.AppDownload.find({"bundleId": {"$in": local_packages.keys()}, "sign": sign})
@@ -442,15 +414,16 @@ class AppController(ControllerBase):
             tmp_download_list = {}
             if res:
                 for down in res:
+                    down_version = "0" if down.get('version', "") == "" else down["version"]
                     try:
                         tmp = {
                             'ipaHash': down['hash'],
-                            'version': down['version'],
+                            'version': down_version,
                             'addTime': str(down['addTime'])
                         }
-                        if down['version'] not in tmp_download_list:
-                            tmp_download_list[down['version']] = []
-                        tmp_download_list[down['version']].append(tmp)
+                        if down_version not in tmp_download_list:
+                            tmp_download_list[down_version] = []
+                        tmp_download_list[down_version].append(tmp)
                     except Exception, ex: continue
                 try:
                     ipaHistoryDownloads = sort_dict_keys(tmp_download_list)
