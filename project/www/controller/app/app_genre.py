@@ -83,7 +83,8 @@ class AppGenreController(ControllerBase):
                         'icon': create_pic_url(current_all_genre["icon_file"]),
                         'appCount': 1000
                     }
-                    item['items'].append(current_all_genre_dict)
+                    #暂时不加， 以后处理
+                    # item['items'].append(current_all_genre_dict)
                     if item['genreId'] == 6014:
                         item['items'] += game_genre 
                     if item['genreId'] == 6021:
