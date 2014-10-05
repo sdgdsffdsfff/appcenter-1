@@ -32,8 +32,15 @@ def asynchronous_cache_genres():
         threads.append(gevent.spawn(cache_app_list, str(genre['genreId'])))
     gevent.joinall(threads)
 
+def synchronous_cache_genres():
+    for index, genre in enumerate(mongo_db.app_genre.find()):
+        print index
+        cache_app_list(str(genre['genreId']))
+
 def cache_app_list_run(genreID=None):
-    if genreID != None:
+    if genreID == -1:
+        synchronous_cache_genres()
+    elif genreID != None:
         genre_id = int(genreID)
         cache_app_list(genre_id)
     else: asynchronous_cache_genres()
