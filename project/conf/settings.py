@@ -25,7 +25,7 @@ settings = {
         }
     },
     'elasticsearch': {
-        'host': '54.76.53.68',
+        'host': '172.31.7.125',
         'port': 9200,
         'index': 'appcenter'
     },
