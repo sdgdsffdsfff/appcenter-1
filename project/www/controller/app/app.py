@@ -182,15 +182,13 @@ class AppController(ControllerBase):
         downloads = self.get_downloads_of_allbundleids(bundle_ids, sign)
         res = []
         collection = 'AppBase_' + lang
-        sign_downloads = self.get_downloads_of_allbundleids(bundle_ids, 1)
+        apps_cn = mongo_db[collection].find({'bundleId': bundle_ids})
+        apps_cn_dict = dict()
+        for app_cn in apps_cn: apps_cn_dict[app_cn.get("bundleId", "")] = app_cn
         for app in apps:
-            try:
-                ext_data = mongo_db[collection].find_one({'trackId': app['trackId']})
-                if ext_data: app['trackName'] = ext_data.get('trackName', app.get('trackName', ''))
-            except Exception, ex:
-                continue
+            ext_data = apps_cn_dict.get(app.get("bundleId", ""), None)
+            if ext_data: app['trackName'] = ext_data.get('trackName', app.get('trackName', ''))
             list_data = {}
-
             list_data['ipaHash'] = downloads[app["bundleId"]]['ipaHash']
             list_data['ipaVersion'] = downloads[app["bundleId"]]['ipaVersion']
             try: list_data['icon'] = artworkUrl512_to_114_icon(app['artworkUrl512'])
