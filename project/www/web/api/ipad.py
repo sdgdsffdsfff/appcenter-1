@@ -25,7 +25,7 @@ class View(FlaskView):
 
     def _get_app_collection(self, identifier):
         col = AppCollectionController(identifier, language=self._view._language, ip=self._view._ip, country=self._view._country)
-        return col.get(num=30, front=True)
+        return col.get(num=30, front=True, sign=self._view._sign)
 
 
 
