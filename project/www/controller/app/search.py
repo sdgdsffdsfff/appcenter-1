@@ -35,7 +35,11 @@ class AppSearch(object):
                                'store': 'yes',
                                'type': u'string',
                                "term_vector": "with_positions_offsets"},
-
+                u'trackNameCN': {'boost': 2.0,
+                               'index': 'analyzed',
+                               'store': 'yes',
+                               'type': u'string',
+                               "term_vector": "with_positions_offsets"},
                 u'supportIphone': {'boost': 1.0,
                                    'index': 'not_analyzed',
                                    'store': 'yes',
@@ -86,47 +90,48 @@ class AppSearch(object):
         except Exception, ex:
             print ex
 
-    def add_index(self, ID, track_name, support_iphone, support_ipad, bundle_id, icon, rating, size, sign, ipa_version_jb, ipa_version_signed, download_count):
+    def add_index(self, ID, track_name, track_name_cn, support_iphone, support_ipad, bundle_id, icon, rating, size, sign, ipa_version_jb, ipa_version_signed, download_count):
         self.es.index(
             {
-              'ID': ID, 
-              'trackName': track_name, 
-              'supportIphone': support_iphone, 
+              'ID': ID,
+              'trackName': track_name,
+              'trackNameCN': track_name_cn,
+              'supportIphone': support_iphone,
               'supportIpad': support_ipad,
               'bundleId': bundle_id,
-              'icon': icon, 
-              'averageUserRating': rating, 
-              'size': size, 
+              'icon': icon,
+              'averageUserRating': rating,
+              'size': size,
               'sign': sign,
-              'ipaVersionJb': ipa_version_jb, 
+              'ipaVersionJb': ipa_version_jb,
               'ipaVersionSigned': ipa_version_signed,
               'downloadCount': download_count
              },
             self.index, "apps", ID)
 
-    def query(self, words, device, sign=0, page=1, page_size=12):
+    def query(self, words, device, sign=0, page=1, page_size=12, language="EN"):
         """
         query
         """
         start = (page - 1) * page_size
-        
-        should = [pyes.TextQuery('trackName', words)]
-        must = []
-        if sign == 1:
-          must.append(pyes.TermQuery('sign', 1))
-        must_not = []
-        if device == 1:
-            must_not.append(pyes.TermQuery('supportIphone', 0))
 
+        if language == "CN":
+            should = [pyes.TextQuery('trackNameCN', words)]
+            s_fields = ['trackNameCN', 'icon', 'ID', 'bundleId', 'averageUserRating','size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount']
+        else:
+            should = [pyes.TextQuery('trackName', words)]
+            s_fields = ['trackName', 'icon', 'ID', 'bundleId', 'averageUserRating','size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount']
+
+        must = []
+        if sign == 1: must.append(pyes.TermQuery('sign', 1))
+        must_not = []
+        if device == 1: must_not.append(pyes.TermQuery('supportIphone', 0))
         results = self.es.search(
-            pyes.Search(pyes.BoolQuery(must=must, must_not=must_not, should=should),
-                        fields=['trackName', 'icon', 'ID', 'bundleId', 'averageUserRating',  
-                        'size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount'],
-                        start=start,
-                        size=page_size
-                        # sort = [
-                        #     { "downloadCount" : "desc" },
-                        # ]
+            pyes.Search(
+                pyes.BoolQuery(must=must, must_not=must_not, should=should),
+                fields=s_fields,
+                start=start,
+                size=page_size
             ))
 
         count = results.count()
@@ -141,9 +146,9 @@ class AppSearch(object):
             else:
                 ipa = ""
             if sign == 1:
-                item['version'] = item['ipaVersionSigned']
+                item['ipaVersion'] = item['ipaVersionSigned']
             else:
-                item['version'] = item['ipaVersionJb']
+                item['ipaVersion'] = item['ipaVersionJb']
             item["ipaDownloadUrl"]= ipa
             del item['ipaVersionJb']
             del item['ipaVersionSigned']

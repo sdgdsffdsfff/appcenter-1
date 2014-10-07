@@ -2,6 +2,7 @@
 # Created by pengchangliang on 14-3-22.
 
 import pyes
+import pymongo
 from conf.settings import settings
 from common.ng_mongo import NGMongoConnect
 from common.ng_redis import NGRedis
@@ -15,13 +16,15 @@ mongo_db = mongo.get_database('appcenter')
 
 
 def index_apps(app_search, apps):
-    appc = AppController()
     for index, app in enumerate(apps):
+        bundle_id = app.get("bundleId", None)
+        if not bundle_id: continue
         support_iphone, support_ipad = 0, 0
         for d in app['supportedDevices']:
             if 'iPhone' in d: support_iphone = 1
             if 'iPad' in d: support_ipad = 1
         rating = app.get('averageUserRating', 0)
+
         try:
             icon = artworkUrl512_to_114_icon(app['artworkUrl512'])
             sign = app.get('sign', 0)
@@ -34,9 +37,13 @@ def index_apps(app_search, apps):
                 ipa_version_jb = app_version['ipaVersion']['jb']
                 ipa_version_signed = app_version['ipaVersion']['signed']
 
+            app_cn = mongodb.AppBase_CN.find_one({'bundleId': bundle_id}, {"trackName": 1})
+            if not app_cn: track_name_cn = app['trackName']
+            else: track_name_cn = app_cn.get("trackName", app["trackName"])
             app_search.add_index(
                 ID = str(app['_id']),
                 track_name = app['trackName'],
+                track_name_cn = track_name_cn,
                 support_iphone = support_iphone,
                 support_ipad = support_ipad, icon = icon,
                 bundle_id = app['bundleId'], rating = rating,
@@ -55,7 +62,6 @@ def index_process_worker(app_search, apps):
         print "%s - %d-%d" % (multiprocessing.current_process().name, start, end)
         cur_thread = threading.Thread(target=index_apps, args=(app_search, apps[start:end]))
         cur_thread.start()
-        cur_thread.join()
         if app_len <= end: break
         start = end
         end += thread_num
@@ -64,10 +70,7 @@ def index_process_worker(app_search, apps):
 
 def build_search_index_run():
     app_search = AppSearch()
-    #try: app_search.delete_index()
-    #except: pass
-    try:
-        app_search.create_index()
+    try: app_search.create_index()
     except: pass
     num_apps_per_process = 50000
     fields = {
@@ -78,15 +81,16 @@ def build_search_index_run():
         "downloadCount": 1
     }
     apps = []
+    processes = []
     for index, app in enumerate(mongo_db.AppBase.find({'review': 1}, fields)):
         apps.append(app)
         if (index + 1) % num_apps_per_process == 0:
             p = multiprocessing.Process(target=index_process_worker, args=(app_search, apps))
             p.start()
+            processes.append(p)
             apps = []
     p = multiprocessing.Process(target=index_process_worker, args=(app_search, apps))
     p.start()
-    p.join()
+    processes.append(p)
+    for process in processes: process.join()
     app_search.refresh()
-
-
