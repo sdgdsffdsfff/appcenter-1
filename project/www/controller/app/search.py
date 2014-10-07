@@ -115,7 +115,7 @@ class AppSearch(object):
         """
         start = (page - 1) * page_size
 
-        if language == "CN":
+        if language == "zh-Hans":
             should = [pyes.TextQuery('trackNameCN', words)]
             s_fields = ['trackNameCN', 'icon', 'ID', 'bundleId', 'averageUserRating','size', 'ipaVersionJb', 'ipaVersionSigned', 'supportIphone', 'supportIpad', 'downloadCount']
         else:

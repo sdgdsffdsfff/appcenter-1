@@ -108,5 +108,5 @@ class SearchView(View):
             device = 1
         num = request.args.get('num', 4)
         search = AppSearch()
-        res = search.query(words, device, self._view._sign, page, 12)
+        res = search.query(words, device, self._view._sign, page, 12, self._view._language)
         return self._view.render(1000, res)
