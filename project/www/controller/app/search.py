@@ -149,6 +149,7 @@ class AppSearch(object):
                 item['ipaVersion'] = item['ipaVersionSigned']
             else:
                 item['ipaVersion'] = item['ipaVersionJb']
+            if "trackNameCN" in item: item['trackName'] = item['trackNameCN']
             item["ipaDownloadUrl"]= ipa
             del item['ipaVersionJb']
             del item['ipaVersionSigned']
