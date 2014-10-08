@@ -14,7 +14,7 @@ mongo_db = mongo.get_database('appcenter')
 class ClientController(object):
 
 	def get_latest_version(self, client_type):
-		res = mongo_db.client.find({"type":client_type}).sort('build', -1).limit(1)
+		res = mongo_db.client.find({"type":client_type, "review": "true"}).sort('build', -1).limit(1)
 		try:
 			client = res[0]
 		except:
