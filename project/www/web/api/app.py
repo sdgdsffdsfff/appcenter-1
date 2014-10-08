@@ -39,6 +39,7 @@ class ListView(View):
     获取应用列表
     """
     @route('/list', endpoint='api_app_list')
+    @main.cache.cached(timeout=CACHE_TIME)
     def get(self):
         genre_id = request.args.get('genre_id', 0)
         device = request.args.get('device', "1")
@@ -51,8 +52,6 @@ class ListView(View):
 
         if device == 'ipad' or device == "2": device = 'ipad'
         else: device = 'iphone'
-        #self.app = AppController()
-
         data = self.app.get_apps_cache(device, self._view._sign, genre_id, int(page), xsort)
 
         return self._view.render(1000, data)
@@ -85,6 +84,7 @@ class RelatedView(View):
     相关的应用
     """
     @route('/related', methods=['GET'], endpoint='api_app_related')
+    @main.cache.cached(timeout=CACHE_TIME)
     def do_request(self):
         object_id = request.args.get('id', None)
         num = request.args.get('num', 4)
@@ -96,6 +96,7 @@ class SearchView(View):
     搜索
     """
     @route('/search', methods=['GET'], endpoint='api_app_search')
+    @main.cache.cached(timeout=CACHE_TIME)
     def do_request(self):
         words = request.args.get('q', None)
         try:
