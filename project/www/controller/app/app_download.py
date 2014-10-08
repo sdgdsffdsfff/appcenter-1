@@ -8,7 +8,7 @@ import os
 import shutil
 from header import *
 from bson.objectid import ObjectId
-from lib.ipa import get_info_from_ipa
+from lib.ipa import get_info_from_ipa, check_sign_from_ipa
 from collections import defaultdict
 
 class AppDownloadController(ControllerBase):
@@ -86,6 +86,7 @@ class AppDownloadController(ControllerBase):
         shutil.move(file_path, dest_file_path)
 
         info = get_info_from_ipa(dest_file_path)
+        sign = check_sign_from_ipa(dest_file_path)
         version = info['version']
         if bundle_id is None:
             bundle_id = info['bundleid']
