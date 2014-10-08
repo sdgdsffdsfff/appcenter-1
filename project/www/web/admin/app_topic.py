@@ -27,11 +27,19 @@ class ListView(View):
     '''
     @route('/list', endpoint='admin_app_topic_list')
     def get(self):
+        page = int(request.args.get('page', 1))
+        page_size = request.args.get('page_size', 10)
         language = request.args.get("language", "")
         if language != "":
-            res = DB.app_topic.find({"language": language})
+            res = DB.app_topic.find({"language": language}).skip((page -1)*page_size).limit(page_size)
         else:
-            res = DB.app_topic.find()
+            res = DB.app_topic.find().skip((page -1)*page_size).limit(page_size)
+        total_page = int(math.ceil(res.count() / float(page_size)))
+        offset = (page - 1) * page_size
+        prev_page = (page - 1) if page - 1 > 0 else 1
+        next_page = (page + 1) if page + 1 < total_page else total_page
+        page_info = {"count": res.count(), "page": page, "total_page": total_page,
+                     "prev_page": prev_page, 'next_page': next_page}
         #语言选项
         lang_options = []
         langs = DB.client_support_language.find()
@@ -41,6 +49,7 @@ class ListView(View):
         self._view.assign('language_code_to_name', language_code_to_name)
         self._view.assign('country_code_to_name', country_code_to_name)
         self._view.assign('lang_options', lang_options)
+        self._view.assign('page_info', page_info)
 
         return self._view.render('app_topic_list', topic_list=list(res), lang=language)
 
