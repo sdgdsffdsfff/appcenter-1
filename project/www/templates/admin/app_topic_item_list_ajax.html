@@ -31,3 +31,24 @@
 		</tbody>
 	</table>
 </form>
+<div class="pagination">
+  <ul>
+  	<li><a href="javascript:;">总计{{ page_info['count']}}条记录, 当前{{page_info['page']}} / {{ page_info['total_page']}}页</a></li>
+    <li><a href="javascript:;" onclick="loadTopics('{{ url_for('admin_app_topic_item_list') }}?page={{ page_info['prev_page'] }}&_id={{topic['_id']}}')">上一页</a></li>
+    <li><a href="javascript:;" onclick="loadTopics('{{ url_for('admin_app_topic_item_list') }}?page={{ page_info['next_page']}}&_id={{topic['_id']}}')">下一页</a></li>
+  </ul>
+</div>
+{% block scripts %}
+<script>
+var ajax = NG.Ajax();
+function loadTopics(url) {
+	ajax.Get(url,  function(res){
+		if(res.data){
+			$('#topic_data_grad').html(res.data);
+			//重新渲染
+			App.initUniform();
+		}
+	});
+}
+</script>
+{% endblock %}

@@ -3,6 +3,7 @@
 #2013-11-26
 
 import random
+import math
 import time, datetime
 from www.lib.form import Form, FormElementField, FormElementSubmit, FormException, FormValidatorAbstract
 from __header__ import AdminView, FlaskView, DB, route, request, session, redirect, url_for, language_code_to_name, file_size_format, country_code_to_name, upload_hash_file
@@ -312,12 +313,21 @@ class ItemListView(View):
     '''
     @route('/item/list', endpoint='admin_app_topic_item_list')
     def get(self):
+        page = int(request.args.get('page', 1))
+        page_size = request.args.get('page_size', 10)
         _id = request.args.get('_id')
         res = DB.app_topic.find_one({'_id': ObjectId(_id)})
         topic_list = []
         if res and 'items' in res:
             topic_list = sort_items(res['items'])
-        return self._view.ajax_render('app_topic_item_list_ajax', topic_list=topic_list, topic=res)
+            total_page = int(math.ceil(len(topic_list) / float(page_size)))
+            offset = (page - 1) * page_size
+            prev_page = (page - 1) if page - 1 > 0 else 1
+            next_page = (page + 1) if page + 1 < total_page else total_page
+            paginate_topic_list = topic_list[(page - 1) * page_size:page*page_size]
+            page_info = {"count": len(topic_list), "page": page, "total_page": total_page,
+                         "prev_page": prev_page, 'next_page': next_page}
+        return self._view.ajax_render('app_topic_item_list_ajax', page_info=page_info, topic_list=paginate_topic_list, topic=res)
 
 
 class ItemDeleteView(View):
