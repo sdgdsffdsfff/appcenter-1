@@ -50,6 +50,7 @@ class ListView(View):
         self._view.assign('country_code_to_name', country_code_to_name)
         self._view.assign('lang_options', lang_options)
         self._view.assign('page_info', page_info)
+        self._view.assign('language', language)
 
         return self._view.render('app_topic_list', topic_list=list(res), lang=language)
 
