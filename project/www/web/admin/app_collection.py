@@ -81,8 +81,11 @@ class ItemListView(View):
     @route('/item/list', methods=['POST'], endpoint='admin_app_collection_item_list')
     def do_request(self):
         identifier = request.args.get('identifier')
-        col = AppCollectionController(identifier, language=request.form['language'], country=request.form['country'])
-        collection = col.get()
+        #col = AppCollectionController(identifier, language=request.form['language'], country=request.form['country'])
+        #collection = col.get()
+        collection = {}
+        collection['data'] = DB.app_collection.find_one({'identifier': identifier})["items"]
+        collection['identifier'] = identifier
         return self._view.ajax_render('app_collection_item_list_ajax', collection_list=collection['data'], identifier=collection['identifier'])
 
     def sort_item(self, items, filters):
