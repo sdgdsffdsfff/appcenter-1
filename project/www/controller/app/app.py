@@ -12,7 +12,7 @@ from bson.objectid import ObjectId
 from www.controller.app.header import *
 from www.controller.app.app_download import AppDownloadController
 from www.controller.app.app_download_netdisk import AppDownloadNetDiskController
-from con.settings import settings
+from conf.settings import settings
 
 class AppController(ControllerBase):
     """
