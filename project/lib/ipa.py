@@ -60,3 +60,13 @@ def get_info_from_ipa(zipfilename):
         if name[-11:] == '/Info.plist' and len(nameArr) == 3:
             return read_plist(z.read(name))    
     raise Exception('NO_PLIST_FILE')
+
+def check_sign_from_ipa(zipfilename):
+    f_zip = zipfile.ZipFile(zipfilename, 'r')
+    for f in f_zip.namelist():
+        index = f.find("_CodeSignature/CodeResources")
+        if index > 0:
+            f_zip.close()
+            return 1
+    f_zip.close()
+    return 0
