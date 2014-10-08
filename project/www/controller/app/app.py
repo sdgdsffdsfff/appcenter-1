@@ -60,6 +60,11 @@ class AppController(ControllerBase):
         """
         try:
             data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id)})
+            if self.request_language == "CN":
+                data_cn = mongo_db.AppBase_CN.find_one({'bundleId': data.get('bundleId', "")})
+                if data_cn:
+                    data_cn["_id"] = data["_id"]
+                    data = data_cn
             data = self.filter_app_output(data)
             downloads = self.get_app_downloads(data['bundleId'])
             for lang in self._get_ext_data_language():
