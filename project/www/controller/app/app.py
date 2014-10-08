@@ -101,7 +101,6 @@ class AppController(ControllerBase):
         cache_key = self.app_info_redis_key % language_to_dbname(self.request_language)
         try:
             json_str = redis_master.hget(cache_key, object_id)
-
             if not json_str or refresh_cache is True:
                 self.set_app_cache(object_id)
                 json_str = redis_master.hget(cache_key, object_id)

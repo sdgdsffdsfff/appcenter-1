@@ -219,7 +219,9 @@ def convertAppIpaHashToIpaURL(app):
             tmp = app['ipaHistoryDownloads']['jb'][key]
             items = []
             for down in tmp:
-                down['ipaDownloadUrl'] = create_ipa_url(down['ipaHash'])
+                ipa_hash = down.get('ipaHash', None)
+                if ipa_hash:
+                    down['ipaDownloadUrl'] = create_ipa_url(ipa_hash)
                 items.append(down)
             app['ipaHistoryDownloads']['jb'][key] = items
     except:
@@ -230,7 +232,9 @@ def convertAppIpaHashToIpaURL(app):
             tmp = app['ipaHistoryDownloads']['signed'][key]
             items = []
             for down in tmp:
-                down['ipaDownloadUrl'] = create_ipa_url(down['ipaHash'])
+                ipa_hash = down.get('ipaHash', None)
+                if ipa_hash:
+                    down['ipaDownloadUrl'] = create_ipa_url(ipa_hash)
                 items.append(down)
             app['ipaHistoryDownloads']['signed'][key] = items
     except:
