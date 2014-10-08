@@ -12,6 +12,7 @@ from bson.objectid import ObjectId
 from www.controller.app.header import *
 from www.controller.app.app_download import AppDownloadController
 from www.controller.app.app_download_netdisk import AppDownloadNetDiskController
+from conf.settings import settings
 
 class AppController(ControllerBase):
     """
@@ -114,6 +115,12 @@ class AppController(ControllerBase):
             except:
                 pass
             data['cacheKey'] = cache_key
+            ipadScreenshotUrls = [
+                isu.replace("#IMG_HOST#", settings["pic_url_host"] + "/") for isu in data["ipadScreenshotUrls"]]
+            screenshotUrls = [
+                isu.replace("#IMG_HOST#", settings["pic_url_host"] + "/") for isu in data["screenshotUrls"]]
+            data["ipadScreenshotUrls"] = ipadScreenshotUrls
+            data["screenshotUrls"] = screenshotUrls
             return convertAppIpaHashToIpaURL(data)
         except Exception, ex:
             traceback.print_exc()

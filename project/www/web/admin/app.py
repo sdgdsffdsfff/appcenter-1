@@ -466,7 +466,7 @@ class EditView(AppDetailBaseView):
                 dir_path = os.path.dirname(full_pic_path)
                 if not os.path.isdir(dir_path):os.makedirs(dir_path)
                 shutil.move(tmp_file, full_pic_path)
-                pic_url = settings['pic_url_host'] + '/%s' % (pic_path)
+                pic_url = settings['pic_url_host'] + '/%s' % (hash_to_path(sha1) + "." + ext)
                 data["artworkUrl512"] = pic_url
             DB.AppBase.update({'_id':self.app_data['_id']}, {'$set':data})
             message = {'status':'success', 'message':'修改成功'} 
