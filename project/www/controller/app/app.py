@@ -31,6 +31,7 @@ class AppController(ControllerBase):
     def __init__(self, language='EN'):
         #语言
         self.request_language = language_code_format(language)
+        self._language = language
 
     def get_by_objectid(self, _id):
         """
@@ -60,7 +61,7 @@ class AppController(ControllerBase):
         """
         try:
             data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id)})
-            if self.request_language == "CN":
+            if self._language == "zh-Hans":
                 data_cn = mongo_db.AppBase_CN.find_one({'bundleId': data.get('bundleId', "")})
                 if data_cn:
                     data_cn["_id"] = data["_id"]

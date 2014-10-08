@@ -46,7 +46,7 @@ class ControllerBase(object):
 def language_code_format(code):
     langs = {
         'JP': 'JA',
-        'CN': 'ZH'
+        'CN': 'ZH',
     }
     return langs[code] if code in langs else code
 
