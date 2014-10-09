@@ -62,7 +62,11 @@ class AppController(ControllerBase):
             data_cn = mongo_db.AppBase_CN.find_one({'bundleId': data.get('bundleId', "")})
             if data_cn:
                 data_cn["_id"] = data["_id"]
+                data_cn["cnname"] = data.get("cnname", "")
                 data = data_cn
+            data["trackName"] = data["trackName"] if data.get("cnname", "") == "" else data["cnname"]
+        elif self._language == "ar":
+            data["trackName"] = data["trackName"] if data.get("arname", "") == "" else data["arname"]
         data = self.filter_app_output(data)
 
         downloads = self.get_app_downloads(data['bundleId'])
@@ -218,7 +222,7 @@ class AppController(ControllerBase):
         apps = mongo_db.AppBase.find(where, {
             "trackId":1, "trackName": 1, "bundleId": 1, "artworkUrl512": 1,
             "averageUserRating": 1, "screenshotUrls": 1, "ipadScreenshotUrls": 1,
-            "fileSizeBytes": 1, "version": 1
+            "fileSizeBytes": 1, "version": 1, 'cnname': 1, 'arname':1
         }).limit(limit).sort(sort[0], sort[1])
         apps = list(apps)
         if "sign" in where and where["sign"] == 1: sign = 1
