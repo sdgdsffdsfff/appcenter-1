@@ -5,6 +5,7 @@
 import random
 import math
 import time, datetime
+import pymongo
 from www.lib.form import Form, FormElementField, FormElementSubmit, FormException, FormValidatorAbstract
 from __header__ import AdminView, FlaskView, DB, route, request, session, redirect, url_for, language_code_to_name, file_size_format, country_code_to_name, upload_hash_file
 from conf.settings import settings
@@ -51,8 +52,9 @@ class ListView(View):
         self._view.assign('lang_options', lang_options)
         self._view.assign('page_info', page_info)
         self._view.assign('language', language)
+        new_res = sorted(list(res), key=lambda k: k.get("order", ""))
 
-        return self._view.render('app_topic_list', topic_list=list(res), lang=language)
+        return self._view.render('app_topic_list', topic_list=new_res, lang=language)
 
 
 class AppTopicInfoBaseView(View):
