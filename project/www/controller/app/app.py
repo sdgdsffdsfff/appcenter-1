@@ -13,6 +13,7 @@ from www.controller.app.header import *
 from www.controller.app.app_download import AppDownloadController
 from www.controller.app.app_download_netdisk import AppDownloadNetDiskController
 from conf.settings import settings
+from collections import defaultdict
 
 class AppController(ControllerBase):
     """
@@ -54,6 +55,38 @@ class AppController(ControllerBase):
         """
         data = mongo_db.AppBase.find_one({'bundleId': bundle_id})
         return self._output_format(data)
+
+    def get_app_detail(self, object_id):
+        data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id)})
+        if self._language == "zh-Hans":
+            data_cn = mongo_db.AppBase_CN.find_one({'bundleId': data.get('bundleId', "")})
+            if data_cn:
+                data_cn["_id"] = data["_id"]
+                data = data_cn
+        data = self.filter_app_output(data)
+
+        downloads = self.get_app_downloads(data['bundleId'])
+        data['systemRequirements'] = "ios" + data.get("minimumOsVersion", "6.0") + "+"
+        try: rating = data['averageUserRating']
+        except: rating = 0
+        try: size = file_size_format(data['fileSizeBytes'])
+        except: size = 'unknown'
+        try: download_version = downloads['ipaVersion']
+        except: download_version = {'jb':'0', 'signed': '0'}
+        dict_merged = dict(downloads, **data)
+        data = dict_merged
+        try: data['ipaHistoryDownloads']['jb'] = sort_dict_keys(data['ipaHistoryDownloads']['jb'])
+        except:pass
+        try:data['ipaHistoryDownloads']['signed'] = sort_dict_keys(data['ipaHistoryDownloads']['signed'])
+        except: pass
+        ipadScreenshotUrls = [
+            isu.replace("#IMG_HOST#", settings["pic_url_host"] + "/") for isu in data["ipadScreenshotUrls"]]
+        screenshotUrls = [
+            isu.replace("#IMG_HOST#", settings["pic_url_host"] + "/") for isu in data["screenshotUrls"]]
+        data["ipadScreenshotUrls"] = ipadScreenshotUrls
+        data["screenshotUrls"] = screenshotUrls
+        return convertAppIpaHashToIpaURL(data)
+
 
     def set_app_cache(self, object_id):
         """
@@ -383,10 +416,13 @@ class AppController(ControllerBase):
         """
         获取应用详细信息
         """
-        #越狱版
-        jb = self.get_downloads(bundle_id, 0)
-        #签名版
-        signed = self.get_downloads(bundle_id, 1)
+        all_downloads = self.get_all_downloads(bundle_id)
+        jb, signed = all_downloads["jb"], all_downloads["sign"]
+
+        # #越狱版
+        # jb = self.get_downloads(bundle_id, 0)
+        # #签名版
+        # signed = self.get_downloads(bundle_id, 1)
         data = {
             #最新版hash值
             'ipaHash': {
@@ -612,3 +648,60 @@ class AppController(ControllerBase):
         """
         cache_key = self.app_version_redis_key % lang
         return redis_master.hlen(cache_key)
+
+    def _extract_direct_download_info(self, downloads):
+        tmp_download_list = defaultdict(list)
+        for down in downloads:
+            d_version = "1.0" if down.get("version", "") == "" else down["version"]
+            tmp_download_list[d_version].append({
+                'ipaHash': down.get('hash', ''),
+                'version': d_version,
+                'addTime': str(down['addTime'])
+            })
+        try: ipaHistoryDownloads = sort_dict_keys(tmp_download_list)
+        except Exception, ex: ipaHistoryDownloads = tmp_download_list
+        try:
+            key = ipaHistoryDownloads.keys()[0]
+            ipaHash = ipaHistoryDownloads[key][0]['ipaHash']
+            ipaVersion = ipaHistoryDownloads[key][0]['version']
+        except:
+            ipaHash, ipaVersion = "", ""
+        return {
+            'ipaHash': ipaHash, 'ipaVersion': ipaVersion,
+            'ipaHistoryDownloads': ipaHistoryDownloads,
+            "tmp_download_list": tmp_download_list
+        }
+
+    def _extract_netdisk_download_info(self, downloads, direct_download_list):
+        for down in downloads:
+            d_version = "1.0" if down.get("version", "") == "" else down["version"]
+            direct_download_list[d_version].append({
+                'webURL': down.get('downloadUrl', ''),
+                'version': d_version,
+                'addTime': str(down['addTime'])
+            })
+        try:
+            ipaHistoryDownloads = sort_dict_keys(direct_download_list)
+        except:
+            ipaHistoryDownloads = tmp_download_list
+        return {'ipaHistoryDownloads': ipaHistoryDownloads}
+
+    def get_all_downloads(self, bundle_id):
+        """取得该应用下的所有下载包"""
+        #直接下载数据
+
+        download = AppDownloadController()
+        sign_downloads, jb_downloads = download.get_all_downloads_of_app(bundle_id)
+        sign_downloads_info = self._extract_direct_download_info(sign_downloads)
+        jb_downloads_info = self._extract_direct_download_info(jb_downloads)
+
+        netdisk = AppDownloadNetDiskController()
+        sign_nd_downloads, jb_nd_downloads = netdisk.get_all_downloads_of_app(bundle_id)
+        sign_nd_downloads_info = self._extract_netdisk_download_info(
+            sign_nd_downloads, sign_downloads_info["tmp_download_list"])
+        jb_nd_downloads_info = self._extract_netdisk_download_info(
+            jb_nd_downloads, jb_downloads_info["tmp_download_list"])
+
+        sign_downloads_info["ipaHistoryDownloads"] = sign_nd_downloads_info["ipaHistoryDownloads"]
+        jb_downloads_info["ipaHistoryDownloads"] = jb_nd_downloads_info["ipaHistoryDownloads"]
+        return {"sign": sign_downloads_info, "jb": jb_downloads_info}
