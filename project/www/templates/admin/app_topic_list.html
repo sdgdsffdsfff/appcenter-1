@@ -1,9 +1,11 @@
+{% block head %}
+<!-- BEGIN X-EDITABLE PLUGIN-->
+    <link rel="stylesheet" type="text/css" href="/static/metronic1.4/assets/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/metronic1.4/assets/plugins/bootstrap-editable/inputs-ext/address/address.css"/>
+<!-- END X-EDITABLE PLUGIN-->
+{% endblock %}
 {% if layout == 'default' %}
     {% extends "admin/_layout.html" %}
-
-    {% block head %}
-
-    {% endblock %}
 
     {% block page_title %} 专题 {% endblock %}
     {% block title %} 专题 <small>列表</small> {% endblock %}
@@ -58,6 +60,7 @@
 					<th style="width: 15%">语言</th>
 					<th style="width: 15%">国家</th>
 					<th style="width: 5%">状态</th>
+					<th>排序(点击修改)</th>
 					<th style="width: 5%">版本</th>
 					<th style="width: 21%">操作</th>
 				</tr>
@@ -85,6 +88,7 @@
 						<span class="label label-danger">未发布</span>
 						{% endif %}
 					</td>
+					<td><a href="#" id="apptopic" data-type="text" data-pk="{{ app_topic['_id'] }}" data-original-title="Enter order" class="editable editable-click apptopic" style="display: inline;">{{ app_topic.get('order', 1000)|int }}</a></td>
 					<td>{% if app_topic['prisonbreak'] == 0 %}
 						<span class="label label-success">正版</span>
 						{% else %}
@@ -122,7 +126,16 @@
 {% endblock %}
 
 {% block scripts %}
+<!-- BEGIN X-EDITABLE PLUGIN -->
+    <script type="text/javascript" src="/static/metronic1.4/assets/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+    <script type="text/javascript" src="/static/metronic1.4/assets/plugins/bootstrap-editable/inputs-ext/address/address.js"></script>
+    <script type="text/javascript" src="/static/metronic1.4/assets/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js"></script>
+    <script type="text/javascript" src="/static/metronic1.4/assets/scripts/my_form_editable.js"></script>
+    <!-- END X-EDITABLE PLUGIN -->
 <script>
+jQuery(document).ready(function() {
+    FormEditable.init();
+});
 var ajax = NG.Ajax();
 
 function deleteAppTopic(_id){
