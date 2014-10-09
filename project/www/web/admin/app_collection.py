@@ -175,6 +175,8 @@ class ItemAddView(View):
                 'language':request.form.getlist('language'),
                 'country':request.form.getlist('country'),
                 'trackName':app['trackName'],
+                'cnname': app.get('cnname', ""),
+                'arname': app.get('arname', ""),
                 'averageUserRating': rating,
                 'icon': artworkUrl512_to_114_icon(app['artworkUrl512']),
                 'ID': str(app['_id']),

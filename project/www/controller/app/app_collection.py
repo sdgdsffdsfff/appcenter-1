@@ -70,6 +70,7 @@ class AppCollectionController(ControllerBase):
                     t_item = mongo_db[lang_collection[self._language]].find_one({"bundleId": tmp_item["bundleId"]})
                     if t_item:
                         app_trackName = t_item["trackName"]
+
                 if self._language == "ar":
                     app_trackName = app_trackName if tmp_item.get("arname", "") == "" else tmp_item["arname"]
                 if self._language == "zh-Hans":
