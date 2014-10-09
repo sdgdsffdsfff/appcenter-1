@@ -73,7 +73,14 @@ function FormatSelection(item) {
 	$(document).ready(function() {
                 window.adtype = "app";
 		$("input:radio[name=adtype]").click(function() {
-		    var value = $(this).val() == "1" ? "app": "topic";
+                    var tvalue = $(this).val(), value = "";
+                    if (tvalue == "1") {
+                      value = "app";
+                    } else if(tvalue == "0") {
+                      value = "topic";
+                    } else {
+                      value = "weburl";
+                    }
 		    window.adtype = value;
 		});
 		$("#adlink").select2({
@@ -102,8 +109,8 @@ function FormatSelection(item) {
 		})
 
 		$("#adlink").change(function(){
-			var oid = $("#adlink").select2('data')._id["$oid"]
-			$(this).val(oid)
+			var oid = $("#adlink").select2('data')._id["$oid"];
+			$(this).val(oid);
 		})
 	});
 	//redirect to list page when add successful
