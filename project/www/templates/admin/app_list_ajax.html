@@ -172,3 +172,30 @@
     <li><a href="javascript:;" onclick="ajaxAppListLoad('{{ url_for('admin_app_ajaxlist') }}?{{next_page_params}}')">下一页</a></li>
   </ul>
 </div>
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".alllang").click(function(){
+		console.log($(".alllang"))
+		var name = $(this).attr('data-attr')
+		$("input[name=" + name + "]").attr("checked", "checked")
+		$("input[name=" + name + "]").parent().addClass("checked")
+	})
+
+	$(".noneofthem").click(function(){
+		var name = $(this).attr('data-attr')
+		var name_array = $("input[name=" + name + "]")
+		for(var i=0;i<name_array.length;i++){
+			if($(name_array[i]).attr("checked") == "checked"){
+				$(name_array[i]).removeAttr("checked")
+				$(name_array[i]).parent().removeClass("checked")
+			}else{
+				$(name_array[i]).attr("checked", "checked")
+				$(name_array[i]).parent().addClass("checked")
+			}
+		}
+	})
+})
+</script>
+{% endblock %}

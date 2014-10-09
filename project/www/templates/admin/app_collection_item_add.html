@@ -173,28 +173,6 @@ ajaxAppListLoad("{{url_for('admin_app_ajaxlist', use='collection')}}");
 //加载集合应用列表
 loadCollection();
 
-$(document).ready(function(){
-	$(".alllang").click(function(){
-		var name = $(this).attr('data-attr')
-		$("input[name=" + name + "]").attr("checked", "checked")
-		$("input[name=" + name + "]").parent().addClass("checked")
-	})
-
-	$(".noneofthem").click(function(){
-		var name = $(this).attr('data-attr')
-		var name_array = $("input[name=" + name + "]")
-		for(var i=0;i<name_array.length;i++){
-			if($(name_array[i]).attr("checked") == "checked"){
-				$(name_array[i]).removeAttr("checked")
-				$(name_array[i]).parent().removeClass("checked")
-			}else{
-				$(name_array[i]).attr("checked", "checked")
-				$(name_array[i]).parent().addClass("checked")
-			}
-		}
-	})
-})
-
 </script>
 {% endblock %}
 
