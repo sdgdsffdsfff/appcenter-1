@@ -69,7 +69,7 @@ class AppController(ControllerBase):
             data = self.filter_app_output(data)
             downloads = self.get_app_downloads(data['bundleId'])
             for lang in self._get_ext_data_language():
-                data['systemRequirements'] = 'IOS5.0+' #temp
+                data['systemRequirements'] = data.get("minimumOsVersion", "6.0") + "+"
                 try: rating = data['averageUserRating']
                 except: rating = 0
                 try: size = file_size_format(data['fileSizeBytes'])
