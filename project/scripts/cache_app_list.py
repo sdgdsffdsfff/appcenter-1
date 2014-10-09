@@ -17,23 +17,21 @@ mongo_db = mongo.get_database('appcenter')
 def cache_app_list(genre_id):
     app = AppController()
     print "Begin Caching Genre: %s App List" % genre_id
-    app.set_apps_cache(genre_id, ('sort', -1)) #推荐
-    app.set_apps_cache(genre_id, ('downloadCount', -1)) #最热
-    app.set_apps_cache(genre_id, ('_id', -1)) #最新
+    app.set_apps_cache(genre_id, ('sort', -1))
+    app.set_apps_cache(genre_id, ('downloadCount', -1))
+    app.set_apps_cache(genre_id, ('_id', -1))
     print "Finish Caching Genre: %s App List" % genre_id
 
-
 def asynchronous_cache_genres():
-    pass
-    # threads = []
-    # for index, genre in enumerate(mongo_db.app_genre.find()):
-    #     threads.append(gevent.spawn(cache_app_list, str(genre['genreId'])))
-    # gevent.joinall(threads)
+    processes = []
+    for index, genre in enumerate(mongo_db.app_genre.find()):
+        cur_process = multiprocessing.Process(target=cache_app_list, args=(genre, ))
+        cur_process.start()
+        processes.append(cur_process)
+    for pro in processes: pro.join()
 
 def synchronous_cache_genres():
-    for index, genre in enumerate(mongo_db.app_genre.find()):
-        print index
-        cache_app_list(str(genre['genreId']))
+    pass
 
 def cache_app_list_run(genreID=None):
     if genreID == "-1":

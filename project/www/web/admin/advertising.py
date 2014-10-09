@@ -47,6 +47,8 @@ class ItemSearchView(View):
         elif tp == "topic":
             topics = DB.app_topic.find({"name": q} , { "name": 1, "_id":1 })
             items = [topic for topic in topics]
+        elif tp == "weburl":
+            items = [{"name": q, "_id": {"$oid": q}}]
         return self._view.ajax_response(status=status, data={"items": items})
 
 
@@ -169,7 +171,7 @@ class ItemAddView(View):
         self._form = Form('advertising_add_form', request, session)
         self._form.add_field('text', '标题', 'title', data={'attributes':{'class':'m-wrap large', 'placeholder': '标题'}})
         self._form.add_field('select', '所属广告位', 'identifier', data={'value':identifier, 'option': identifier_options, 'attributes':{'class':'m-wrap large'}})
-        self._form.add_field('radio', '广告类型', 'adtype', data={'value': '1', 'option': [("应用", "1"), ("专题", "0")]})
+        self._form.add_field('radio', '广告类型', 'adtype', data={'value': '1', 'option': [("应用", "1"), ("专题", "0"), ("web", "2")]})
         #self._form.add_field('text', '链接', 'link', data={'attributes':{'class':'m-wrap large', 'placeholder': 'id=应用ID/topic_id=专题ID'}})
         self._form.add_field('text', '链接', 'link', data={'attributes':{'class':'m-wrap large', 'id': 'adlink'}})
         self._form.add_field('text', '排序', 'order', data={'attributes':{'class':'m-wrap large', 'placeholder': '排序'}})
@@ -204,6 +206,8 @@ class ItemAddView(View):
             elif request.form["adtype"] == "0":
                 #it's a topic
                 link = "TOPIC_ID=" + request.form["link"]
+            elif request.form["adtype"] == "2":
+                link = "WEB_URL=" + request.form["link"]
             item_id = '%s%s' % (int(time.time()), random.randint(1000, 9999))
             #入库 
             items = {
