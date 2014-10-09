@@ -65,6 +65,17 @@ var FormEditable = function () {
             }
         });
 
+        $('.apptopic').editable({
+            url: "/admin/app_topic/order/update",
+            type: 'text',
+            pk: $(this).attr("data-pk"),
+            //name: "order",
+            title: 'Enter order',
+            validate: function (value) {
+                if ($.trim(value) == '') return 'This field is required';
+            }
+        });
+
     }
 
     return {

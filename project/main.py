@@ -79,6 +79,7 @@ def register_view():
     admin.app_topic.ItemAddView.register(app, route_prefix='/admin/')
     admin.app_topic.ItemDeleteView.register(app, route_prefix='/admin/')
     admin.app_topic.ItemSortView.register(app, route_prefix='/admin/')
+    admin.app_topic.AppTopicOrderUpdateView.register(app, route_prefix='/admin/')
     admin.cache.InfoView.register(app, route_prefix='/admin/')
     admin.users.ListView.register(app, route_prefix='/admin/')
     admin.users.AddView.register(app, route_prefix='/admin/')

@@ -91,6 +91,23 @@ class AppTopicInfoBaseView(View):
         #self._form.add_validator(AppTopicAddValidator)
 
 
+class AppTopicOrderUpdateView(View):
+    '''
+    排序修改
+    '''
+    @route('/order/update', methods=['POST'], endpoint='admin_apptopic_order_update')
+    def post(self):
+        try:
+            pk = request.form["pk"]
+            value = request.form["value"]
+            DB.app_topic.update({"_id": ObjectId(pk)}, {"$set": {"order": int(value)}})
+            status, message = 'success', '添加成功'
+        except Exception, ex:
+            status, message = 'error', str(ex)
+
+        return self._view.ajax_response(status, message)
+
+
 class AddView(AppTopicInfoBaseView):
     '''
     专题添加
