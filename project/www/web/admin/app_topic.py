@@ -52,7 +52,7 @@ class ListView(View):
         self._view.assign('lang_options', lang_options)
         self._view.assign('page_info', page_info)
         self._view.assign('language', language)
-        new_res = sorted(list(res), key=lambda k: k.get("order", ""))
+        new_res = sorted(list(res), key=lambda k: k.get("order", ""), reverse=True)
 
         return self._view.render('app_topic_list', topic_list=new_res, lang=language)
 
@@ -84,6 +84,7 @@ class AppTopicInfoBaseView(View):
 
         self._form = Form('app_topic_add_form', request, session)
         self._form.add_field('text', '专题名称', 'name', data={'attributes': {'class': 'm-wrap large'}})
+        self._form.add_field('text', '排序', 'sort', data={'attributes': {'class': 'm-wrap large'}})
         self._form.add_field('textarea', '描述', 'description', data={'attributes': {'class': 'm-wrap large'}})
         self._form.add_field('checkbox', '投放语言', 'language', data={'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家', 'country', data={'value': '', 'option': country_options})
@@ -147,6 +148,7 @@ class AddView(AppTopicInfoBaseView):
             data = {
                 'name': request.form['name'],
                 'description': request.form['description'],
+                'sort': int(1000 if request.form.get("sort", "").strip() == "" else request.form["sort"]),
                 'icon_hash': hash_str,
                 'icon_store_path': save_file,
                 'language': language,
