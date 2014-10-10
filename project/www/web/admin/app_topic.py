@@ -32,9 +32,9 @@ class ListView(View):
         page_size = request.args.get('page_size', 10)
         language = request.args.get("language", "")
         if language != "":
-            res = DB.app_topic.find({"language": language}).sort("order", -1).skip((page -1)*page_size).limit(page_size)
+            res = DB.app_topic.find({"language": language}).sort([("order", pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         else:
-            res = DB.app_topic.find().sort("order", -1).skip((page -1)*page_size).limit(page_size)
+            res = DB.app_topic.find().sort([("order", pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         total_page = int(math.ceil(res.count() / float(page_size)))
         offset = (page - 1) * page_size
         prev_page = (page - 1) if page - 1 > 0 else 1
@@ -82,6 +82,7 @@ class AppTopicInfoBaseView(View):
 
         self._form = Form('app_topic_add_form', request, session)
         self._form.add_field('text', '专题名称', 'name', data={'attributes': {'class': 'm-wrap large'}})
+        self._form.add_field('text', '排序', 'order', data={'attributes': {'class': 'm-wrap large'}})
         self._form.add_field('textarea', '描述', 'description', data={'attributes': {'class': 'm-wrap large'}})
         self._form.add_field('checkbox', '投放语言', 'language', data={'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家', 'country', data={'value': '', 'option': country_options})
@@ -145,6 +146,7 @@ class AddView(AppTopicInfoBaseView):
             data = {
                 'name': request.form['name'],
                 'description': request.form['description'],
+                'order': int(0 if request.form.get("order", "").strip() == "" else request.form["order"]),
                 'icon_hash': hash_str,
                 'icon_store_path': save_file,
                 'language': language,
@@ -311,7 +313,7 @@ class ItemAddView(View):
                 raise ValueError(u"应用已经存在")
             items = {
                 'id': int(item_id),
-                'sort':int(request.form['sort']),
+                'order':int(request.form['order']),
                 'trackName':app['trackName'],
                 'cnname': app.get('cnname', ""),
                 'arname': app.get('arname', ""),
