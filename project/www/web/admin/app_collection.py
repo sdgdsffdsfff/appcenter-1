@@ -81,10 +81,20 @@ class ItemListView(View):
     @route('/item/list', methods=['POST'], endpoint='admin_app_collection_item_list')
     def do_request(self):
         identifier = request.args.get('identifier')
+        language=request.form['language']
+        country=request.form['country']
         #col = AppCollectionController(identifier, language=request.form['language'], country=request.form['country'])
         #collection = col.get()
         collection = {}
-        collection_list = DB.app_collection.find_one({'identifier': identifier})["items"]
+        collection_list = []
+        for item in DB.app_collection.find_one({'identifier': identifier})["items"]:
+            if language == "" and country == "":
+                collection_list.append(item)
+            else:
+                if language in item["language"]:
+                    collection_list.append(item)
+                if country in item["country"]:
+                    collection_list.append(item) 
         new_collection_list = sorted(collection_list, key=lambda k: k.get("sort", ""), reverse=True)
         collection['data'] = new_collection_list
         collection['identifier'] = identifier
