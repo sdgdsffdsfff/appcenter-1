@@ -68,6 +68,7 @@
               </form>
             </div>
           <a class="btn green" data-toggle="modal" href="{{ url_for('admin_advertising_item_add', identifier=ad['identifier']) }}{% if layout != 'default' %}&layout=tiny{% endif%}">新添加广告 <i class="icon-plus"></i></a>
+          <a class="btn green" href="javascript:window.location.reload()">刷新排序</a>
           <br />
           <br />
         </div>
