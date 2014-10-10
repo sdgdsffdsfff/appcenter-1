@@ -315,6 +315,8 @@ class ItemAddView(View):
                 'id': int(item_id),
                 'sort':int(request.form['sort']),
                 'trackName':app['trackName'],
+                'cnname': app.get('cnname', ""),
+                'arname': app.get('arname', ""),
                 'icon': artworkUrl512_to_114_icon(app['artworkUrl512']),
                 'ID': str(app['_id']),
                 'averageUserRating': rating,

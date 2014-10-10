@@ -15,6 +15,14 @@ class AppDownloadController(ControllerBase):
     '''
     APP 下载
     '''
+    def get_all_downloads_of_app(self, bundleid):
+        where = {'bundleId': bundleid}
+        res = list(mongo_db.AppDownload.find(where))
+        res = list(sort_downloads(res))
+        results = defaultdict(list)
+        for re in res: results[re.get("sign", 0)].append(re)
+        return results.get(1, []), results.get(0, [])
+
     def get_by_bundleids(self, bundleids, sign=0):
         results = defaultdict(list)
         results2 = dict()
