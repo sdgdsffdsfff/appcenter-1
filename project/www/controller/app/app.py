@@ -199,7 +199,7 @@ class AppController(ControllerBase):
         """
         获取应用基本数据
         """
-        m = mongo_db.AppBase.find(where)
+        m = mongo_db.AppBase.find(where).sort("sort", -1)
         count = m.count()
         total_page = int(math.ceil(count / float(page_size)))
         offset = (page - 1) * page_size
