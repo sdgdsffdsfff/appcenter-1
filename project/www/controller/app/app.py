@@ -29,7 +29,7 @@ class AppController(ControllerBase):
     #默认语言
     default_language = 'CN'
 
-    def __init__(self, language='EN'):
+    def __init__(self, language='en'):
         #语言
         self.request_language = language_code_format(language)
         self._language = language
@@ -350,7 +350,7 @@ class AppController(ControllerBase):
             }
         app_base = list(mongo_db.AppBase.find({"bundleId": {"$in": to_update_bundleids}}))
         ulti_results = []
-        if self.request_language == "ZH":
+        if self._language == "zh-Hans":
             appbase_cn = list(mongo_db.AppBase_CN.find({"bundleId": {"$in": to_update_bundleids}}))
         for app_d in app_base:
             app_d_bundle_id = app_d["bundleId"]
