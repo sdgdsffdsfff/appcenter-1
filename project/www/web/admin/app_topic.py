@@ -32,9 +32,9 @@ class ListView(View):
         page_size = request.args.get('page_size', 10)
         language = request.args.get("language", "")
         if language != "":
-            res = DB.app_topic.find({"language": language}).skip((page -1)*page_size).limit(page_size)
+            res = DB.app_topic.find({"language": language}).sort([("order", pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         else:
-            res = DB.app_topic.find().skip((page -1)*page_size).limit(page_size)
+            res = DB.app_topic.find().sort([("order", pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         total_page = int(math.ceil(res.count() / float(page_size)))
         offset = (page - 1) * page_size
         prev_page = (page - 1) if page - 1 > 0 else 1
@@ -53,8 +53,8 @@ class ListView(View):
         self._view.assign('page_info', page_info)
         self._view.assign('language', language)
 
-        new_res = sorted(list(res), key=lambda k: k.get("order", ""), reverse=True)
-
+        # new_res = sorted(list(res), key=lambda k: k.get("order", ""))
+        new_res = list(res)
         return self._view.render('app_topic_list', topic_list=new_res, lang=language)
 
 
