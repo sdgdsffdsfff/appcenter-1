@@ -89,7 +89,7 @@
 						<span class="label label-danger">未发布</span>
 						{% endif %}
 					</td>
-					<td><a href="#" id="apptopic" data-type="text" data-pk="{{ app_topic['_id'] }}" data-original-title="Enter order" class="editable editable-click apptopic" style="display: inline;">{{ app_topic.get('order', 1000)|int }}</a></td>
+					<td><a href="#" id="apptopic" data-type="text" data-pk="{{ app_topic['_id'] }}" data-original-title="Enter order" class="editable editable-click apptopic" style="display: inline;">{{ app_topic.get('order', 0)|int }}</a></td>
 					<td>{% if app_topic['prisonbreak'] == 0 %}
 						<span class="label label-success">正版</span>
 						{% else %}

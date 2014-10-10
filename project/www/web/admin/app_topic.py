@@ -149,7 +149,7 @@ class AddView(AppTopicInfoBaseView):
             data = {
                 'name': request.form['name'],
                 'description': request.form['description'],
-                'order': int(1000 if request.form.get("order", "").strip() == "" else request.form["order"]),
+                'order': int(0 if request.form.get("order", "").strip() == "" else request.form["order"]),
                 'icon_hash': hash_str,
                 'icon_store_path': save_file,
                 'language': language,
