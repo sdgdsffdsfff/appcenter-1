@@ -63,7 +63,7 @@ class AppController(ControllerBase):
             if data_cn:
                 data_cn["_id"] = data["_id"]
                 data_cn["cnname"] = data.get("cnname", "")
-                data = data_cn
+                data.update(data_cn)
             data["trackName"] = data["trackName"] if data.get("cnname", "") == "" else data["cnname"]
         elif self._language == "ar":
             data["trackName"] = data["trackName"] if data.get("arname", "") == "" else data["arname"]
@@ -173,7 +173,7 @@ class AppController(ControllerBase):
         try:
             data['icon'] = artworkUrl512_to_114_icon(data['artworkUrl512'])
         except:
-            data['icon'] = artworkUrl512_to_114_icon(data.get('artworkUrl100', 'http://pic.api.vshare.com/84/fe/5d/8f/5420fd96434eae6143156820c9b7f61d.114x114-75.png'))
+            data['icon'] = artworkUrl512_to_114_icon(data.get('artworkUrl100', 'http://pic.api.vshare.com/84/fe/5d/8f/5420fd96434eae6143156820c9b7f61d.png'))
 
         filter_fields = ['contentAdvisoryRating', 'trackCensoredName', 'artworkUrl512', 'artistId', 'userRatingCountForCurrentVersion',
              'artworkUrl60', 'averageUserRatingForCurrentVersion', 'sellerUrl', 'artworkUrl100', 'wrapperType', 'supportedDevices', 
