@@ -178,9 +178,18 @@ class ItemAddView(View):
             #check if items already in app_collection
             print(DB.app_collection.find({'identifier':self._identifier, "items":\
                  {"$elemMatch": {"trackName": app['trackName']}}}).count())
-            if DB.app_collection.find({'identifier':self._identifier, "items":\
-                {"$elemMatch": {"trackName": app['trackName']}}}).count() != 0:
-                raise ValueError(u"应用已经存在")
+            i_collection = list(DB.app_collection.find({'identifier':self._identifier, "items":{"$elemMatch": {"trackName": app['trackName']}}}))
+            if len(i_collection) != 0:
+                items = i_collection[0]["items"]
+                for item in items:
+                    if item["trackName"] == app['trackName']:
+                        temp_language = item["language"]
+                        for language in request.form.getlist('language'):
+                            if language not in temp_language:
+                                item["language"].append(language)
+                DB.app_collection.update({'identifier':request.args.get('identifier')}, {'$set':{'items':items}})
+                return self._view.ajax_response('success', '', '')
+
             items = {
                 'id': int(item_id),
                 'sort':int(request.form['sort']),
