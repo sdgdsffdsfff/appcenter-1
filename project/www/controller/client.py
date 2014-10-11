@@ -13,7 +13,7 @@ mongo_db = mongo.get_database('appcenter')
 
 class ClientController(object):
 
-	def get_latest_version(self, client_type):
+	def get_latest_version(self, client_type, language="zh-Hans"):
 		res = mongo_db.client.find({"type":client_type, "review": "true"}).sort('build', -1).limit(1)
 		try:
 			client = res[0]
@@ -25,18 +25,18 @@ class ClientController(object):
 			'build': client['build'], 
 			'description': client['desc'],
 			'fileURL': os.path.join(settings['client_url_host'], client['store_path']),
-			'plistURL': DOMAIN_URL + '/api/client/ios/plist'+ urllib.quote('?type=%s' % client_type)
+                        'plistURL': "https://ssl-api.appvv.com/update.plist?type=%s&language=%s" % (client_type, language)
 		}
 
-	def get_latest_version_plist(self, client_type):
+	def get_latest_version_plist(self, client_type, language="zh-Hans"):
 		data = self.get_latest_version(client_type)
 		if str(client_type).find('signed') != -1:
 			bundle_id = 'com.appvv.vsharenojbhz'
 		else:
 			bundle_id = 'com.appvv.vsharejbhz'
 		plist = """
-			<?xml version="1.0" encoding="UTF-8"?>
-			<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+                <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+                <?xml version="1.0" encoding="UTF-8"?>
 			<plist version="1.0">
 				<dict>
 					<key>items</key>
@@ -78,4 +78,4 @@ class ClientController(object):
 			</plist>
 		""".format(data['fileURL'], client_type, bundle_id, data['version'], data['version'])
 
-		return plist
+		return plist.strip()

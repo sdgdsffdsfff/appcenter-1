@@ -29,6 +29,8 @@
 {% block content %}
 {% include 'admin/_search_app_modal.html' %}
 <!-- BEGIN  TABLE PORTLET-->
+  <a class="btn yellow" href="{{ url_for('admin_app_topic_edit', _id=app_topic['_id'], layout=layout) }}">编辑</a>
+
 <div class="row-fluid">
 	<div class="span5">
 		<div class="portlet box blue">

@@ -24,8 +24,9 @@ class UpdateView(View):
     	client type (jb,signed,cydia,jb_facebook, signed_facebook, jb_media, signed_media)
     	"""
     	client_type = request.args.get('type', 'jb')
+        language = request.args.get('language', 'zh-Hans')
         client = ClientController()
-        data = client.get_latest_version(client_type)
+        data = client.get_latest_version(client_type, language=language)
         return self._view.render(1000, data)
 
 class PlistView(View):
@@ -40,5 +41,3 @@ class PlistView(View):
         resp = make_response(plist, 200)
         resp.headers['Content-Type'] = 'application/xml'
         return resp
-
-        
