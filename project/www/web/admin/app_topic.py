@@ -292,7 +292,6 @@ class ItemAddView(View):
 
             return self._view.render('app_topic_item_add')
 
-
         try:
             app = DB.AppBase.find_one({'_id': ObjectId(request.form['_appid'])})
             if app == None:
@@ -313,7 +312,7 @@ class ItemAddView(View):
                 raise ValueError(u"应用已经存在")
             items = {
                 'id': int(item_id),
-                'order':int(request.form['order']),
+                'sort':int(request.form['sort']),
                 'trackName':app['trackName'],
                 'cnname': app.get('cnname', ""),
                 'arname': app.get('arname', ""),
