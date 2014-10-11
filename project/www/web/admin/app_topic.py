@@ -31,10 +31,16 @@ class ListView(View):
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
         language = request.args.get("language", "")
-        if language != "":
-            res = DB.app_topic.find({"language": language}).sort([("order", pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
+        prisonbreak = request.args.get("prisonbreak", "")
+        if language and prisonbreak:
+            where = {"language": language, "prisonbreak": int(prisonbreak)}
+        elif language:
+            where = {"language": language}
+        elif prisonbreak:
+            where = {"prisonbreak": int(prisonbreak)}
         else:
-            res = DB.app_topic.find().sort([("order", pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
+            where = {}
+        res = DB.app_topic.find(where).sort([("order", pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         total_page = int(math.ceil(res.count() / float(page_size)))
         offset = (page - 1) * page_size
         prev_page = (page - 1) if page - 1 > 0 else 1
@@ -52,6 +58,7 @@ class ListView(View):
         self._view.assign('lang_options', lang_options)
         self._view.assign('page_info', page_info)
         self._view.assign('language', language)
+        self._view.assign('prisonbreak', prisonbreak)
         return self._view.render('app_topic_list', topic_list=res, lang=language)
 
 

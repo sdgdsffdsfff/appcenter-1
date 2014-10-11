@@ -52,16 +52,24 @@
 						</select> 
 					</label>
 				</div>
+				<label>
+					版本
+					<select size="1" onchange="changeVersionForm()" id="prisonbreak" name="prisonbreak" aria-controls="prisonbreak" class="m-wrap small">
+						<option value="" selected="selected">全部</option>
+						<option value="0" {% if prisonbreak == "0" %}selected="selected"{% endif %}>正版</option>
+						<option value="1" {% if prisonbreak == "1" %}selected="selected"{% endif %}>越狱</option>
+					</select> 
+				</label>
 			</form>
 		<table class="table table-striped table-hover table-bordered">
 			<thead>
 				<tr>
                     <th style="width: 8%">ICON</th>
-					<th style="width: 36%">专题名称</th>
+					<th style="width: 25%">专题名称</th>
 					<th style="width: 15%">语言</th>
 					<th style="width: 15%">国家</th>
 					<th style="width: 5%">状态</th>
-					<th>排序(点击修改)</th>
+					<th style="width: 10%">排序(点击修改)</th>
 					<th style="width: 5%">版本</th>
 					<th style="width: 21%">操作</th>
 				</tr>
@@ -152,7 +160,13 @@ function deleteAppTopic(_id){
 
 function changeLangForm() {
 	$('#loading').css({"visibility":"visible"});
-	var url = "{{url_for('admin_app_topic_list')}}?language="+ $("#language").val();
+	var url = "{{url_for('admin_app_topic_list')}}?language="+ $("#language").val() + "&prisonbreak=" + $("#prisonbreak").val();
+	window.location.href=url;
+}
+
+function changeVersionForm() {
+	$('#loading').css({"visibility":"visible"});
+	var url = "{{url_for('admin_app_topic_list')}}?language="+ $("#language").val() + "&prisonbreak=" + $("#prisonbreak").val();
 	window.location.href=url;
 }
 
