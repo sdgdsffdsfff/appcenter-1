@@ -311,7 +311,7 @@ class ItemAddView(View):
                 {"$elemMatch": {"trackName": app['trackName']}}}).count() != 0:
                 raise ValueError(u"应用已经存在")
             items = {
-                'id': int(item_id),
+                'id': item_id,
                 'sort':int(request.form['sort']),
                 'trackName':app['trackName'],
                 'cnname': app.get('cnname', ""),
@@ -369,7 +369,7 @@ class ItemDeleteView(View):
         try:
             _id = request.args.get('_id')
             item_id = request.args.get('id')
-            DB.app_topic.update({'_id': ObjectId(_id)}, {'$pull': {'items': {'id':int(item_id)}}})
+            DB.app_topic.update({'_id': ObjectId(_id)}, {'$pull': {'items': {'id':item_id}}})
             status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)
