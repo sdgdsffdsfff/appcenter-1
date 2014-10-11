@@ -63,7 +63,7 @@ class AppTopicController(ControllerBase):
 
     def get_list(self, jb=0):
         try:
-            res = mongo_db.app_topic.find({'status': 1, 'prisonbreak': jb}).sort([("order", 1)])
+            res = mongo_db.app_topic.find({'status': 1, 'prisonbreak': jb}).sort([("order", -1)])
             if not res:
                 return []
             output = []
