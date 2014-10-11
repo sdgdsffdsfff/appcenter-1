@@ -173,7 +173,7 @@ class AppController(ControllerBase):
         try:
             data['icon'] = artworkUrl512_to_114_icon(data['artworkUrl512'])
         except:
-            data['icon'] = artworkUrl512_to_114_icon(data['artworkUrl100'])
+            data['icon'] = artworkUrl512_to_114_icon(data.get('artworkUrl100', ""))
 
         filter_fields = ['contentAdvisoryRating', 'trackCensoredName', 'artworkUrl512', 'artistId', 'userRatingCountForCurrentVersion',
              'artworkUrl60', 'averageUserRatingForCurrentVersion', 'sellerUrl', 'artworkUrl100', 'wrapperType', 'supportedDevices', 
