@@ -377,6 +377,7 @@ class ItemDeleteView(View):
             _id = request.args.get('_id')
             item_id = request.args.get('id')
             DB.app_topic.update({'_id': ObjectId(_id)}, {'$pull': {'items': {'id':item_id}}})
+            DB.app_topic.update({'_id': ObjectId(_id)}, {'$pull': {'items': {'id':int(item_id)}}})
             status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)
