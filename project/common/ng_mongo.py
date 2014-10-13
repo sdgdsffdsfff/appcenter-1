@@ -26,8 +26,7 @@ class NGMongoConnect(object):
         if replica_set:
             self.conn = MongoClient(replica_set["connection_str"], replicaSet=replica_set['replica_set_name'])
         else:
-            self.kwargs.pop("replica_set")
-            self.conn = Connection(*self.args, **self.kwargs)
+            self.conn = MongoClient(self.args[0])
 
     def disconnect(self):
         return self.conn.disconnect()
