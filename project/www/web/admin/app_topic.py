@@ -394,6 +394,7 @@ class ItemSortView(View):
             for key in request.form.keys():
                 id = int(key.split('_')[1])
                 DB.app_topic.update({'_id':ObjectId(request.args.get('_id')), 'items.id': id}, {'$set': {'items.$.sort': int(request.form[key])}})
+                DB.app_topic.update({'_id':ObjectId(request.args.get('_id')), 'items.id': int(id)}, {'$set': {'items.$.sort': int(request.form[key])}})
             status, message = 'success', ''
         except Exception, ex:
             status, message = 'error', str(ex)
