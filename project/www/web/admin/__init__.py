@@ -17,3 +17,5 @@ import client
 import search_q
 import hotword
 import other_ad
+import app_buy_and_update
+import apple_account

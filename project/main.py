@@ -13,7 +13,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 app = Flask(__name__, template_folder='www/templates', static_folder='www/static')
-app.debug = False
+app.debug = True
 app.secret_key = 'a2V*js%W$xd89saye3qhn&A32lk@'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -110,6 +110,8 @@ def register_view():
     admin.other_ad.CustomAdListView.register(app, route_prefix='/admin/')
     admin.other_ad.CustomadDeleteView.register(app, route_prefix='/admin/')
     admin.other_ad.CustomadAddView.register(app, route_prefix='/admin/')
+    admin.app_buy_and_update.ListView.register(app, route_prefix='/api/')
+    admin.apple_account.ListView.register(app, route_prefix='/api/')
 
     api.iphone.HomePageView.register(app, route_prefix='/api/')
     api.ipad.HomePageView.register(app, route_prefix='/api/')
