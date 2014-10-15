@@ -7,6 +7,7 @@ import urllib
 from collections import OrderedDict
 from conf.settings import settings, DOMAIN_URL
 from common.ng_mongo import NGMongoConnect
+from urllib import urlencode, quote
 
 mongo = NGMongoConnect(settings['mongodb']['host'], replica_set=settings["mongodb"].get("replica_set", None))
 mongo_db = mongo.get_database('appcenter')
@@ -25,7 +26,7 @@ class ClientController(object):
 			'build': client['build'], 
 			'description': client['desc'],
 			'fileURL': os.path.join(settings['client_url_host'], client['store_path']),
-                        'plistURL': "https://ssl-api.appvv.com/update.plist?type=%s&language=%s" % (client_type, language)
+                        'plistURL': quote("https://ssl-api.appvv.com/update.plist?type=%s&language=%s" % (client_type, language))
 		}
 
 	def get_latest_version_plist(self, client_type, language="zh-Hans"):
