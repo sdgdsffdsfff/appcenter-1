@@ -127,8 +127,8 @@
 <div class="pagination">
   <ul>
   	<li><a href="javascript:;">总计{{ page_info['count']}}条记录, 当前{{page_info['page']}} / {{ page_info['total_page']}}页</a></li>
-    <li><a href="javascript:;" onclick="loadAppTopic('{{ url_for('admin_app_topic_list') }}?page={{ page_info['prev_page'] }}&language={{ language }}')">上一页</a></li>
-    <li><a href="javascript:;" onclick="loadAppTopic('{{ url_for('admin_app_topic_list') }}?page={{ page_info['next_page']}}&language={{ language }}')">下一页</a></li>
+    <li><a href="javascript:;" onclick="loadAppTopic('{{ url_for('admin_app_topic_list') }}?page={{ page_info['prev_page'] }}&language={{ language }}&prisonbreak={{prisonbreak}}')">上一页</a></li>
+    <li><a href="javascript:;" onclick="loadAppTopic('{{ url_for('admin_app_topic_list') }}?page={{ page_info['next_page']}}&language={{ language }}&prisonbreak={{prisonbreak}}')">下一页</a></li>
   </ul>
 </div>
 <!-- END  TABLE PORTLET-->
