@@ -1,5 +1,44 @@
 {% extends "admin/_layout.html" %}
+{% block head %}
+<style>
+		.fl{
+			float: left;
+		}
+		.b{
+			font-weight: bold;
+		}
+		.f16{
+			font-size: 16px;
+		}
+		.cl{
+			clear: both;
+		}
+		.cred{
+			color: red;
+		}
+		.cgreen{
+			color: green;
+		}
+		.cblue{
+			color: #4B8DF8;
+		}
+		.mr2{
+			margin-right: 2px;
+		}
+		.bdbgrey{
+			border: 1px solid #EEEEEE;
+		}
+		.bdblue{
+			border: 1px solid #4B8DF8;
+		}		
+		.misson-btn .btn{
+			padding:14px 58px;
+			border-radius: 10px !important;
 
+		}
+
+</style>
+{% endblock %}
 {% block page_title %} 购买更新 {% endblock %}
 {% block title %} 收费应用 <small>购买更新</small> {% endblock %}
 
@@ -15,11 +54,180 @@
 {% endblock %}
 
 {% block content %}
+<div class='f16'>
+	<div>
+		<p class='fl b'>购买统计考核：</p>
+		<p class='fl'>
+			<a href="">董元（20）、</a>
+			<a href="">董元（20）、</a>
+			<a href="">董元（20）、</a>
+			<a href="">董元（20）、</a>
+			<a href="">董元（20）</a>
+		</p>
+	</div>
+	<div class="cl"></div>
+
+	<div class="bdbgrey cl"></div>	
+</div>
+<h3 ><span class='cblue'>我的购买记录<span><small> 待更新</small></h3>
+<div class="span10">
+	<!-- BEGIN SAMPLE TABLE PORTLET-->
+	<div class="portlet box blue">
+		<div class="portlet-title">
+			<div class="caption">
+				<button class="btn red" id='buy-list-btn'>购买应用</button>
+				<button class="btn green" id='tobeupdate-list'>待更新列表</button>
+				<button class="btn yellow" id='all-list'>所有任务记录</button>				
+			</div>
+		</div>
+			<div class="portlet-body buy-list">
+				<p class="span1"></p>
+				<p class='span4'>
+					<span>当前任务数量：876787</span><br>
+					<span class='cgreen'>昨日完成数量：5787</span><br>
+					<span class='cred'>前日完成数量：576</span>
+				</p>
+				<p class='misson-btn span6'>
+					<a class="btn blue big">领取任务</i></a>
+				</p>
+				<table class="table table-striped table-hover table-bordered">
+					<thead>
+						<tr>
+							<th>苹果ID</th>
+							<th>应用名称</th>
+							<th>已购买时间</th>
+							<th>本地|官方版本</th>
+							<th>价格</th>
+							<th>购买链接</th>
+							<th>标记</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>45555555</td>
+							<td>通过xxxxx</td>
+							<td>2014.10.10</td>
+							<td>244|687</td>
+							<td class="cred">$19</td>
+							<td><a href="">苹果购买</a></td>
+							<td><span class="label label-info">未购买</span></td>
+						</tr>
+						<tr>
+							<td>45555555</td>
+							<td>通过xxxxx</td>
+							<td>2014.10.10</td>
+							<td>244|687</td>
+							<td class="cred">$19</td>
+							<td><a href="">苹果购买</a></td>
+							<td><span class="label label-success">已购买</span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="portlet-body tobeupdate-list">
+				<table class="table table-bordered table-hover table-striped">
+					<thead>
+						<tr>
+							<th>苹果ID</th>
+							<th>应用名称</th>
+							<th>已购买时间</th>
+							<th>本地|官方版本</th>
+							<th>价格</th>
+							<th>购买链接</th>
+							<th>标记</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>45555555</td>
+							<td>通过xxxxx</td>
+							<td>2014.10.10</td>
+							<td>244|687</td>
+							<td class="cred">$19</td>
+							<td><a href="">苹果购买</a></td>
+							<td><span class="label label-info">未购买</span></td>
+						</tr>
+						<tr>
+							<td>45555555</td>
+							<td>通过xxxxx</td>
+							<td>2014.10.10</td>
+							<td>244|687</td>
+							<td class="cred">$19</td>
+							<td><a href="">苹果购买</a></td>
+							<td><span class="label label-success">已购买</span></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="pagination">
+					<ul>
+						<li><a href="#">«</a></li>
+						<li><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+						<li><a href="#">4</a></li>
+						<li><a href="#">»</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="portlet-body all-list">
+				<table class="table table-bordered table-hover table-striped">
+					<thead>
+						<tr>
+							<th>苹果ID</th>
+							<th>应用名称</th>
+							<th>已购买时间</th>
+							<th>本地|官方版本</th>
+							<th>价格</th>
+							<th>购买链接</th>
+							<th>标记</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>45555555</td>
+							<td>通过xxxxx</td>
+							<td>2014.10.10</td>
+							<td>244|687</td>
+							<td class="cred">$19</td>
+							<td><a href="">苹果购买</a></td>
+							<td><span class="label label-info">未购买</span></td>
+						</tr>
+						<tr>
+							<td>45555555</td>
+							<td>通过xxxxx</td>
+							<td>2014.10.10</td>
+							<td>244|687</td>
+							<td class="cred">$19</td>
+							<td><a href="">苹果购买</a></td>
+							<td><span class="label label-success">已购买</span></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="pagination">
+					<ul>
+						<li><a href="#">«</a></li>
+						<li><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+						<li><a href="#">4</a></li>
+						<li><a href="#">»</a></li>
+					</ul>
+				</div>				
+			</div>				
+	</div>
+	<!-- END SAMPLE TABLE PORTLET-->
+</div> 
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript">
+	$('#add-btn').on('click',function(){
+		var new_ipt = $('<input type="text" class="m-wrap medium mr2" placeholder="">')
+		$('#ipts').append(new_ipt);
+	});
+
 </script>
 {% endblock %}
 
 {% block menuName %}购买更新{% endblock %}
+{% block titleType %}a{% endblock %}
