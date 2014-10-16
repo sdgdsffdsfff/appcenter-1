@@ -39,7 +39,7 @@ class AppTopicController(ControllerBase):
             tmp = []
             for item in res['items']:
                 if item.get("bundleId", "") != "":
-                    downloads = self.get_downloads(item["bundleId"], jb)
+                    downloads = self.get_downloads(item["bundleId"], 1-jb)
                     ipa = create_ipa_url(downloads['ipaHash'])
                 else:
                     ipa = ""
