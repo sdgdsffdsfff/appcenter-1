@@ -108,3 +108,4 @@ class AppDownloadController(ControllerBase):
             'addTime': datetime.datetime.now()
         }
         mongo_db.AppDownload.update({'hash': sha1}, data, upsert=True)
+        mongo_db.AppBase.update({'bundleId': bundle_id}, {"$set": {"sign": sign}}, upsert=True)
