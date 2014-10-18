@@ -110,8 +110,10 @@ def register_view():
     admin.other_ad.CustomAdListView.register(app, route_prefix='/admin/')
     admin.other_ad.CustomadDeleteView.register(app, route_prefix='/admin/')
     admin.other_ad.CustomadAddView.register(app, route_prefix='/admin/')
-    admin.app_buy_and_update.ListView.register(app, route_prefix='/api/')
-    admin.apple_account.ListView.register(app, route_prefix='/api/')
+    admin.app_buy_and_update.ListView.register(app, route_prefix='/admin/')
+    admin.apple_account.ListView.register(app, route_prefix='/admin/')
+    admin.apple_account.AddView.register(app, route_prefix='/admin/')
+    admin.apple_account.DeleteView.register(app, route_prefix='/admin/')
 
     api.iphone.HomePageView.register(app, route_prefix='/api/')
     api.ipad.HomePageView.register(app, route_prefix='/api/')
