@@ -35,32 +35,52 @@ class ListView(View):
 class AddView(View):
     @route('/add', methods=['POST'], endpoint='apple_account_add')
     def post(self):
-        _id = request.args.get('id')
+        if 'acid' in request.form:
+            acid = request.form['acid']
+        else:
+            acid = ''
         try:
             userid = DB.User.find_one({"username": current_user.username})['_id']
         except Exception, ex:
             status, message = 'error', str(ex.message)
+            return self._view.ajax_response(status, message)
         try:
             data = {
                 'country': request.form['country'],
                 'apple_account': request.form['apple_account'],
-                'app_num': float(request.form['app_num']),
                 'email_passwd': request.form['email_passwd'],
                 'itunes_passwd': request.form['itunes_passwd'],
-                'itunes_sec': request.form['itunes_sec'],
+                'itunes_sec1': request.form['itunes_sec1'],
+                'itunes_sec2': request.form['itunes_sec2'],
+                'itunes_sec3': request.form['itunes_sec3'],
                 'status': request.form['status'],
                 'balance': float(request.form['balance']),
                 'user_id': userid
             }
-            if _id:
-                res = DB.apple_account.find_one({'_id': ObjectId(_id)})
-                DB.apple_account.update({'_id': ObjectId(_id)}, data)
+            email_pattern = '^[a-zA-Z](\\w*[-_]?\\w+)*@(\\w*[-_]?\\w+)+[\\.][a-zA-Z]{2,3}([\\.][a-zA-Z]{2})?$'
+            if not re.search(email_pattern, data['apple_account']):
+                status = 'error'
+                message = '注册帐号格式不正确'
+                return self._view.ajax_response(status, message)
+            if acid:
+                user_had = DB.apple_account.find_one({'apple_account': data['apple_account'], '_id': {'$ne': ObjectId(acid)}})
+            else:
+                user_had = DB.apple_account.find_one({'apple_account': data['apple_account']})
+            if user_had:
+                username = DB.User.find_one({'_id': ObjectId(user_had['user_id'])})['username']
+                status = 'error'
+                message = '%s 已经拥有这个账户' % str(username)
+                return self._view.ajax_response(status, message)
+            if acid:
+                res = DB.apple_account.find_one({'_id': ObjectId(acid)})
+                DB.apple_account.update({'_id': ObjectId(acid)}, data)
+                status, message = 'success', '添加成功'
             else:
                 DB.apple_account.insert(data)
                 status, message = 'success', '添加成功'
         except Exception, ex:
             status, message = 'error', str(ex.message)
-        return redirect(url_for("apple_account_list"))
+        return self._view.ajax_response(status, message)
 
 
 class DeleteView(View):

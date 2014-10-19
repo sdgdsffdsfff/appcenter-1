@@ -38,7 +38,9 @@
 								<th>含应用数</th>
 								<th>邮箱密码</th>
 								<th>iTunes密码</th>
-								<th>iTunes密保</th>
+								<th>iTunes密保1</th>
+								<th>iTunes密保2</th>
+								<th>iTunes密保3</th>
 								<th>状态</th>
 								<th>余额</th>
 								<th></th>
@@ -52,7 +54,9 @@
                               <td id='an'>{{ account['app_num'] }}</td>
                               <td id='ep'>{{ account['email_passwd'] }}</td>
                               <td id='ip'>{{ account['itunes_passwd'] }}</td>
-                              <td id='is'>{{ account['itunes_sec'] }}</td>
+                              <td id='is1'>{{ account['itunes_sec1'] }}</td>
+                              <td id='is2'>{{ account['itunes_sec2'] }}</td>
+                              <td id='is3'>{{ account['itunes_sec3'] }}</td>
                               <td id='st'>
                                 {% if account['status'] == 'abnormal' %}
                                 异常
@@ -88,7 +92,9 @@
                 </div>
 				<div class="modal-body">
 						<div class="row-fluid">
-                          <form id='form_apple_account' action="{{ url_for('apple_account_add') }}" method="post" class="form-horizontal">	
+                          <div class="alert hide" id="form-alert"></div>
+                          <form id="form_apple_account" action="" class="form-horizontal">	
+                            <input id='acid' name='acid' type='hidden' />
                             <div class="control-group">
                                 <label class="control-label">注册帐号</label>
                                 <div class="controls">
@@ -96,19 +102,9 @@
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">应用数量</label>
-                                <div class="controls">
-                                    <input id="an" type="text" name="app_num" placeholder="" class="m-wrap medium">
-                                </div>
-                            </div>
-                            <div class="control-group">
                               <label class="control-label">地区</label>
                               <div class="controls">
-                                <select id="co" name="country">
-                                  {% for country in country_list %}
-                                  <option value="{{country['code']}}">{{ country['name']}}</option>
-                                  {% endfor %}
-                                </select>
+                                <input id="co" type="text" name="country" placeholder="" class="m-wrap medium">
                                 </div>
                               </div>
 								<div class="control-group">
@@ -124,11 +120,23 @@
 									</div>
 								</div>
 								<div class="control-group">
-									<label class="control-label">iTunes密保</label>
+									<label class="control-label">iTunes密保1</label>
 									<div class="controls">
-										<input id="is" type="text" name="itunes_sec" placeholder="" class="m-wrap medium">
+										<input id="is1" type="text" name="itunes_sec1" placeholder="" class="m-wrap medium">
 									</div>
-								</div>																
+								</div>	
+								<div class="control-group">
+									<label class="control-label">iTunes密保2</label>
+									<div class="controls">
+										<input id="is2" type="text" name="itunes_sec2" placeholder="" class="m-wrap medium">
+									</div>
+								</div>	
+								<div class="control-group">
+									<label class="control-label">iTunes密保3</label>
+									<div class="controls">
+										<input id="is3" type="text" name="itunes_sec3" placeholder="" class="m-wrap medium">
+									</div>
+								</div>	
 								<div class="control-group">
 									<label class="control-label">账户状态</label>
 									<div class="controls">
@@ -152,13 +160,13 @@
 										<input id="ba" type="text" name="balance" placeholder="" class="m-wrap medium">
 									</div>
 								</div>								
-								<div class="form-actions">
-									<button type="submit" class="btn blue"><i class="icon-ok"></i>保存</button>
-									<button type="button" class="btn" data-dismiss="modal">取消</button>
-								</div>
 							</form>						
-
 						</div>
+                        <div class="modal-footer">
+                            <button onclick="addAppleAccount()" class="btn red"><i class="icon-ok"></i>保存</button>
+                            <button type="button" class="btn" data-dismiss="modal">取消</button>
+                        </div>
+
 				</div>
 			</div>
 			<!-- <div class="modal-backdrop fade in" style="z-index: 10049;"></div> -->					
@@ -166,6 +174,7 @@
 
 {% block scripts %}
 <script type="text/javascript">
+  var ajax = NG.Ajax();
 //$('#cancel-btn').on('click',function(){
 	//$('#account-manage-task').hide();
 	//$('.modal-backdrop').hide();
@@ -175,9 +184,11 @@ $('.edit-btn').click(function(){
   $('input#ac').val($(this).parent().siblings('td#ac').text());
   $('input#ep').val($(this).parent().siblings('td#ep').text());
   $('input#ip').val($(this).parent().siblings('td#ip').text());
-  $('input#is').val($(this).parent().siblings('td#is').text());
+  $('input#is1').val($(this).parent().siblings('td#is1').text());
+  $('input#is2').val($(this).parent().siblings('td#is2').text());
+  $('input#is3').val($(this).parent().siblings('td#is3').text());
   $('input#ba').val($(this).parent().siblings('td#ba').text());
-  $('input#an').val($(this).parent().siblings('td#an').text());
+  $('input#acid').val($(this).attr('vale'));
   var option = $(this).parent().siblings('td#st').text();
   option = option.replace(/(^\s*)|(\s*$)/g, "")
   if (option == '正常') {
@@ -200,6 +211,21 @@ $('.edit-btn').click(function(){
   $('#form_apple_account').attr('action', "{{ url_for('apple_account_add')}}?id=" + $(this).attr('vale'));
   //$('.modal-backdrop').show();
 })
+
+function addAppleAccount(){
+  var url = '{{ url_for('apple_account_add') }}';
+  var data = $('#form_apple_account').serialize();
+  console.log(data);
+  ajax.Post(url, data, function(res){
+    if(res.status == 'success'){
+      $('#account_manage_task').modal('hide');
+      location.reload();
+    } else {
+      $('#form-alert').html(res.message);
+      $('#form-alert').show();
+    }
+  });
+}
 
 function delAppleAccount(id){
   var ajax = NG.Ajax();
