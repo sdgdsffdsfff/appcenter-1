@@ -174,11 +174,8 @@
 
 {% block scripts %}
 <script type="text/javascript">
-  var ajax = NG.Ajax();
-//$('#cancel-btn').on('click',function(){
-	//$('#account-manage-task').hide();
-	//$('.modal-backdrop').hide();
-//})
+var ajax = NG.Ajax();
+
 $('.edit-btn').click(function(){
   $('select#co').val($(this).parent().siblings('td#co').text());
   $('input#ac').val($(this).parent().siblings('td#ac').text());
@@ -208,15 +205,13 @@ $('.edit-btn').click(function(){
     $("input[name='status'][value='unknown']").attr("checked", true);
   }
   $('#account-manage-task').modal('show');
-  $('#form_apple_account').attr('action', "{{ url_for('apple_account_add')}}?id=" + $(this).attr('vale'));
-  //$('.modal-backdrop').show();
 })
 
 function addAppleAccount(){
   var url = '{{ url_for('apple_account_add') }}';
   var data = $('#form_apple_account').serialize();
-  console.log(data);
   ajax.Post(url, data, function(res){
+    $('input#acid').val('');
     if(res.status == 'success'){
       $('#account_manage_task').modal('hide');
       location.reload();
