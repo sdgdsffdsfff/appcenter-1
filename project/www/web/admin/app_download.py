@@ -1,10 +1,10 @@
 #encoding=UTF8
 #code by LP
 #2013-11-21
-
 import os
 import time
 import random
+
 from __header__ import AdminView, FlaskView, DB, route, request, session, redirect, url_for
 from bson.objectid import ObjectId
 from www.controller.app.app import AppController
@@ -80,7 +80,7 @@ class UploadView(View):
             file = request.files['Filedata']
             if file and self.allowed_file(file.filename):
                 name = str(time.time()) + '_' + file.filename
-                tmp_file = os.path.join(settings['tmp_dir'], name)
+                tmp_file = os.path.join(settings['tmp_dir'], name).replace("\\", "/")
                 file.save(tmp_file)
                 self.app_download.add(bundle_id=bundle_id, sign=sign, file_path=tmp_file)
                 status, message = 'success', u'上传成功'

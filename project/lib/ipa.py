@@ -63,10 +63,12 @@ def get_info_from_ipa(zipfilename):
 
 def check_sign_from_ipa(zipfilename):
     f_zip = zipfile.ZipFile(zipfilename, 'r')
-    for f in f_zip.namelist():
-        index = f.find("_CodeSignature/CodeResources")
-        if index > 0:
-            f_zip.close()
-            return 1
+        #for f in f_zip.namelist():
+        # index = f.find("_CodeSignature/CodeResources")
+        # if index > 0:
+        #     f_zip.close()
+        #     return 1
+    if "new.plist" in f_zip.namelist():
+        return 1
     f_zip.close()
     return 0
