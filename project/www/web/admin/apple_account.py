@@ -54,7 +54,7 @@ class AddView(View):
                 'itunes_sec2': request.form['itunes_sec2'],
                 'itunes_sec3': request.form['itunes_sec3'],
                 'status': request.form['status'],
-                'balance': float(request.form['balance']),
+                'balance': float(0 if request.form.get('balance', '').strip() == '' else request.form['balance']),
                 'user_id': userid
             }
             email_pattern = '^[a-zA-Z](\\w*[-_]?\\w+)*@(\\w*[-_]?\\w+)+[\\.][a-zA-Z]{2,3}([\\.][a-zA-Z]{2})?$'
