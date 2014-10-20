@@ -6,9 +6,6 @@
 			color: #fff !important;
 			font-weight: bold;
 		}
-		#account-manage-task,.modal-backdrop{
-			display: none;
-		}	
 		.bdblue{
 			border: 1px solid #4D90FE;
 		}
@@ -29,126 +26,209 @@
 {% endblock %}
 
 {% block content %}
-	   		<h3>董元</h3>
-			<div class="">
+<h3>{{ current_user.username }}</h3>
+        <a class="btn green" data-toggle="modal" href="#account-manage-task">添加 <i class="icon-plus"></i></a>
+            <div class="">
 				<div class="portlet-body bdblue">
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr class='bgblue'>
-								<th>#</th>
 								<th>地区</th>
 								<th>注册账号</th>
 								<th>含应用数</th>
 								<th>邮箱密码</th>
 								<th>iTunes密码</th>
-								<th>iTunes密保</th>
+								<th>iTunes密保1</th>
+								<th>iTunes密保2</th>
+								<th>iTunes密保3</th>
 								<th>状态</th>
 								<th>余额</th>
 								<th></th>
 							</tr>
 						</thead>
 						<tbody>
+                          {% for account in account_list %}
 							<tr>
-								<td>1</td>
-								<td>美国</td>
-								<td>fengzi@appvv.com</td>
-								<td>40</td>
-								<td>wefwe23</td>
-								<td>weer878</td>
-								<td>密1：weer  密2：erw 密3：erw</td>
-								<td>正常</td>
-								<td>45<i class="fa fa-edit"></i></td>
-								<td><a class="btn blue mini edit-btn" href="#"><i class="icon-edit"></i></a></td>
+                              <td id='co'>{{ account['country'] }}</td>
+                              <td id='ac'>{{ account['apple_account'] }}</td>
+                              <td id='an'>{{ account['app_num'] }}</td>
+                              <td id='ep'>{{ account['email_passwd'] }}</td>
+                              <td id='ip'>{{ account['itunes_passwd'] }}</td>
+                              <td id='is1'>{{ account['itunes_sec1'] }}</td>
+                              <td id='is2'>{{ account['itunes_sec2'] }}</td>
+                              <td id='is3'>{{ account['itunes_sec3'] }}</td>
+                              <td id='st'>
+                                {% if account['status'] == 'abnormal' %}
+                                异常
+                                {% elif account['status'] == 'normal' %}
+                                正常
+                                {% elif account['status'] == 'unknown' %}
+                                未知
+                                {% endif %}
+                              </td>
+                              <td id='ba'>{{ account['balance'] }}<i class="fa fa-edit"></i></td>
+                              <td><a class="btn blue mini edit-btn" vale={{ account['_id'] }} href="#"><i class="icon-edit"></i></a>
+                                <a class="btn red mini" data-toggle="modal" href="#confirm_delete_{{ account['_id'] }}">删除</a>
+                              <div id="confirm_delete_{{ account['_id'] }}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                <div class="modal-body">
+                                    <p>确定要删除吗?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" data-dismiss="modal" class="btn">取消</button>
+                                    <button type="button" data-dismiss="modal" class="btn red" onclick="delAppleAccount('{{ account['_id'] }}')">确定</button>
+                                </div>
+                            </div>
+                        </td>
 							</tr>
-							<tr>
-								<td>2</td>
-								<td>中国</td>
-								<td>fengzi@appvv.com</td>
-								<td>40</td>
-								<td>wefwe23</td>
-								<td>weer878</td>
-								<td>密1：weer  密2：erw 密3：erw</td>
-								<td>正常</td>
-								<td>45<i class="fa fa-edit"></i></td>
-								<td><a class="btn blue mini edit-btn" href="#"><i class="icon-edit"></i></a></td>
-							</tr>
+                            {% endfor %}
 						</tbody>
 					</table>
 				</div>
 			</div>
-			<div data-keyboard="false" data-backdrop="static" tabindex="-1" class="modal hide fade in" id="account-manage-task" style="margin-top: -61.5px;" aria-hidden="false">
+			<div  tabindex="-1" class="modal hide fade in" id="account-manage-task" style="margin-top: -61.5px;" aria-hidden="false">
+                <div class="modal-header">
+                  <a class="close" href="#" data-dismiss="modal"></a>
+                  <h3>帐号管理</h3>
+                </div>
 				<div class="modal-body">
 						<div class="row-fluid">
-							<form action="#" class="form-horizontal">						
-								<div class="control-group">
-									<label class="control-label">地区</label>
-									<div class="controls">
-										<input type="text" placeholder="" class="m-wrap medium">
-									</div>
-								</div>
+                          <div class="alert hide" id="form-alert"></div>
+                          <form id="form_apple_account" action="" class="form-horizontal">	
+                            <input id='acid' name='acid' type='hidden' />
+                            <div class="control-group">
+                                <label class="control-label">注册帐号</label>
+                                <div class="controls">
+                                    <input id="ac" type="text" name="apple_account" placeholder="" class="m-wrap medium">
+                                </div>
+                            </div>
+                            <div class="control-group">
+                              <label class="control-label">地区</label>
+                              <div class="controls">
+                                <input id="co" type="text" name="country" placeholder="" class="m-wrap medium">
+                                </div>
+                              </div>
 								<div class="control-group">
 									<label class="control-label">邮箱密码</label>
 									<div class="controls">
-										<input type="password" placeholder="" class="m-wrap medium">
+										<input id="ep" type="text" name="email_passwd" placeholder="" class="m-wrap medium">
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">iTunes密码</label>
 									<div class="controls">
-										<input type="password" placeholder="" class="m-wrap medium">
+										<input id="ip" type="text" name="itunes_passwd" placeholder="" class="m-wrap medium">
 									</div>
 								</div>
 								<div class="control-group">
-									<label class="control-label">iTunes密保</label>
+									<label class="control-label">iTunes密保1</label>
 									<div class="controls">
-										<input type="password" placeholder="" class="m-wrap medium">
+										<input id="is1" type="text" name="itunes_sec1" placeholder="" class="m-wrap medium">
 									</div>
-								</div>																
+								</div>	
 								<div class="control-group">
-									<label class="control-label">Radio Buttons</label>
+									<label class="control-label">iTunes密保2</label>
+									<div class="controls">
+										<input id="is2" type="text" name="itunes_sec2" placeholder="" class="m-wrap medium">
+									</div>
+								</div>	
+								<div class="control-group">
+									<label class="control-label">iTunes密保3</label>
+									<div class="controls">
+										<input id="is3" type="text" name="itunes_sec3" placeholder="" class="m-wrap medium">
+									</div>
+								</div>	
+								<div class="control-group">
+									<label class="control-label">账户状态</label>
 									<div class="controls">
 										<label class="radio">
-										<div class="radio"><span><input type="radio" name="optionsRadios1" value="option1"></span></div>
-										Option 1
+										<div class="radio"><input type="radio" name="status" value="normal"></div>
+									    正常	
 										</label>
 										<label class="radio">
-										<div class="radio"><span class="checked"><input type="radio" name="optionsRadios1" value="option2" checked=""></span></div>
-										Option 2
+										<div class="radio"><input type="radio" name="status" value="abnormal"></div>
+										异常
 										</label>  
 										<label class="radio">
-										<div class="radio"><span><input type="radio" name="optionsRadios1" value="option2"></span></div>
-										Option 3
+										<div class="radio"><input type="radio" name="status" value="unknown"></div>
+										未知
 										</label>  
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">余额</label>
 									<div class="controls">
-										<input type="text" placeholder="" class="m-wrap medium">
+										<input id="ba" type="text" name="balance" placeholder="" class="m-wrap medium">
 									</div>
 								</div>								
-								<div class="form-actions">
-									<button type="submit" class="btn blue"><i class="icon-ok"></i>保存</button>
-									<button type="button" class="btn" id='cancel-btn'>取消</button>
-								</div>
 							</form>						
-
 						</div>
+                        <div class="modal-footer">
+                            <button onclick="addAppleAccount()" class="btn red"><i class="icon-ok"></i>保存</button>
+                            <button type="button" class="btn" data-dismiss="modal">取消</button>
+                        </div>
+
 				</div>
 			</div>
-			<div class="modal-backdrop fade in" style="z-index: 10049;"></div>					
+			<!-- <div class="modal-backdrop fade in" style="z-index: 10049;"></div> -->					
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript">
-$('#cancel-btn').on('click',function(){
-	$('#account-manage-task').hide();
-	$('.modal-backdrop').hide();
+var ajax = NG.Ajax();
+
+$('.edit-btn').click(function(){
+  $('select#co').val($(this).parent().siblings('td#co').text());
+  $('input#ac').val($(this).parent().siblings('td#ac').text());
+  $('input#ep').val($(this).parent().siblings('td#ep').text());
+  $('input#ip').val($(this).parent().siblings('td#ip').text());
+  $('input#is1').val($(this).parent().siblings('td#is1').text());
+  $('input#is2').val($(this).parent().siblings('td#is2').text());
+  $('input#is3').val($(this).parent().siblings('td#is3').text());
+  $('input#ba').val($(this).parent().siblings('td#ba').text());
+  $('input#acid').val($(this).attr('vale'));
+  var option = $(this).parent().siblings('td#st').text();
+  option = option.replace(/(^\s*)|(\s*$)/g, "")
+  if (option == '正常') {
+    $("input[name='status'][value='abnormal']").parent().removeClass("checked");
+    $("input[name='status'][value='unknown']").parent().removeClass("checked");
+    $("input[name='status'][value='normal']").parent().addClass("checked");
+    $("input[name='status'][value='normal']").attr("checked", true);
+  } else if (option == '异常') {
+    $("input[name='status'][value='normal']").parent().removeClass("checked");
+    $("input[name='status'][value='unknown']").parent().removeClass("checked");
+    $("input[name='status'][value='abnormal']").parent().addClass("checked");
+    $("input[name='status'][value='abnormal']").attr("checked", true);
+  } else {
+    $("input[name='status'][value='normal']").parent().removeClass("checked");
+    $("input[name='status'][value='abnormal']").parent().removeClass("checked");
+    $("input[name='status'][value='unknown']").parent().addClass("checked");
+    $("input[name='status'][value='unknown']").attr("checked", true);
+  }
+  $('#account-manage-task').modal('show');
 })
-$('.edit-btn').on('click',function(){
-	$('#account-manage-task').show();
-	$('.modal-backdrop').show();
-})
+
+function addAppleAccount(){
+  var url = '{{ url_for('apple_account_add') }}';
+  var data = $('#form_apple_account').serialize();
+  ajax.Post(url, data, function(res){
+    $('input#acid').val('');
+    if(res.status == 'success'){
+      $('#account_manage_task').modal('hide');
+      location.reload();
+    } else {
+      $('#form-alert').html(res.message);
+      $('#form-alert').show();
+    }
+  });
+}
+
+function delAppleAccount(id){
+  var ajax = NG.Ajax();
+  var url = "{{url_for('apple_account_delete') }}?id=" + id;
+  ajax.Get(url, function(res){
+    location.reload();
+  });
+}
 </script>
 {% endblock %}
 

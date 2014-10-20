@@ -86,7 +86,7 @@ class AppDownloadController(ControllerBase):
         ipa文件入库
         """
         sha1 = sha1_of_file(file_path)
-        dest_file_path = os.path.join(settings['ipa_dir'], hash_to_path(sha1)+'.ipa')
+        dest_file_path = os.path.join(settings['ipa_dir'], hash_to_path(sha1)+'.ipa').replace("\\", "/")
 
         dir_name = os.path.dirname(dest_file_path)
         if not os.path.isdir(dir_name):
@@ -108,3 +108,4 @@ class AppDownloadController(ControllerBase):
             'addTime': datetime.datetime.now()
         }
         mongo_db.AppDownload.update({'hash': sha1}, data, upsert=True)
+        mongo_db.AppBase.update({'bundleId': bundle_id}, {"$set": {"sign": sign}}, upsert=True)
