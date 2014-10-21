@@ -111,6 +111,9 @@ def register_view():
     admin.other_ad.CustomadDeleteView.register(app, route_prefix='/admin/')
     admin.other_ad.CustomadAddView.register(app, route_prefix='/admin/')
     admin.app_buy_and_update.ListView.register(app, route_prefix='/admin/')
+    admin.app_buy_and_update.UpdateListView.register(app, route_prefix='/admin/')
+    admin.app_buy_and_update.AllListView.register(app, route_prefix='/admin/')
+
     admin.apple_account.ListView.register(app, route_prefix='/admin/')
     admin.apple_account.AddView.register(app, route_prefix='/admin/')
     admin.apple_account.DeleteView.register(app, route_prefix='/admin/')
