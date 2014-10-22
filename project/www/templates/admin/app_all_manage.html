@@ -10,7 +10,7 @@
         <th>当前版本</th>
         <th>价格</th>
         <th>账号名称</th>
-        <th>入库时间</th>
+        <th>操作时间</th>
         <th>购买链接</th>
         <th>状态</th>
       </tr>
@@ -24,9 +24,6 @@
         <td class="cred">{{ res.get('currency', '') }}:{{ res.get('price', '') }}</td>
         <td>{{ res.get('apple_account', '') }}</td>
         <td>
-          {% if res.get('recieve_time', '') %}
-          领取:{{res['recieve_time'].strftime('%Y-%m-%d') }}|
-          {% endif %}
           {% if res.get('buy_time', '') %}
           购买:{{res['buy_time'].strftime('%Y-%m-%d') }}|
           {% endif %}

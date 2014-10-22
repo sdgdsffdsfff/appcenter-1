@@ -58,7 +58,9 @@
   <div>
     <p class='fl b'>购买统计考核：</p>
     <p class='fl'>
-      <a href="#">董元（20）、</a>
+      {% for res in indicators %}
+      <a href="#">{{ res }}:购买({{ indicators[res]['buy'] }})\更新({{ indicators[res]['update'] }})</a>
+      {% endfor %}
     </p>
   </div>
   <div class="cl"></div>

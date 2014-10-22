@@ -9,6 +9,8 @@ from flask import request, abort
 from bson.objectid import ObjectId
 from datetime import datetime
 from random import randint
+from collections import defaultdict
+import pytz
 
 class View(FlaskView):
     route_base = '/app-buy-manager'
@@ -18,6 +20,12 @@ class View(FlaskView):
 class ListView(View):
     @route('/list', endpoint='app_buy')
     def get(self):
+        indicators = defaultdict(dict)
+        editors = DB.User.find({'role': 'Editor'},{'_id': 0, 'username': 1})
+        for editor in editors:
+            indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
+            indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
+
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
         res = DB.app_process.find({'apple_account': {'$exists': False},
@@ -37,11 +45,18 @@ class ListView(View):
                                  to_buy_count=to_buy_count,
                                  to_update_count=to_update_count,
                                  to_process_count=to_process_count,
-                                 page_info=page_info)
+                                 page_info=page_info,
+                                 indicators=indicators)
 
 class UpdateListView(View):
     @route('/update_list', endpoint='app_update')
     def get(self):
+        indicators = defaultdict(dict)
+        editors = DB.User.find({'role': 'Editor'},{'_id': 0, 'username': 1})
+        for editor in editors:
+            indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
+            indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
+
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
         res = DB.app_process.find({'apple_account': {'$exists': True},
@@ -54,11 +69,17 @@ class UpdateListView(View):
         next_page = (page + 1) if page + 1 < total_page else total_page
         page_info = {"count": res.count(), "page": page, "total_page": total_page,
                      "prev_page": prev_page, 'next_page': next_page}
-        return self._view.render('app_update_manage', results=res, page_info=page_info)
+        return self._view.render('app_update_manage', results=res, page_info=page_info, indicators=indicators)
 
 class AllListView(View):
     @route('/all_list', endpoint='app_all')
     def get(self):
+        indicators = defaultdict(dict)
+        editors = DB.User.find({'role': 'Editor'},{'_id': 0, 'username': 1})
+        for editor in editors:
+            indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
+            indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
+
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
         res = DB.app_process_log.find({'editor': current_user.username}). \
@@ -69,7 +90,7 @@ class AllListView(View):
         next_page = (page + 1) if page + 1 < total_page else total_page
         page_info = {"count": res.count(), "page": page, "total_page": total_page,
                      "prev_page": prev_page, 'next_page': next_page}
-        return self._view.render('app_all_manage', results=res, page_info=page_info)
+        return self._view.render('app_all_manage', results=res, page_info=page_info, indicators=indicators)
 
 
 class GetTaskView(View):
@@ -90,7 +111,7 @@ class GetTaskView(View):
             "currency": currency,
             "status": "new",
             "editor": current_user.username,
-            "recieve_time": datetime.utcnow()
+            "recieve_time": datetime.now(pytz.timezone('Asia/Shanghai'))
         }
         DB.app_process.insert(new_app_task)
         new_app_task['recieve_time'] = new_app_task['recieve_time'].strftime('%Y-%m-%d')
@@ -107,7 +128,8 @@ class BuyAppView(View):
             status, message = 'success', res
             data = DB.app_process.find_one({'track_id': track_id,
                                    'status': {'$ne': 'finished'}}, {'_id': 0})
-            data['buy_time'] = datetime.utcnow()
+            data['buy_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
+            data['editor'] = current_user.username
             DB.app_process_log.insert(data)
         except Exception, ex:
             status, message = 'error', str(ex.message)
@@ -125,7 +147,8 @@ class UpdateAppView(View):
             status, message = 'success', res
             data = DB.app_process.find_one({'track_id': track_id,
                                    'status': {'$ne': 'finished'}}, {'_id': 0})
-            data['update_time'] = datetime.utcnow()
+            data['update_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
+            data['editor'] = current_user.username
             DB.app_process_log.insert(data)
         except Exception, ex:
             status, message = 'error', str(ex.message)
