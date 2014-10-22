@@ -105,7 +105,8 @@ class BuyAppView(View):
             res = DB.app_process.update({'track_id': track_id},
                                         {'$set': {'status': 'processing'}})
             status, message = 'success', res
-            data = DB.app_process.find_one({'track_id': track_id}, {'_id': 0})
+            data = DB.app_process.find_one({'track_id': track_id,
+                                   'status': {'$ne': 'finished'}}, {'_id': 0})
             data['buy_time'] = datetime.utcnow()
             DB.app_process_log.insert(data)
         except Exception, ex:
@@ -122,7 +123,8 @@ class UpdateAppView(View):
             res = DB.app_process.update({'track_id': track_id},
                                         {'$set': {'status': 'processing'}})
             status, message = 'success', res
-            data = DB.app_process.find_one({'track_id': track_id}, {'_id': 0})
+            data = DB.app_process.find_one({'track_id': track_id,
+                                   'status': {'$ne': 'finished'}}, {'_id': 0})
             data['update_time'] = datetime.utcnow()
             DB.app_process_log.insert(data)
         except Exception, ex:
