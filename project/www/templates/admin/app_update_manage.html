@@ -15,27 +15,56 @@
       </tr>
     </thead>
     <tbody>
+      {% for res in results %}
       <tr>
-        <td>45555555</td>
-        <td>微信</td>
-        <td>244|231</td>
-        <td class="cred">$19</td>
-        <td>abd#dd.com</td>
-        <td><a href="">苹果购买</a></td>
-        <td><span class="label label-info">更新</span></td>
+        <td>{{ res.get('track_id', '') }}</td>
+        <td>{{ res.get('track_name', '') }}</td>
+        <td>{{ res.get('local_version', '') }}|{{ res.get('new_version', '')}}</td>
+        <td class="cred">{{ res.get('currency', '') }}:{{ res.get('price', '') }}</td>
+        <td>{{ res.get('apple_account', '') }}</td>
+        <td><a href="{{ res.get('link_url', '') }}">苹果购买</a></td>
+        <td width=140>
+          {% if res.get('status', '') == 'Update' %}
+          <span class="label label-info"><a href='javascript:void(0);' class='updatebtn' vale={{ res.get('track_id', '') }}>更新</a>
+          {% elif res.get('status', '') == 'processing' %}
+          <span class="label label-success">正在入库
+          {% else %}
+          <span class="label">未知
+          {% endif %}
+        </span></td>
       </tr>
-      <tr>
-        <td>45555555</td>
-        <td>微信</td>
-        <td>244|231</td>
-        <td class="cred">$19</td>
-        <td>abd#dd.com</td>
-        <td><a href="">苹果购买</a></td>
-        <td><span class="label label-success">正在入库</span></td>
-      </tr>
-
+      {% endfor %}
     </tbody>
   </table>
+  <div class="pagination">
+    <ul>
+      <li><a href="javascript:;">总计{{ page_info['count']}}条记录, 当前{{page_info['page']}} / {{ page_info['total_page']}}页</a></li>
+      <li><a href="{{ url_for('app_update') }}?page={{ page_info['prev_page'] }}" >上一页</a></li>
+      <li><a href="{{ url_for('app_update') }}?page={{ page_info['next_page'] }}" >下一页</a></li>
+    </ul>
+  </div>
 </div>
 {% endblock %}
 
+{% block scripts %}
+<script type="text/javascript">
+  ajax = NG.Ajax();
+
+  $('a.updatebtn').click(function(){
+    var update_btn = $(this);
+    if (update_btn.text() == '更新'){
+      var url = "{{ url_for('update_app') }}";
+      var data = {'track_id': update_btn.attr('vale')};
+      ajax.Post(url, data, function(res){
+        if(res.status == 'success'){
+          update_btn.removeClass('updatebtn');
+          update_btn.text('正在入库');
+          update_btn.parent().toggleClass('label-info label-success');
+        } else{
+          alert(res)
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

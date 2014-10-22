@@ -12,20 +12,56 @@
         <th>账号名称</th>
         <th>入库时间</th>
         <th>购买链接</th>
+        <th>状态</th>
       </tr>
     </thead>
     <tbody>
+      {% for res in results %}
       <tr>
-        <td>45555555</td>
-        <td>通过xxxxx</td>
-        <td>244</td>
-        <td class="cred">$19</td>
-        <td>abc@ss.com</td>
-        <td>2014-1-1</td>
-        <td><a href="">苹果购买</a></td>
+        <td>{{ res.get('track_id', '') }}</td>
+        <td>{{ res.get('track_name', '') }}</td>
+        <td>{{ res.get('local_version', '')}}</td>
+        <td class="cred">{{ res.get('currency', '') }}:{{ res.get('price', '') }}</td>
+        <td>{{ res.get('apple_account', '') }}</td>
+        <td>
+          {% if res.get('recieve_time', '') %}
+          领取:{{res['recieve_time'].strftime('%Y-%m-%d') }}|
+          {% endif %}
+          {% if res.get('buy_time', '') %}
+          购买:{{res['buy_time'].strftime('%Y-%m-%d') }}|
+          {% endif %}
+          {% if res.get('update_time', '') %}
+          更新:{{res['update_time'].strftime('%Y-%m-%d') }}|
+          {% endif %}
+          {% if res.get('storage_time', '') %}
+          入库:{{res['storage_time'].strftime('%Y-%m-%d') }}|
+          {% endif %}
+        </td>
+        <td><a href="{{ res.get('link_url', '') }}">苹果购买</a></td>
+        <td>
+        {% if res.get('status', '') == 'new' %}
+        <span class="label label-info">购买
+        {% elif res.get('status', '') == 'Update' %}
+        <span class="label label-info">更新
+        {% elif res.get('status', '') == 'processing' %}
+        <span class="label label-success">正在入库
+        {% elif res.get('status', '') == 'finished' %}
+        <span class="label label-success">完成
+        {% else %}
+        <span class="label">未知
+        {% endif %}
+        </span></td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
+  <div class="pagination">
+    <ul>
+      <li><a href="javascript:;">总计{{ page_info['count']}}条记录, 当前{{page_info['page']}} / {{ page_info['total_page']}}页</a></li>
+      <li><a href="{{ url_for('app_all') }}?page={{ page_info['prev_page'] }}">上一页</a></li>
+      <li><a href="{{ url_for('app_all') }}?page={{ page_info['next_page'] }}">下一页</a></li>
+    </ul>
+  </div>
 </div>
 {% endblock %}
 
