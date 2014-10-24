@@ -73,7 +73,7 @@
               rstatus = '正在入库';
             }
             var content = "<tr> <td>" + res['track_id'] + "</td> <td>" + res['track_name'] + "</td> <td>" + res['new_version'] + "</td> <td class='cred'>" + res['currency'] + ":" + res['price'] + "</td> <td>" + res['recieve_time'] + "</td> <td><a href='" +res['link_url'] + "'>苹果购买</a></td> <td><span class='label label-info'>" + rstatus + "</span></td> </tr> ";
-            $('tbody').before(content); 
+            $('tbody').prepend(content); 
             //修改购买数量
             var words = $('#to_buy_count').text().split('：')[0];
             var number = Number($('#to_buy_count').text().split('：')[1]) + 1;

@@ -17,6 +17,7 @@ from flask.ext.login import current_user
 import uuid
 
 DB = mongo_db
+rsm = redis_master
 
 def upload_hash_file(file, target_dir, allow_ext=['png', 'jpg', 'jpeg']):
     '''

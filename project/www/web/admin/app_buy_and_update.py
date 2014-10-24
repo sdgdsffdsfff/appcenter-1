@@ -11,6 +11,8 @@ from datetime import datetime
 from random import randint
 from collections import defaultdict
 import pytz
+import redis
+import json
 
 class View(FlaskView):
     route_base = '/app-buy-manager'
@@ -96,19 +98,33 @@ class AllListView(View):
 class GetTaskView(View):
     @route('/get-task', endpoint='get_buy_task')
     def get(self):
-        track_id = str(randint(100000000, 999999999))
-        track_name = "Heads Up!"
-        version = "2.3.5"
-        price = 19
-        currency = "USD"
-        link_url = "https://itunes.apple.com/app/id623592465"
+        r_server = redis.Redis('localhost')
+        while True:
+            data = json.loads(r_server.rpop('app_process'))
+            if not DB.app_process.find_one({'track_id': data['track_id']}):
+                break
+
+        if 'US' in data['info']:
+            q_res = data['info']['US']
+        elif 'CN' in data['info']:
+            q_res = data['info']['CN']
+        else:
+            q_res_key = data['info'].keys()[0]
+            q_res = data['info'][q_res_key]
+
+        # track_id = str(randint(100000000, 999999999))
+        # track_name = "Heads Up!"
+        # version = "2.3.5"
+        # price = 19
+        # currency = "USD"
+        link_url = "https://itunes.apple.com/app/id%s" % str(data['track_id'])
         new_app_task = {
-            "track_id": track_id,
-            "track_name": track_name,
-            "new_version": version,
-            "price": price,
+            "track_id": str(data['track_id']),
+            "track_name": q_res['trackName'],
+            "new_version": q_res['version'],
+            "price": q_res['price'],
             "link_url": link_url,
-            "currency": currency,
+            "currency": q_res['currency'],
             "status": "new",
             "editor": current_user.username,
             "recieve_time": datetime.now(pytz.timezone('Asia/Shanghai'))
@@ -123,11 +139,12 @@ class BuyAppView(View):
     def post(self):
         try:
             track_id = request.form.get('track_id', '')
-            res = DB.app_process.update({'track_id': track_id},
-                                        {'$set': {'status': 'processing'}})
+            res = DB.app_process.update(
+                {'track_id': track_id}, {'$set': {'status': 'processing'}})
             status, message = 'success', res
-            data = DB.app_process.find_one({'track_id': track_id,
-                                   'status': {'$ne': 'finished'}}, {'_id': 0})
+            data = DB.app_process.find_one(
+                {'track_id': track_id,
+                 'status': {'$ne': 'finished'}}, {'_id': 0})
             data['buy_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
             data['editor'] = current_user.username
             DB.app_process_log.insert(data)
@@ -145,8 +162,9 @@ class UpdateAppView(View):
             res = DB.app_process.update({'track_id': track_id},
                                         {'$set': {'status': 'processing'}})
             status, message = 'success', res
-            data = DB.app_process.find_one({'track_id': track_id,
-                                   'status': {'$ne': 'finished'}}, {'_id': 0})
+            data = DB.app_process.find_one(
+                {'track_id': track_id,
+                 'status': {'$ne': 'finished'}}, {'_id': 0})
             data['update_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
             data['editor'] = current_user.username
             DB.app_process_log.insert(data)
