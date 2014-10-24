@@ -55,7 +55,8 @@ class AddView(View):
                 'type': tp[0]["type_id"],
                 "store_path": store_path,
                 'other_download': request.form["other_download"],
-                'desc': request.form["desc"]
+                'desc': request.form["desc"],
+                'desc_zh-Hans': request.form['desc_zh-Hans']
             }
             DB.client.insert(data)
             status, message = 'success', '添加成功'
