@@ -113,6 +113,9 @@ def register_view():
     admin.app_buy_and_update.ListView.register(app, route_prefix='/admin/')
     admin.app_buy_and_update.UpdateListView.register(app, route_prefix='/admin/')
     admin.app_buy_and_update.AllListView.register(app, route_prefix='/admin/')
+    admin.app_buy_and_update.GetTaskView.register(app, route_prefix='/admin/')
+    admin.app_buy_and_update.BuyAppView.register(app, route_prefix='/admin/')
+    admin.app_buy_and_update.UpdateAppView.register(app, route_prefix='/admin/')
 
     admin.apple_account.ListView.register(app, route_prefix='/admin/')
     admin.apple_account.AddView.register(app, route_prefix='/admin/')
