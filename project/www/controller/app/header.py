@@ -21,6 +21,9 @@ redis = NGRedis(settings['new_app_redis'])
 redis_master = redis.get_redis(source=True)
 redis_master_pipeline = redis_master.pipeline()
 
+redis_app_process = NGRedis(settings['app_process'])
+redis_ap_master = redis_app_process.get_redis(source=True)
+
 
 class ControllerBase(object):
 
@@ -106,8 +109,8 @@ def build_download_url(host,  hash_str, secret, expire):
     md5_str = obj.digest()
     md5_str = base64.encodestring(md5_str)
     md5_str = md5_str.replace('+', '-').replace('/','_').replace('=', '').strip()
-    
-    return '%s%s?st=%s&e=%s' % (host, file_path, md5_str, expire) 
+
+    return '%s%s?st=%s&e=%s' % (host, file_path, md5_str, expire)
 
 def artworkUrl512_to_175_icon(artworkUrl512):
     '''

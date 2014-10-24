@@ -8,7 +8,7 @@ import shutil
 from werkzeug import secure_filename
 
 from conf.settings import settings
-from www.controller.app.header import (mongo_db, redis_master, sha1_of_file,
+from www.controller.app.header import (mongo_db, redis_master, sha1_of_file, redis_ap_master,
                                        hash_to_path, create_pic_url_by_path, file_size_format)
 from www.web.base import WebView
 from flask.ext.classy import FlaskView, route
@@ -17,7 +17,7 @@ from flask.ext.login import current_user
 import uuid
 
 DB = mongo_db
-rsm = redis_master
+rsm = redis_ap_master
 
 def upload_hash_file(file, target_dir, allow_ext=['png', 'jpg', 'jpeg']):
     '''

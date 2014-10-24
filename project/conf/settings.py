@@ -17,6 +17,12 @@ settings = {
             }
         ]
     },
+    'app_process': {
+        'redis_master': {
+            'host': '127.0.0.1',
+            'port': 6379
+        }
+    },
     'mongodb': {
         'host': '',
         'replica_set': {

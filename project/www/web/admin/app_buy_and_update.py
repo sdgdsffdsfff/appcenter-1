@@ -2,7 +2,7 @@
 import main, hashlib, math
 from flask.ext.login import UserMixin
 from __header__ import AdminView, FlaskView
-from __header__ import DB, route
+from __header__ import DB, route, rsm
 from flask.ext.login import current_user
 from functools import wraps
 from flask import request, abort
@@ -98,9 +98,8 @@ class AllListView(View):
 class GetTaskView(View):
     @route('/get-task', endpoint='get_buy_task')
     def get(self):
-        r_server = redis.Redis('localhost')
         while True:
-            data = json.loads(r_server.rpop('app_process'))
+            data = json.loads(rsm.rpop('app_process'))
             if not DB.app_process.find_one({'track_id': data['track_id']}):
                 break
 
@@ -112,11 +111,6 @@ class GetTaskView(View):
             q_res_key = data['info'].keys()[0]
             q_res = data['info'][q_res_key]
 
-        # track_id = str(randint(100000000, 999999999))
-        # track_name = "Heads Up!"
-        # version = "2.3.5"
-        # price = 19
-        # currency = "USD"
         link_url = "https://itunes.apple.com/app/id%s" % str(data['track_id'])
         new_app_task = {
             "track_id": str(data['track_id']),
