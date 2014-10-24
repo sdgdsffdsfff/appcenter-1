@@ -20,11 +20,15 @@ class ClientController(object):
 			client = res[0]
 		except:
 			return {}
+		if language == "en":
+			desc = "desc"
+		else:
+			desc = "desc_" + language
 		return {
 			'clientType': client_type,
 			'version': client['version'], 
 			'build': client['build'], 
-			'description': client['desc'],
+			'description': client.get(desc, "desc"),
 			'fileURL': os.path.join(settings['client_url_host'], client['store_path']),
                         'plistURL': quote("https://ssl-api.appvv.com/update.plist?type=%s&language=%s" % (client_type, language))
 		}
