@@ -357,10 +357,10 @@ class AppController(ControllerBase):
             if app_d_bundle_id  not in results: continue
             results[app_d_bundle_id].update({
                 'ID': str(app_d['_id']),
-                'trackName': app_d['trackName'],
-                'icon': app_d['artworkUrl512'],
-                'averageUserRating': app_d['averageUserRating'],
-                'size': file_size_format(app_d['fileSizeBytes'])
+                'trackName': app_d.get('trackName', ''),
+                'icon': app_d.get('artworkUrl512', ''),
+                'averageUserRating': app_d.get('averageUserRating', 3),
+                'size': file_size_format(app_d.get('fileSizeBytes', 1))
             })
             temp_r = results[app_d_bundle_id]
             if self.request_language == "ZH":
