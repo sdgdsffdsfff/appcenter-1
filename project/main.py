@@ -13,7 +13,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 app = Flask(__name__, template_folder='www/templates', static_folder='www/static')
-app.debug = False
+app.debug = True
 app.secret_key = 'a2V*js%W$xd89saye3qhn&A32lk@'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -127,3 +127,4 @@ def register_view():
     api.hotword.ListView.register(app, route_prefix='/api/')
     api.app_ad_image.ListView.register(app, route_prefix='/api/')
     api.other_ad.InfoView.register(app, route_prefix='/api/')
+    api.web_on.WebOnView.register(app, route_prefix='/api/')

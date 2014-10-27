@@ -35,7 +35,6 @@ class View(FlaskView):
 class HomePageView(View):
     """iphone home page feture"""
     @route('/home_page', endpoint='api_iphone_home_page')
-    # @main.cache.cached(timeout=CACHE_TIME)
     def get(self):
         data = {}
         jb = 1 - self._view._sign

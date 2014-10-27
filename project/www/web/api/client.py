@@ -25,6 +25,7 @@ class UpdateView(View):
     	"""
     	client_type = request.args.get('type', 'jb')
         language = request.args.get('language', 'zh-Hans')
+        if language == "cn": language = 'zh-Hans'
         client = ClientController()
         data = client.get_latest_version(client_type, language=language)
         return self._view.render(1000, data)

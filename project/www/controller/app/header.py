@@ -188,7 +188,7 @@ def get_country_code(ip):
     return code if code != 'CN' else 'ZH'
 
 def file_size_format(size_byte):
-    return '%.2fMB' % (int(size_byte) / 1024 / 1024)
+    return '%.2fMB' % (int(size_byte) / 1024.0 / 1024)
 
 def datetime_format(date_time):
     return date_time.strftime('%Y-%m-%d')
