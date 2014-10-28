@@ -10,6 +10,7 @@ import base64
 import hashlib
 from distutils.version import LooseVersion
 from conf.settings import settings
+from conf.settings import APP_PROCESS
 from common.ng_mongo import NGMongoConnect
 from common.ng_redis import NGRedis
 from collections import OrderedDict
@@ -21,7 +22,7 @@ redis = NGRedis(settings['new_app_redis'])
 redis_master = redis.get_redis(source=True)
 redis_master_pipeline = redis_master.pipeline()
 
-redis_app_process = NGRedis(settings['app_process'])
+redis_app_process = NGRedis(APP_PROCESS)
 redis_ap_master = redis_app_process.get_redis(source=True)
 
 
