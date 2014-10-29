@@ -158,7 +158,7 @@ def sort_downloads(data):
     if length == 0: return data
     return sorted(
         data,
-        key = lambda x: LooseVersion('0' if x.get('version', '') == "" else x["version"]),
+        key = lambda x: (LooseVersion('0' if x.get('version', '') == "" else x["version"]), x.get("addTime", datetime.datetime(2013,1,1))),
         reverse=True
     )
 
