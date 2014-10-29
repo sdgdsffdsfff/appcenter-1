@@ -106,11 +106,13 @@ class GetTaskView(View):
 
         if 'US' in data['info']:
             q_res = data['info']['US']
+            country = 'US'
         elif 'CN' in data['info']:
             q_res = data['info']['CN']
+            country = 'CN'
         else:
-            q_res_key = data['info'].keys()[0]
-            q_res = data['info'][q_res_key]
+            country = data['info'].keys()[0]
+            q_res = data['info'][country]
 
         link_url = "https://itunes.apple.com/app/id%s" % str(data['track_id'])
         new_app_task = {
@@ -120,6 +122,7 @@ class GetTaskView(View):
             "price": q_res['price'],
             "link_url": link_url,
             "currency": q_res['currency'],
+            "country": country,
             "status": "new",
             "editor": current_user.username,
             "recieve_time": datetime.now(pytz.timezone('Asia/Shanghai'))
