@@ -28,7 +28,7 @@ class ClientController(object):
 			'clientType': client_type,
 			'version': client['version'], 
 			'build': client['build'], 
-			'description': client.get(desc, "desc"),
+			'discription': client.get(desc, "desc"),
 			'fileURL': os.path.join(settings['client_url_host'], client['store_path']),
                         'plistURL': quote("https://ssl-api.appvv.com/update.plist?type=%s&language=%s" % (client_type, language))
 		}
