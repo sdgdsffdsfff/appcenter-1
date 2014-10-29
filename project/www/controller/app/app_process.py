@@ -18,10 +18,9 @@ class AppProcess(object):
              'status': 'processing'},
             {'$set': {'apple_account': apple_account,
                       'storage_time': storage_time,
-                      'apple_account': apple_account,
                       'status': 'finished',
-                      'local_version': bundle_version},
-             '$unset': {'new_version': ''}})
+                      'local_version': bundle_version,
+                      'new_version': bundle_version}})
         return res['nModified']
 
     def do_log(self, ptype, track_id, bundle_version, apple_account):

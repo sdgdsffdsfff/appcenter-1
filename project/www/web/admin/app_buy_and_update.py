@@ -13,6 +13,7 @@ from collections import defaultdict
 import pytz
 import redis
 import json
+import pymongo
 
 class View(FlaskView):
     route_base = '/app-buy-manager'
@@ -33,7 +34,7 @@ class ListView(View):
         res = DB.app_process.find({'apple_account': {'$exists': False},
                                    'status': {'$ne': 'finished'},
                                    'editor': current_user.username}). \
-            sort('status').skip((page -1)*page_size).limit(page_size)
+            sort([('status', pymongo.ASCENDING), ('recieve_time', pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         total_page = int(math.ceil(res.count() / float(page_size)))
         offset = (page - 1) * page_size
         prev_page = (page - 1) if page - 1 > 0 else 1
@@ -64,7 +65,7 @@ class UpdateListView(View):
         res = DB.app_process.find({'apple_account': {'$exists': True},
                                    'status': {'$ne': 'finished'},
                                    'editor': current_user.username}). \
-            sort('status').skip((page -1)*page_size).limit(page_size)
+            sort([('status', pymongo.ASCENDING),('update_time', pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         total_page = int(math.ceil(res.count() / float(page_size)))
         offset = (page - 1) * page_size
         prev_page = (page - 1) if page - 1 > 0 else 1
@@ -85,7 +86,7 @@ class AllListView(View):
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
         res = DB.app_process_log.find({'editor': current_user.username}). \
-            sort('status').skip((page -1)*page_size).limit(page_size)
+            sort([('status', pymongo.DESCENDING), ('buy_time', pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
         total_page = int(math.ceil(res.count() / float(page_size)))
         offset = (page - 1) * page_size
         prev_page = (page - 1) if page - 1 > 0 else 1
