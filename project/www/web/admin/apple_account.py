@@ -1,5 +1,4 @@
 #encoding=UTF8
-import re
 import main, hashlib
 from flask.ext.login import UserMixin
 from __header__ import AdminView, FlaskView, session
@@ -58,9 +57,9 @@ class AddView(View):
                 'user_id': userid
             }
             email_pattern = '^[a-zA-Z](\\w*[-_]?\\w+)*@(\\w*[-_]?\\w+)+[\\.][a-zA-Z]{2,3}([\\.][a-zA-Z]{2})?$'
-            if not re.search(email_pattern, data['apple_account']):
+            if not data['apple_account']:
                 status = 'error'
-                message = '注册帐号格式不正确'
+                message = '注册帐号不能为空'
                 return self._view.ajax_response(status, message)
             if acid:
                 user_had = DB.apple_account.find_one({'apple_account': data['apple_account'], '_id': {'$ne': ObjectId(acid)}})
