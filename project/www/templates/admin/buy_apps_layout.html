@@ -57,11 +57,28 @@
 <div class='f16'>
   <div>
     <p class='fl b'>购买统计考核：</p>
-    <p class='fl'>
-      {% for res in indicators %}
-      <a href="#">{{ res }}:购买({{ indicators[res]['buy'] }})\更新({{ indicators[res]['update'] }})</a>
-      {% endfor %}
-    </p>
+    <br>
+    <!-- <p class='fl'> -->
+      <table class='table' style='font-size:14px'>
+        <tr>
+          <td>编辑</td>
+          <td>购买|更新</td>
+          <td>编辑</td>
+          <td>购买|更新</td>
+          <td>编辑</td>
+          <td>购买|更新</td>
+          </tr>
+        {% for i in ind_res %}
+        <tr>
+          {% for item in ind_res[i] %}
+          <td>{{ item[0] }}</td>
+          <td>{{ item[1]['buy'] }}|{{ item[1]['update'] }}</td>
+          {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+
+    <!-- </p> -->
   </div>
   <div class="cl"></div>
   <div class="bdbgrey cl"></div>
