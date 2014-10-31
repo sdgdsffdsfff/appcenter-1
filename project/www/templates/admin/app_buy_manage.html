@@ -30,7 +30,7 @@
         <td>{{ res.get('new_version', '')}}</td>
         <td class="cred">{{res.get('currency', '')}}:{{ res.get('price', '') }}</td>
         <td>{{ res.get('recieve_time', '').strftime('%Y-%m-%d') }}</td>
-        <td><a href="{{ res['link_url'] }}">苹果购买</a></td>
+        <td><a target="_blank" href="{{ res['link_url'] }}">苹果购买</a></td>
         <td width=140>
         {% if res.get('status', '') == 'new' %}
         <span class="label label-info"><a href='javascript:void(0);' class='buybtn' vale={{res.get('track_id', '')}}>购买</a>
