@@ -23,21 +23,15 @@ class AppProcess(object):
                       'new_version': bundle_version}})
         return res['nModified']
 
-    def do_log(self, ptype, track_id, bundle_version, apple_account):
-        if ptype == 'buy':
-            ptime = 'buy_time'
-        elif ptype == 'update':
-            ptime = 'update_time'
-
+    def do_log(self, track_id, bundle_version, apple_account):
         storage_time = datetime.datetime.now(pytz.timezone('Asia/Shanghai'))
         res = mongo_db.app_process_log.update(
             {'track_id': track_id,
-             'status': 'processing',
-             ptime: {'$exists': True}},
+             'status': 'processing'},
             {'$set': {'apple_account': apple_account,
                       'storage_time': storage_time,
                       'apple_account': apple_account,
                       'status': 'finished',
-                      'local_version': bundle_version},
-             '$unset': {'new_version': ''}})
+                      'local_version': bundle_version,
+                      'new_version': bundle_version}})
         return res['nModified']
