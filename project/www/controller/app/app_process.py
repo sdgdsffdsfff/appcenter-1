@@ -17,7 +17,6 @@ class AppProcess(object):
             {'track_id': track_id,
              'status': 'processing'},
             {'$set': {'apple_account': apple_account,
-                      'storage_time': storage_time,
                       'status': 'finished',
                       'local_version': bundle_version,
                       'new_version': bundle_version}})
@@ -30,7 +29,6 @@ class AppProcess(object):
              'status': 'processing'},
             {'$set': {'apple_account': apple_account,
                       'storage_time': storage_time,
-                      'apple_account': apple_account,
                       'status': 'finished',
                       'local_version': bundle_version,
                       'new_version': bundle_version}})
