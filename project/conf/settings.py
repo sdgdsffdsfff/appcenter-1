@@ -43,8 +43,9 @@ DOMAIN_URL = 'http://api.vshare.com'
 CACHE_TIME = 60 * 10
 APP_PROCESS = {
     'redis_master': {
-        'host': '127.0.0.1',
-        'port': 6379
+        'host': '54.183.93.130',
+        'port': 7379,
+        'password': 'vS!t_rt1@2aT'
     }
 }
 try: from settings_local import *
