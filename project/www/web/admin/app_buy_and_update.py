@@ -8,10 +8,8 @@ from functools import wraps
 from flask import request, abort
 from bson.objectid import ObjectId
 from datetime import datetime
-from random import randint
 from collections import defaultdict
 import pytz
-import redis
 import json
 import pymongo
 
@@ -28,6 +26,10 @@ class ListView(View):
         for editor in editors:
             indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
             indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
+        ind_res = defaultdict(list)
+        for i in range(len(indicators)):
+            ind_res[i/3].append(indicators.popitem())
+
 
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
@@ -49,7 +51,7 @@ class ListView(View):
                                  to_update_count=to_update_count,
                                  to_process_count=to_process_count,
                                  page_info=page_info,
-                                 indicators=indicators)
+                                 ind_res=ind_res)
 
 class UpdateListView(View):
     @route('/update_list', endpoint='app_update')
@@ -59,6 +61,9 @@ class UpdateListView(View):
         for editor in editors:
             indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
             indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
+        ind_res = defaultdict(list)
+        for i in range(len(indicators)):
+            ind_res[i/3].append(indicators.popitem())
 
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
@@ -72,7 +77,7 @@ class UpdateListView(View):
         next_page = (page + 1) if page + 1 < total_page else total_page
         page_info = {"count": res.count(), "page": page, "total_page": total_page,
                      "prev_page": prev_page, 'next_page': next_page}
-        return self._view.render('app_update_manage', results=res, page_info=page_info, indicators=indicators)
+        return self._view.render('app_update_manage', results=res, page_info=page_info, ind_res=ind_res)
 
 class AllListView(View):
     @route('/all_list', endpoint='app_all')
@@ -82,6 +87,9 @@ class AllListView(View):
         for editor in editors:
             indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
             indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
+        ind_res = defaultdict(list)
+        for i in range(len(indicators)):
+            ind_res[i/3].append(indicators.popitem())
 
         page = int(request.args.get('page', 1))
         page_size = request.args.get('page_size', 10)
@@ -93,7 +101,7 @@ class AllListView(View):
         next_page = (page + 1) if page + 1 < total_page else total_page
         page_info = {"count": res.count(), "page": page, "total_page": total_page,
                      "prev_page": prev_page, 'next_page': next_page}
-        return self._view.render('app_all_manage', results=res, page_info=page_info, indicators=indicators)
+        return self._view.render('app_all_manage', results=res, page_info=page_info, ind_res=ind_res)
 
 
 class GetTaskView(View):
