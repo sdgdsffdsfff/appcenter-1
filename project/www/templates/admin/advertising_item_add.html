@@ -133,6 +133,30 @@ function FormatSelection(item) {
 	if(checkRedirect() == true) {
 		window.location.href = "{{url_for('admin_advertising_item_list')}}?identifier=" + identifier + "&layout=" + layout
 	}
+  $(document).ready(function() {
+    $("div[class='controls']").eq(5).append("<label class='checkbox inline'><a href='javascript:void(0);' class='btn blue' onclick=checkall('language')>全选</a></label>")
+    $("div[class='controls']").eq(5).append("<label class='checkbox inline'><a href='javascript:void(0);' class='btn blue' onclick=togglecheck('language')>反选</a></label>")
+    $("div[class='controls']").eq(6).append("<label class='checkbox inline'><a href='javascript:void(0);' class='btn blue' onclick=checkall('country')>全选</a></label>")
+    $("div[class='controls']").eq(6).append("<label class='checkbox inline'><a href='javascript:void(0);' class='btn blue' onclick=togglecheck('country')>反选</a></label>")
+  });
+function togglecheck(name) {
+  $.each($("input[name='" + name + "']"), function(index, ele) {
+    if (!$(ele).prop('checked')){
+      $(ele).prop('checked', true);
+    }
+    else if ($(ele).prop('checked')){
+      $(ele).prop('checked', false);
+    }
+    $(ele).parent().toggleClass('checked');
+  });
+}
+
+function checkall(name) {
+  $("input[name='" + name + "']").prop('checked', true);
+  $.each($("input[name='" + name + "']"), function(index, ele) {
+    $(ele).parent().addClass('checked');
+  });
+}
 </script>
 {% endblock %}
 {% block menuName %}广告位置{% endblock %}
