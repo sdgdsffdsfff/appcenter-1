@@ -70,7 +70,7 @@ class UpdateListView(View):
         res = DB.app_process.find({'apple_account': {'$exists': True},
                                    'status': {'$ne': 'finished'},
                                    'editor': current_user.username}). \
-            sort([('status', pymongo.ASCENDING),('update_time', pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
+            sort('status', pymongo.ASCENDING).skip((page -1)*page_size).limit(page_size)
         total_page = int(math.ceil(res.count() / float(page_size)))
         offset = (page - 1) * page_size
         prev_page = (page - 1) if page - 1 > 0 else 1
