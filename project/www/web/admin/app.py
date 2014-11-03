@@ -21,7 +21,7 @@ from www.controller.app.header import artworkUrl512_to_114_icon, sha1_of_file, h
 from www.lib.form import Form, FormElementField, FormException, FormValidatorAbstract
 from bson.objectid import ObjectId
 
-country = ["us", "cn"]
+country = ["cn", "us"]
 
 class View(FlaskView):
 
@@ -539,6 +539,14 @@ class SyncInfoView(View):
                         db = DB.AppBase
                     elif coun == "cn":
                         db = DB.AppBase_CN
+                    us_db = DB.AppBase
+                    us_app = us_db.find_one({'trackId':int(trackId)})
+                    if us_app is None:
+                        us_id = us_db.insert(data)
+                    else:
+                        us_id = us_app["_id"]
+                        us_db.update({'_id':ObjectId(us_id)}, {'$set':data})
+
                     app = db.find_one({'trackId':int(trackId)})
                     if app is None:
                         _id = db.insert(data)
