@@ -18,7 +18,7 @@
     <tbody>
       {% for res in results %}
       <tr>
-        <td>{{ res.get('track_id', '') }}</td>
+        <td>{{ res.get('track_id', 0) }}</td>
         <td>{{ res.get('track_name', '') }}</td>
         <td>{{ res.get('local_version', '')}}</td>
         <td class="cred">{{ res.get('currency', '') }}:{{ res.get('price', '') }}</td>
@@ -36,13 +36,17 @@
         </td>
         <td><a href="{{ res.get('link_url', '') }}">苹果购买</a></td>
         <td>
-        {% if res.get('status', '') == 'new' %}
+        {% if res.get('status', '') == 'buy' %}
         <span class="label label-info">购买
-        {% elif res.get('status', '') == 'Update' %}
+        {% elif res.get('status', '') == 'update' %}
         <span class="label label-info">更新
-        {% elif res.get('status', '') == 'processing' %}
+        {% elif res.get('status', '') == 'buying' %}
         <span class="label label-success">正在入库
-        {% elif res.get('status', '') == 'finished' %}
+        {% elif res.get('status', '') == 'updating' %}
+        <span class="label label-success">正在入库
+        {% elif res.get('status', '') == 'bought' %}
+        <span class="label label-success">完成
+        {% elif res.get('status', '') == 'updated' %}
         <span class="label label-success">完成
         {% else %}
         <span class="label">未知

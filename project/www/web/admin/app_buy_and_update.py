@@ -13,95 +13,99 @@ import pytz
 import json
 import pymongo
 
+
 class View(FlaskView):
     route_base = '/app-buy-manager'
+
     def before_request(self, name):
         self._view = AdminView()
+        temp_indicators = defaultdict(dict)
+        editors = DB.User.find({'role': 'Editor'}, {'_id': 0, 'username': 1})
+        for editor in editors:
+            temp_indicators[editor['username']]['buy'] = \
+                DB.app_process_log.find(
+                    {'status': 'bought', 'editor': editor['username']}).count()
+            temp_indicators[editor['username']]['update'] = \
+                DB.app_process_log.find(
+                    {'status': 'updated',
+                     'editor': editor['username']}).count()
+
+        indicators = defaultdict(list)
+
+        for i in range(len(temp_indicators)):
+            indicators[i/3].append(temp_indicators.popitem())
+
+        self._view.assign('indicators', indicators)
+
+    def pagination(self, res, page, page_size):
+        total_page = int(math.ceil(res.count() / float(page_size)))
+        prev_page = (page - 1) if page - 1 > 0 else 1
+        next_page = (page + 1) if page + 1 < total_page else total_page
+        page_info = {"count": res.count(), "page": page,
+                     "total_page": total_page, "prev_page": prev_page,
+                     'next_page': next_page}
+        self._view.assign('page_info', page_info)
+
 
 class ListView(View):
     @route('/list', endpoint='app_buy')
     def get(self):
-        indicators = defaultdict(dict)
-        editors = DB.User.find({'role': 'Editor'},{'_id': 0, 'username': 1})
-        for editor in editors:
-            indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
-            indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
-        ind_res = defaultdict(list)
-        for i in range(len(indicators)):
-            ind_res[i/3].append(indicators.popitem())
-
-
         page = int(request.args.get('page', 1))
-        page_size = request.args.get('page_size', 10)
-        res = DB.app_process.find({'apple_account': {'$exists': False},
-                                   'status': {'$ne': 'finished'},
-                                   'editor': current_user.username}). \
-            sort([('status', pymongo.ASCENDING), ('recieve_time', pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
-        total_page = int(math.ceil(res.count() / float(page_size)))
-        offset = (page - 1) * page_size
-        prev_page = (page - 1) if page - 1 > 0 else 1
-        next_page = (page + 1) if page + 1 < total_page else total_page
-        page_info = {"count": res.count(), "page": page, "total_page": total_page,
-                     "prev_page": prev_page, 'next_page': next_page}
-        to_buy_count = DB.app_process.find({'apple_account': {'$exists': False}, 'status': {'$ne': 'finished'}}).count()
-        to_update_count = DB.app_process.find({'apple_account': {'$exists': True}, 'status': {'$ne': 'finished'}}).count()
-        to_process_count = DB.app_process.find({'status': {'$ne': 'finished'}}).count()
+        page_size = int(request.args.get('page_size', 10))
+
+        res = DB.app_process.find(
+            {'$or': [{'status': 'buy'}, {'status': 'buying'}],
+             'editor': current_user.username}).sort(
+                 [('status', pymongo.ASCENDING),
+                  ('recieve_time', pymongo.DESCENDING)]).skip(
+                      (page - 1)*page_size).limit(page_size)
+
+        self.pagination(res, page, page_size)
+
+        to_buy_count = DB.app_process.find(
+            {'$or': [{'status': 'buy'}, {'status': 'buying'}]}).count()
+        to_update_count = DB.app_process.find(
+            {'$or': [{'status': 'update'}, {'status': 'updating'}]}).count()
+        to_process_count = to_buy_count + to_update_count
+
         return self._view.render('app_buy_manage', results=res,
                                  to_buy_count=to_buy_count,
                                  to_update_count=to_update_count,
-                                 to_process_count=to_process_count,
-                                 page_info=page_info,
-                                 ind_res=ind_res)
+                                 to_process_count=to_process_count)
+
 
 class UpdateListView(View):
     @route('/update_list', endpoint='app_update')
     def get(self):
-        indicators = defaultdict(dict)
-        editors = DB.User.find({'role': 'Editor'},{'_id': 0, 'username': 1})
-        for editor in editors:
-            indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
-            indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
-        ind_res = defaultdict(list)
-        for i in range(len(indicators)):
-            ind_res[i/3].append(indicators.popitem())
-
         page = int(request.args.get('page', 1))
-        page_size = request.args.get('page_size', 10)
-        res = DB.app_process.find({'apple_account': {'$exists': True},
-                                   'status': {'$ne': 'finished'},
-                                   'editor': current_user.username}). \
-            sort('status', pymongo.ASCENDING).skip((page -1)*page_size).limit(page_size)
-        total_page = int(math.ceil(res.count() / float(page_size)))
-        offset = (page - 1) * page_size
-        prev_page = (page - 1) if page - 1 > 0 else 1
-        next_page = (page + 1) if page + 1 < total_page else total_page
-        page_info = {"count": res.count(), "page": page, "total_page": total_page,
-                     "prev_page": prev_page, 'next_page': next_page}
-        return self._view.render('app_update_manage', results=res, page_info=page_info, ind_res=ind_res)
+        page_size = int(request.args.get('page_size', 10))
+
+        res = DB.app_process.find(
+            {'$or': [{'status': 'update'}, {'status': 'updating'}],
+             'editor': current_user.username}).sort(
+                 'status', pymongo.ASCENDING).skip(
+                     (page - 1)*page_size).limit(page_size)
+
+        self.pagination(res, page, page_size)
+        return self._view.render('app_update_manage', results=res)
+
 
 class AllListView(View):
     @route('/all_list', endpoint='app_all')
     def get(self):
-        indicators = defaultdict(dict)
-        editors = DB.User.find({'role': 'Editor'},{'_id': 0, 'username': 1})
-        for editor in editors:
-            indicators[editor['username']]['buy'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'buy_time': {'$exists': True}}).count()
-            indicators[editor['username']]['update'] = DB.app_process_log.find({'status': 'finished', 'editor': editor['username'], 'update_time': {'$exists': True}}).count()
-        ind_res = defaultdict(list)
-        for i in range(len(indicators)):
-            ind_res[i/3].append(indicators.popitem())
 
         page = int(request.args.get('page', 1))
-        page_size = request.args.get('page_size', 10)
-        res = DB.app_process_log.find({'editor': current_user.username}). \
-            sort([('status', pymongo.DESCENDING), ('buy_time', pymongo.DESCENDING)]).skip((page -1)*page_size).limit(page_size)
-        total_page = int(math.ceil(res.count() / float(page_size)))
-        offset = (page - 1) * page_size
-        prev_page = (page - 1) if page - 1 > 0 else 1
-        next_page = (page + 1) if page + 1 < total_page else total_page
-        page_info = {"count": res.count(), "page": page, "total_page": total_page,
-                     "prev_page": prev_page, 'next_page': next_page}
-        return self._view.render('app_all_manage', results=res, page_info=page_info, ind_res=ind_res)
+        page_size = int(request.args.get('page_size', 10))
+
+        res = DB.app_process_log.find(
+            {'editor': current_user.username}).sort(
+                [('status', pymongo.ASCENDING),
+                 ('buy_time', pymongo.DESCENDING)]).skip(
+                     (page - 1) * page_size).limit(page_size)
+
+        self.pagination(res, page, page_size)
+
+        return self._view.render('app_all_manage', results=res)
 
 
 class GetTaskView(View):
@@ -124,14 +128,14 @@ class GetTaskView(View):
 
         link_url = "https://itunes.apple.com/app/id%s" % str(data['track_id'])
         new_app_task = {
-            "track_id": str(data['track_id']),
+            "track_id": data['track_id'],
             "track_name": q_res['trackName'],
             "new_version": q_res['version'],
             "price": q_res['price'],
             "link_url": link_url,
             "currency": q_res['currency'],
             "country": country,
-            "status": "new",
+            "status": "buy",
             "editor": current_user.username,
             "recieve_time": datetime.now(pytz.timezone('Asia/Shanghai'))
         }
@@ -144,13 +148,11 @@ class BuyAppView(View):
     @route('/buy', methods=['POST'], endpoint='buy_app')
     def post(self):
         try:
-            track_id = request.form.get('track_id', '')
+            track_id = int(request.form.get('track_id', 0))
             res = DB.app_process.update(
-                {'track_id': track_id}, {'$set': {'status': 'processing'}})
+                {'track_id': track_id}, {'$set': {'status': 'buying'}})
             status, message = 'success', res
-            data = DB.app_process.find_one(
-                {'track_id': track_id,
-                 'status': {'$ne': 'finished'}}, {'_id': 0})
+            data = DB.app_process.find_one({'track_id': track_id}, {'_id': 0})
             data['buy_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
             data['editor'] = current_user.username
             DB.app_process_log.insert(data)
@@ -164,13 +166,11 @@ class UpdateAppView(View):
     @route('/update', methods=['POST'], endpoint='update_app')
     def post(self):
         try:
-            track_id = request.form.get('track_id', '')
+            track_id = int(request.form.get('track_id', 0))
             res = DB.app_process.update({'track_id': track_id},
-                                        {'$set': {'status': 'processing'}})
+                                        {'$set': {'status': 'updating'}})
             status, message = 'success', res
-            data = DB.app_process.find_one(
-                {'track_id': track_id,
-                 'status': {'$ne': 'finished'}}, {'_id': 0})
+            data = DB.app_process.find_one({'track_id': track_id}, {'_id': 0})
             data['update_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
             data['editor'] = current_user.username
             DB.app_process_log.insert(data)

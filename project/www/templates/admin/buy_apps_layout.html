@@ -68,9 +68,9 @@
           <td>编辑</td>
           <td>购买|更新</td>
           </tr>
-        {% for i in ind_res %}
+        {% for i in indicators %}
         <tr>
-          {% for item in ind_res[i] %}
+          {% for item in indicators[i] %}
           <td>{{ item[0] }}</td>
           <td>{{ item[1]['buy'] }}|{{ item[1]['update'] }}</td>
           {% endfor %}

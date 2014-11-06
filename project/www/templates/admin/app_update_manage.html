@@ -17,16 +17,16 @@
     <tbody>
       {% for res in results %}
       <tr>
-        <td>{{ res.get('track_id', '') }}</td>
+        <td>{{ res.get('track_id', 0) }}</td>
         <td>{{ res.get('track_name', '') }}</td>
         <td>{{ res.get('local_version', '') }}|{{ res.get('new_version', '')}}</td>
         <td class="cred">{{ res.get('currency', '') }}:{{ res.get('price', '') }}</td>
         <td>{{ res.get('apple_account', '') }}</td>
         <td><a href="{{ res.get('link_url', '') }}">苹果购买</a></td>
         <td width=140>
-          {% if res.get('status', '') == 'Update' %}
+          {% if res.get('status', '') == 'update' %}
           <span class="label label-info"><a href='javascript:void(0);' class='updatebtn' vale={{ res.get('track_id', '') }}>更新</a>
-          {% elif res.get('status', '') == 'processing' %}
+          {% elif res.get('status', '') == 'updating' %}
           <span class="label label-success">正在入库
           {% else %}
           <span class="label">未知

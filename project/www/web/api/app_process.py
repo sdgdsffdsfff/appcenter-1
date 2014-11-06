@@ -8,6 +8,7 @@ from __header__ import FlaskView, ApiView, route, request
 
 class View(FlaskView):
     route_base = '/app_process'
+
     def before_request(self, name):
         self._view = ApiView()
 
@@ -17,20 +18,12 @@ class FinishView(View):
     def post(self):
         app_process = AppProcess()
         try:
-            track_id = request.form.get('track_id', '')
+            track_id = int(request.form.get('track_id', 0))
             bundle_version = request.form.get('bundle_version', '')
             apple_account = request.form.get('apple_account', '')
 
-            result1 = app_process.finish_process(str(track_id),
-                                                 bundle_version,
-                                                 apple_account)
-            result2 = app_process.do_log(str(track_id), bundle_version,
-                                         apple_account)
-            if result1 == 0 or result2 == 0:
-                status = 2000
-                message = 'something wrong happend while write to db'
-            else:
-                status, message = 1000, 'done'
-        except Exception, ex:
-            status, message = 2000, str(ex.message)
-        return self._view.render(status, message)
+            result = app_process.finish_process(track_id, bundle_version,
+                                                apple_account)
+        except:
+            result = 2000
+        return self._view.render(result, '')

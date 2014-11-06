@@ -22,19 +22,19 @@
         <th>标记</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id='list_body'>
       {% for res in results %}
       <tr>
-        <td>{{ res.get('track_id', '') }}</td>
+        <td>{{ res.get('track_id', 0) }}</td>
         <td>{{ res.get('track_name', '') }}</td>
         <td>{{ res.get('new_version', '')}}</td>
         <td class="cred">{{res.get('currency', '')}}:{{ res.get('price', '') }}</td>
         <td>{{ res.get('recieve_time', '').strftime('%Y-%m-%d') }}</td>
         <td><a target="_blank" href="{{ res['link_url'] }}">苹果购买</a></td>
         <td width=140>
-        {% if res.get('status', '') == 'new' %}
+        {% if res.get('status', '') == 'buy' %}
         <span class="label label-info"><a href='javascript:void(0);' class='buybtn' vale={{res.get('track_id', '')}}>购买</a>
-        {% elif res.get('status', '') == 'processing' %}
+        {% elif res.get('status', '') == 'buying' %}
         <span class="label label-success">正在入库
         {% else %}
         <span class="label">未知
@@ -67,13 +67,13 @@
           if (res.status == 'success'){
             var res = res.message;
             var rstatus = ''
-            if (res['status'] == 'new') {
+            if (res['status'] == 'buy') {
               rstatus = "<a href='javascript:void(0);' class='buybtn' vale=" + res['track_id'] + ">购买</a>";
-            } else if (res['status'] == 'processing'){
+            } else if (res['status'] == 'buying'){
               rstatus = '正在入库';
             }
             var content = "<tr> <td>" + res['track_id'] + "</td> <td>" + res['track_name'] + "</td> <td>" + res['new_version'] + "</td> <td class='cred'>" + res['currency'] + ":" + res['price'] + "</td> <td>" + res['recieve_time'] + "</td> <td><a href='" +res['link_url'] + "'>苹果购买</a></td> <td><span class='label label-info'>" + rstatus + "</span></td> </tr> ";
-            $('tbody').prepend(content); 
+            $('#list_body').prepend(content); 
             //修改购买数量
             var words = $('#to_buy_count').text().split('：')[0];
             var number = Number($('#to_buy_count').text().split('：')[1]) + 1;
