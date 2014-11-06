@@ -63,7 +63,9 @@ class AppCollectionController(ControllerBase):
                     rating = 0
                 download_info = download_infos[tmp_item.get('bundleId', '')]
                 d_version = download_info.get("ipaVersion", "")
-                download_info.pop("ipaHistoryDownloads")
+                try:
+                    download_info.pop("ipaHistoryDownloads")
+                except Exception, e: pass 
                 download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
                 app_trackName = tmp_item['trackName']
                 if self._language in lang_collection:
