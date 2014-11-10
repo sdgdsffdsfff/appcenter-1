@@ -129,3 +129,4 @@ def register_view():
     api.other_ad.InfoView.register(app, route_prefix='/api/')
     api.web_on.WebOnView.register(app, route_prefix='/api/')
     api.app_collection.AppListView.register(app, route_prefix='/api/')
+    api.notification.ListView.register(app, route_prefix='/api/')
