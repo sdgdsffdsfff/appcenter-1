@@ -121,6 +121,10 @@ def register_view():
     admin.apple_account.AddView.register(app, route_prefix='/admin/')
     admin.apple_account.DeleteView.register(app, route_prefix='/admin/')
 
+    admin.notification.ListView.register(app, route_prefix='/admin/')
+    admin.notification.EditView.register(app, route_prefix='/admin/')
+    admin.notification.ToggleStateView.register(app, route_prefix='/admin/')
+
     api.iphone.HomePageView.register(app, route_prefix='/api/')
     api.ipad.HomePageView.register(app, route_prefix='/api/')
     api.app.DetailView.register(app, route_prefix='/api/')

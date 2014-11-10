@@ -1,0 +1,104 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %} 推送管理 {% endblock %}
+{% block title %} 推送 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+	<i class="icon-home"></i>
+	<a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+	<i class="icon-angle-right"></i>
+  </li>
+  <li>推送列表</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+  <div class="portlet-title">
+	<div class="caption"><i class="icon-edit"></i>推送列表</div>
+	<div class="tools"></div>
+  </div>
+  <div class="portlet-body">
+	<div class="table-toolbar">
+	</div>
+	<table class="table table-striped table-hover table-bordered">
+	  <thead>
+		<tr>
+		  <th>编号</th>
+		  <th>内容</th>
+		  <th>操作</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		{% for noti in noti_list %}
+		<tr>
+		  <td>{{ noti['id'] }}</td>
+		  <td>{{ noti['content'] }}</td>
+		  <td>
+			<a class=" btn blue" data-toggle="modal" href="#confirm_box_{{noti['id']}}">编辑</a>
+			<div id="confirm_box_{{noti['id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+				<div class="modal-header">
+				<p>编辑内容</p>
+			  </div>
+			  <div class="modal-body">
+			  	<div class="alert hide" id="form-alert"></div>
+				<p>
+					<textarea id="pushcontent_{{noti['id']}}" class="m-wrap large">{{ noti['content'] }}</textarea>
+				</p>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn">取消</button>
+				<button type="button" data-dismiss="modal" class="btn red" onclick="editPush('{{notifications[0]['_id']}}','{{noti['id']}}')">确定</button>
+			  </div>
+			</div>
+		  </td>
+		</tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+	{% if notifications[0].published %}
+		<button type="button" onclick="toggleNotiState('{{notifications[0]['_id']}}','{{notifications[0].published}}')" class="btn yellow">取消推送</button>
+	{% else %}
+		<button type="button" onclick="toggleNotiState('{{notifications[0]['_id']}}','{{notifications[0].published}}')" class="btn green">推送</button>
+	{% endif %}
+  </div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var ajax = NG.Ajax();
+
+function editPush(_id, pid){
+	var url = '{{ url_for("admin_notification_edit") }}';
+  	var data = {'_id': _id, 'pid': pid, 'content': $("#pushcontent_" + pid).val()}
+	ajax.Post(url, data, function(res){
+		if(res.status == 'success'){
+		  	$('#add_modal').modal('hide');
+		  	location.reload();
+		}else{
+		  	$('#form-alert').html(res.message);
+		  	$('#form-alert').show();
+		}
+	}); 
+}
+
+function toggleNotiState(_id, state){
+		var url = "{{url_for('admin_notification_toggle_state')}}?_id="+_id + "&state="+state;
+		ajax.Get(url, function(res){
+				if(res.status == 'success'){
+						location.reload();
+				} else{
+						alert(res)
+				}
+		});
+}
+</script>
+{% endblock %}
+
+{% block menuName %}推送管理{% endblock %}
