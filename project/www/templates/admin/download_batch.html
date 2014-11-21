@@ -1,0 +1,189 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %} 下载批次管理 {% endblock %}
+{% block title %} vshare客户端版本 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+    <i class="icon-home"></i>
+    <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+    <i class="icon-angle-right"></i>
+  </li>
+  <li>vshare客户端版本列表</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade  hide in" data-width="700" id="add_modal">
+  <div class="modal-header">
+    <a class="close" href="#" data-dismiss="modal"></a>
+    <h3>添加客户端版本</h3>
+  </div>
+  <div class="modal-body inner">
+    <div class="alert hide" id="form-alert"></div>
+    <form action="" id="vshareVersion-add-form" class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label">客户端名称</label>
+        <div class="controls">
+          <input type="text" name="name" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">客户端标识</label>
+        <div class="controls">
+          <input type="text" name="identity" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">需要对应的苹果账号</label>
+        <div class="controls">
+          <input type="text" name="apple_account" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">取消</button>
+    <button  class="btn red" onclick="addVshareVersion()">确定添加</button>
+  </div>
+</div>
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+  <div class="portlet-title">
+    <div class="caption"><i class="icon-edit"></i>客户端版本列表</div>
+    <div class="tools"></div>
+  </div>
+  <div class="portlet-body">
+    <div class="table-toolbar">
+      <div class="btn-group">
+        <a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
+      </div>
+    </div>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>客户端名称</th>
+          <th>客户端标识</th>
+          <th>下载签名账户</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vshare_version in vshare_version_list %}
+        <tr>
+          <td><strong>{{ vshare_version['name'] }}</strong></td>
+          <td>{{ vshare_version['identity'] }}</td>
+          <td>{{ vshare_version['apple_account'] }}</td>
+          <td>
+            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{vshare_version['_id']}}">删除</a>
+            <div id="confirm_box_{{vshare_version['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+              <div class="modal-body">
+                <p>确定要删除吗?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">取消</button>
+                <button type="button" data-dismiss="modal" class="btn red" onclick="deleteVshareVersion('{{vshare_version['_id']}}')">确定</button>
+              </div>
+            </div>
+            <a  class=" btn blue" data-toggle="modal" href="#edit_modal_box_{{vshare_version['_id']}}">编辑</a>
+            <div id="edit_modal_box_{{vshare_version['_id']}}" class="modal fade  hide in" data-width="700" id="add_modal">
+              <div class="modal-header">
+                <a class="close" href="#" data-dismiss="modal"></a>
+                <h3>修改客户端版本批次</h3>
+              </div>
+              <div class="modal-body inner">
+                <div class="alert hide" id="form-alert"></div>
+                <form action="" id="vshareVersion-eidt-form-{{vshare_version['_id']}}" class="form-horizontal">
+                  <input type="hidden" name="_id" value="{{vshare_version['_id']}}" />
+                  <div class="control-group">
+                    <label class="control-label">客户端名称</label>
+                    <div class="controls">
+                      <input type="text" name="name" value="{{vshare_version['name']}}" class="m-wrap large" />
+                      <span class="help-inline"></span>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">客户端标识</label>
+                    <div class="controls">
+                      <input type="text" name="identity" class="m-wrap large" value="{{vshare_version['identity']}}" />
+                      <span class="help-inline"></span>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">需要对应的苹果账号</label>
+                    <div class="controls">
+                      <input type="text" name="apple_account" value="{{vshare_version['apple_account']}}" class="m-wrap large" />
+                      <span class="help-inline"></span>
+                    </div>
+                  </div>
+
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">取消</button>
+                <button  class="btn red" onclick='editVshareVersion("{{vshare_version['_id']}}")'>确定修改</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var ajax = NG.Ajax();
+
+function deleteVshareVersion(_id){
+        var url = "{{url_for('admin_vshare_version_delete')}}?_id="+_id;
+        ajax.Get(url, function(res){
+                if(res.status == 'success'){
+                        location.reload();
+                } else{
+                        alert(res)
+                }
+        });
+}
+
+function editVshareVersion(_id){
+  var url = '{{ url_for("admin_vshare_version_edit") }}';
+  var data = $('#vshareVersion-eidt-form-'+_id).serialize();
+  ajax.Post(url, data, function(res){
+    if(res.status == 'success'){
+      $('#edit_modal_box_'+_id).modal('hide');
+      location.reload();
+    }else{
+      $('#form-alert').html(res.message);
+      $('#form-alert').show();
+    }
+  });
+}
+
+function addVshareVersion(){
+        var url = '{{ url_for("admin_vshare_version_add") }}';
+        var data = $('#vshareVersion-add-form').serialize();
+        ajax.Post(url, data, function(res){
+                if(res.status == 'success'){
+                        $('#add_modal').modal('hide');
+                        location.reload();
+                }else{
+                        $('#form-alert').html(res.message);
+                        $('#form-alert').show();
+                }
+        });
+}
+</script>
+{% endblock %}
+
+{% block menuName %}下载批次管理{% endblock %}

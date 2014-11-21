@@ -128,6 +128,7 @@ def register_view():
     admin.download_batch.ListView.register(app, route_prefix='/admin/')
     admin.download_batch.AddView.register(app, route_prefix='/admin/')
     admin.download_batch.DeleteView.register(app, route_prefix='/admin/')
+    admin.download_batch.EditView.register(app, route_prefix='/admin/')
 
     api.iphone.HomePageView.register(app, route_prefix='/api/')
     api.ipad.HomePageView.register(app, route_prefix='/api/')
