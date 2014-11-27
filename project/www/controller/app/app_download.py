@@ -15,7 +15,11 @@ class AppDownloadController(ControllerBase):
     '''
     APP 下载
     '''
-    def get_all_downloads_of_app(self, bundleid):
+    def get_all_downloads_of_app(self, bundleid, vv_version="common"):
+        cur_apple_account = None
+        if vv_version != "common":
+            cur_vshare_version = mongo_db.vshare_version.find_one({"identity": vv_version})
+            cur_apple_account = cur_vshare_version.get("apple_account", "common")
         where = {'bundleId': bundleid}
         res = list(mongo_db.AppDownload.find(where))
         res = list(sort_downloads(res))
@@ -23,22 +27,31 @@ class AppDownloadController(ControllerBase):
         for re in res: results[re.get("sign", 0)].append(re)
         return results.get(1, []), results.get(0, [])
 
-    def get_by_bundleids(self, bundleids, sign=0):
+    def get_by_bundleids(self, bundleids, sign=0, vv_version="common"):
+        results_1 = defaultdict(list)
+        results_2 = defaultdict(list)
         results = defaultdict(list)
-        results2 = dict()
         where = {'bundleId': {"$in": bundleids}, "sign": sign}
         res = mongo_db.AppDownload.find(where)
-
+        cur_apple_account = None
+        if vv_version != "common":
+            cur_vshare_version = mongo_db.vshare_version.find_one({"identity": vv_version})
+            cur_apple_account = cur_vshare_version.get("apple_account", "common")
         for down in res:
-            results[down["bundleId"]].append(down)
-        for key, value in results.items():
-            try:
-                results2[key] = list(sort_downloads(list(value)))
-            except:
-                results2[key] = list(value)
-        return results2
+            apple_account = down.get("apple_account", None)
+            if apple_account and apple_account == cur_apple_account:
+                results_1[down["bundleId"]].append(down)
+            elif apple_account is None:
+                results_2[down["bundleId"]].append(down)
+        for key, value in results_2.items():
+            try: results[key] += list(sort_downloads(list(value)))
+            except: results[key] += list(value)
+        for key, value in results_1.items():
+            try: results[key] += list(sort_downloads(list(value)))
+            except: results[key] += list(value)
+        return results
 
-    def get_by_bundleid(self, bundleid, sign=0):
+    def get_by_bundleid(self, bundleid, sign=0, vv_version="common"):
         """
         通过bundleid获取app
         """

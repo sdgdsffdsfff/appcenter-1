@@ -15,7 +15,7 @@ class AppCollectionController(ControllerBase):
         else:
             self._country = country
 
-    def get(self, num=None, front=False, sign=0):
+    def get(self, num=None, front=False, sign=0, vv_version="common"):
         '''
         Get app collection
         num 获取数量  front是否前端显示
@@ -39,7 +39,7 @@ class AppCollectionController(ControllerBase):
             filter_items = []
             app_controller = AppController()
             bundleids = [itemq.get('bundleId', '') for itemq in res['items']]
-            download_infos = app_controller.get_downloads_of_allbundleids(bundleids, sign)
+            download_infos = app_controller.get_downloads_of_allbundleids(bundleids, sign, vv_version)
             for item in res['items']:
                 tmp_item = None
                 if self._language == "":
@@ -105,6 +105,3 @@ class AppCollectionController(ControllerBase):
         except Exception, ex:
             print ex
             return {}
-
-
-

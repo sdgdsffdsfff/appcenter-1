@@ -446,11 +446,11 @@ class AppController(ControllerBase):
         }
         return data
 
-    def get_downloads_of_allbundleids(self, bundle_ids, sign):
+    def get_downloads_of_allbundleids(self, bundle_ids, sign, vv_version="common"):
         """add by kq for bundle search"""
 
         download_direct = AppDownloadController()
-        reses = download_direct.get_by_bundleids(bundle_ids, sign)
+        reses = download_direct.get_by_bundleids(bundle_ids, sign, vv_version)
         download_netdisk = AppDownloadNetDiskController()
         reses2 = download_netdisk.get_by_bundleids(bundle_ids, sign)
 

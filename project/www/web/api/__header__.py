@@ -29,6 +29,9 @@ class ApiView(WebView):
         self._ip = request.remote_addr
         #国家
         self._country = request.args.get('country', None)
+
+        self.vv_version = request.args.get('app_type', 'common')
+
         #渠道包类型
         self._client_type = request.args.get('client_type', 'common')
         #用于判断签名和越狱
