@@ -60,7 +60,7 @@
 
   function load_quest() {
     var url = '{{ url_for('get_buy_task') }}'
-      if ($('a.buybtn').size() >= 5){
+      if ($('a.buybtn').size() >= 1000){
         alert('请先完成当前购买工作')
       } else {
         ajax.Get(url, function(res){
