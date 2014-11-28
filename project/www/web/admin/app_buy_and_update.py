@@ -115,16 +115,20 @@ class GetTaskView(View):
             data = json.loads(rsm.rpop('app_process'))
             if not DB.app_process.find_one({'track_id': data['track_id']}):
                 break
-
+        country = None
         if 'US' in data['info']:
             q_res = data['info']['US']
             country = 'US'
-        elif 'CN' in data['info']:
+            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+        if 'CN' in data['info']:
             q_res = data['info']['CN']
             country = 'CN'
-        else:
+            DB.AppBase_CN.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+            if 'US' not in data['info']: DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+        if country is None:
             country = data['info'].keys()[0]
             q_res = data['info'][country]
+            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
 
         link_url = "https://itunes.apple.com/app/id%s" % str(data['track_id'])
         new_app_task = {

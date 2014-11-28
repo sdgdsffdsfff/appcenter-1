@@ -19,16 +19,20 @@ class ListView(View):
     @route('/list', endpoint='apple_account_list')
     def get(self):
         account_list, country_list = [], []
+        count_per_account = {}
         try:
             country_list = DB.country.find()
             userid = DB.User.find_one({"username": current_user.username})['_id']
             account_list = DB.apple_account.find({"user_id": userid})
+            for apple_account in account_list:
+                count_per_account[apple_account] = DB.app_process.find({"apple_account": apple_account}).count()
         except Exception, ex:
             status, message = 'error', str(ex.message)
-        # account_list = DB.apple_account.find()
         return self._view.render('apple_account_manage',
                                  country_list=country_list,
-                                 account_list=account_list)
+                                 account_list=account_list,
+                                 count_per_account = count_per_account
+        )
 
 
 class AddView(View):
