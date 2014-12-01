@@ -16,16 +16,23 @@ class AppDownloadController(ControllerBase):
     APP 下载
     '''
     def get_all_downloads_of_app(self, bundleid, vv_version="common"):
-        cur_apple_account = None
+        cur_apple_account = ""
         if vv_version != "common":
             cur_vshare_version = mongo_db.vshare_version.find_one({"identity": vv_version})
             cur_apple_account = cur_vshare_version.get("apple_account", "common")
         where = {'bundleId': bundleid}
         res = list(mongo_db.AppDownload.find(where))
         res = list(sort_downloads(res))
-        results = defaultdict(list)
-        for re in res: results[re.get("sign", 0)].append(re)
-        return results.get(1, []), results.get(0, [])
+        results_common = defaultdict(list)
+        results_apple_account = defaultdict(list)
+        for re in res:
+            apple_account = re.get("apple_account", None)
+            if apple_account == cur_apple_account:
+                results_apple_account[re.get("sign", 0)].append(re)
+            elif apple_account is None:
+                results_common[re.get("sign", 0)].append(re)
+        return (results_apple_account.get(1, []) + results_common.get(1, []),
+                results_apple_account.get(0, []) + results_common.get(0, []))
 
     def get_by_bundleids(self, bundleids, sign=0, vv_version="common"):
         results_1 = defaultdict(list)

@@ -26,7 +26,7 @@ class DetailView(View):
         data = {}
         object_id = request.args.get('id', None)
         if object_id is not None:
-            try: data = self.app.get_app_detail(object_id)
+            try: data = self.app.get_app_detail(object_id, self._view.vv_version)
             except Exception, ex: pass
         return self._view.render(1000, data)
 

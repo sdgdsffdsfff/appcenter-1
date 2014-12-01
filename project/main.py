@@ -13,7 +13,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 app = Flask(__name__, template_folder='www/templates', static_folder='www/static')
-app.debug = False
+app.debug = True
 app.secret_key = 'a2V*js%W$xd89saye3qhn&A32lk@'
 login_manager = LoginManager()
 login_manager.init_app(app)
