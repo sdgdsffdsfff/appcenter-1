@@ -16,10 +16,9 @@ class AppDownloadController(ControllerBase):
     APP 下载
     '''
     def get_all_downloads_of_app(self, bundleid, vv_version="common"):
-        cur_apple_account = ""
-        if vv_version != "common":
-            cur_vshare_version = mongo_db.vshare_version.find_one({"identity": vv_version})
-            cur_apple_account = cur_vshare_version.get("apple_account", "common")
+        cur_vshare_version = mongo_db.vshare_version.find_one({"identity": vv_version})
+        if cur_vshare_version: cur_apple_account = cur_vshare_version.get("apple_account", "")
+        else: cur_apple_account = ""
         where = {'bundleId': bundleid}
         res = list(mongo_db.AppDownload.find(where))
         res = list(sort_downloads(res))
