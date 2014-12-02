@@ -40,20 +40,20 @@ class AppDownloadController(ControllerBase):
         results = defaultdict(list)
         where = {'bundleId': {"$in": bundleids}, "sign": sign}
         res = mongo_db.AppDownload.find(where)
-        cur_apple_account = None
-        if vv_version != "common":
-            cur_vshare_version = mongo_db.vshare_version.find_one({"identity": vv_version})
-            cur_apple_account = cur_vshare_version.get("apple_account", "common")
+        cur_vshare_version = mongo_db.vshare_version.find_one({"identity": vv_version})
+        if cur_vshare_version is not None:
+            cur_apple_account = cur_vshare_version.get("apple_account", "")
+        else: cur_apple_account = ""
         for down in res:
             apple_account = down.get("apple_account", None)
             if apple_account and apple_account == cur_apple_account:
                 results_1[down["bundleId"]].append(down)
             elif apple_account is None:
                 results_2[down["bundleId"]].append(down)
-        for key, value in results_2.items():
+        for key, value in results_1.items():
             try: results[key] += list(sort_downloads(list(value)))
             except: results[key] += list(value)
-        for key, value in results_1.items():
+        for key, value in results_2.items():
             try: results[key] += list(sort_downloads(list(value)))
             except: results[key] += list(value)
         return results
