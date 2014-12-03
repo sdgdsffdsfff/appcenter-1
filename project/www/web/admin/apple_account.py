@@ -23,15 +23,17 @@ class ListView(View):
         try:
             country_list = DB.country.find()
             userid = DB.User.find_one({"username": current_user.username})['_id']
-            account_list = DB.apple_account.find({"user_id": userid})
+            account_list = list(DB.apple_account.find({"user_id": userid}))
             for apple_account in account_list:
-                count_per_account[apple_account] = DB.app_process.find({"apple_account": apple_account}).count()
+                apple_account_str = apple_account["apple_account"]
+                count_per_account[apple_account_str] = DB.app_process.find({"apple_account": apple_account_str}).count()
         except Exception, ex:
             status, message = 'error', str(ex.message)
+
         return self._view.render('apple_account_manage',
                                  country_list=country_list,
                                  account_list=account_list,
-                                 count_per_account = count_per_account
+                                 count_per_account=count_per_account
         )
 
 
