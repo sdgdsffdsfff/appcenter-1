@@ -209,6 +209,9 @@ class CreateView(View):
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'bundleId', 'bundleId', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '文件大小', 'fileSizeBytes', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '正版下载地址', 'superurl_sign', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '越狱下载地址', 'superurl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '官方版本', 'version', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '主分类', 'primaryGenreId', data={'option': genre_options})
         self._form.add_field('checkbox', '支持设备', 'supportedDevices', data={'value': '', 'option': [("iPad", "iPad"), ("iPhone", "iPhone")]})
@@ -236,7 +239,10 @@ class CreateView(View):
                     'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                     'description':request.form['description'],
                     'releaseNotes':request.form['releaseNotes'],
-                    'supportedDevices': request.form.getlist('supportedDevices')
+                    'supportedDevices': request.form.getlist('supportedDevices'),
+                    'fileSizeBytes': request.form['fileSizeBytes'],
+                    "superurl": request.form["superurl"],
+                    "superurl_sign": request.form["superurl_sign"]
                 }
                 DB.AppBase.update({'bundleId':request.form['bundleId']}, {'$set':data}, upsert=True)
                 app = DB.AppBase.find_one({"trackId": int(request.form["trackId"])})
@@ -378,6 +384,9 @@ class EditView(AppDetailBaseView):
         self._form.add_field('file', '上传图标', 'pic', data={'attributes': {}})
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '文件大小', 'fileSizeBytes', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '正版下载地址', 'superurl_sign', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '越狱下载地址', 'superurl', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '应用中文名称', 'trackName_CN', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '编辑翻译(中文)', 'cnname', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '编辑翻译(阿拉伯)', 'arname', data={'attributes':{'class':'m-wrap large'}})
@@ -432,7 +441,10 @@ class EditView(AppDetailBaseView):
                 'languageCodesISO2A':request.form.getlist('languageCodesISO2A'),
                 'description':request.form['description'],
                 'releaseNotes':request.form['releaseNotes'],
-                'review': int(request.form['review'])
+                'review': int(request.form['review']),
+                'fileSizeBytes': request.form['fileSizeBytes'],
+                "superurl": request.form["superurl"],
+                "superurl_sign": request.form["superurl_sign"]
             }
             if int(request.form["supportIphone"]) != self.supportIphone:
                 data["supportIphone"] = int(request.form["supportIphone"])
