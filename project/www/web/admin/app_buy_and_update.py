@@ -5,7 +5,7 @@ from __header__ import AdminView, FlaskView
 from __header__ import DB, route, rsm
 from flask.ext.login import current_user
 from functools import wraps
-from flask import request, abort
+from flask import request, abort, redirect, url_for
 from bson.objectid import ObjectId
 from datetime import datetime
 from collections import defaultdict
@@ -130,7 +130,8 @@ class GetTaskView(View):
             q_res = data['info'][country]
             DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
 
-        link_url = "https://itunes.apple.com/app/id%s" % str(data['track_id'])
+        # link_url = "https://itunes.apple.com/app/id%s" % str(data['track_id'])
+        link_url = q_res.get("trackViewUrl", "")
         new_app_task = {
             "track_id": data['track_id'],
             "track_name": q_res['trackName'],
@@ -181,3 +182,14 @@ class UpdateAppView(View):
         except Exception, ex:
             status, message = 'error', str(ex.message)
         return self._view.ajax_response(status, message)
+
+class DeleteAppView(View):
+    @route('/delete', methods=['POST'], endpoint='delete_app')
+    def post(self):
+        try:
+            track_id = int(request.form.get('track_id', 0))
+            DB.app_process.remove({'track_id': track_id})
+            status, message = 'success', ''
+        except Exception, ex:
+            status, message = 'error', str(ex.message)
+        return redirect(url_for('app_buy'))

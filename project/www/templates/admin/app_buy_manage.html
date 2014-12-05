@@ -20,6 +20,7 @@
         <th>领取任务时间</th>
         <th>购买链接</th>
         <th>标记</th>
+        <th>删除</th>
       </tr>
     </thead>
     <tbody id='list_body'>
@@ -40,6 +41,12 @@
         <span class="label">未知
         {% endif %}
         </span></td>
+        <td>
+          <form method="post" action="{{ url_for('delete_app', track_id=res.get('track_id', 0)) }}">
+            <input type="submit"  value="删除" />
+          </form>
+        </td>
+
       </tr>
       {% endfor %}
     </tbody>

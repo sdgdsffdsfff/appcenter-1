@@ -46,7 +46,11 @@ class ItemSearchView(View):
             items = [{"name": app["trackName"], "trackId": app["trackId"], "_id": app["_id"]} for app in apps]
         elif tp == "topic":
             topics = DB.app_topic.find({"name": q} , { "name": 1, "_id":1 })
+            temp_items = []
             items = [topic for topic in topics]
+            for item in items:
+                temp_items.append({"_id": item["_id"], "name": str(item["_id"])+str(item["name"])})
+            items = temp_items
         elif tp == "weburl":
             items = [{"name": q, "_id": {"$oid": q}}]
         return self._view.ajax_response(status=status, data={"items": items})
