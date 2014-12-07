@@ -203,7 +203,9 @@ class ItemAddView(View):
                 'ID': str(app['_id']),
                 'bundleId': app['bundleId'],
                 'size': file_size_format(app['fileSizeBytes']),
-                'version': download_version
+                'version': download_version,
+                'superurl': app.get("superurl", ""),
+                'superurl_sign': app.get("superurl_sign", "")
             }
 
             DB.app_collection.update({'identifier':request.args.get('identifier')}, {'$push':{'items':items}})
