@@ -25,17 +25,11 @@ class AppCollectionController(ControllerBase):
         lang_collection = {"zh-Hans": "AppBase_CN", "en": "AppBase"}
         try:
             res = mongo_db.app_collection.find_one({'identifier': self._identifier})
-            if not res or 'items' not in res:
-                return {}
-            try:
-                title = res['title']['en']
-            except:
-                title = res['title']['zh-Hans']
-            try:
-                title = res['title'][self._language]
-            except:
-                pass
-
+            if not res or 'items' not in res: return {}
+            try: title = res['title']['en']
+            except: title = res['title']['zh-Hans']
+            try: title = res['title'][self._language]
+            except: pass
             filter_items = []
             app_controller = AppController()
             bundleids = [itemq.get('bundleId', '') for itemq in res['items']]
@@ -67,6 +61,12 @@ class AppCollectionController(ControllerBase):
                     download_info.pop("ipaHistoryDownloads")
                 except Exception, e: pass 
                 download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
+                superurl = item.get("superurl", "").strip()
+                superurl_sign = item.get("superurl_sign", "").strip()
+                if superurl != "" and sign != 1:
+                    download_info["ipaDownloadUrl"] = superurl
+                if superurl_sign != "" and sign != 0:
+                    download_info["ipaDownloadUrl"] = superurl_sign
                 app_trackName = tmp_item['trackName']
                 if self._language in lang_collection:
                     t_item = mongo_db[lang_collection[self._language]].find_one({"bundleId": tmp_item["bundleId"]})
