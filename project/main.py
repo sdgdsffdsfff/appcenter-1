@@ -64,6 +64,7 @@ def register_view():
     admin.app_download.DeleteView.register(app, route_prefix='/admin/')
     admin.app_download.UploadView.register(app, route_prefix='/admin/')
     admin.app_download.DownloadView.register(app, route_prefix='/admin/')
+    admin.app_download.SignQueueView.register(app, route_prefix='/admin/')
     admin.app_collection.ListView.register(app, route_prefix='/admin/')
     admin.app_collection.AddView.register(app, route_prefix='/admin/')
     admin.app_collection.DeleteView.register(app, route_prefix='/admin/')

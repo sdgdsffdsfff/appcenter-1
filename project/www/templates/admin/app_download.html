@@ -75,6 +75,9 @@
                                 </div>
                             </td>
                             <td><a class="btn blue" href="{{ url_for('admin_app_download') }}?ha={{down['hash']}}">下载</a></td>
+                            <td>
+                              <a class="btn green" onclick="signQueue('{{down['hash']}}')">重签名</a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -140,6 +143,16 @@
         $.getJSON(url, {}, function(res){
             if (res.status == 'success'){
                 location.reload();
+            }else{
+                alert(res.message);
+            }
+        });
+    }
+    function signQueue(down_hash) {
+        var url = "{{ url_for('admin_app_ipa_sign') }}?ha=" + down_hash;
+        $.getJSON(url, {}, function(res){
+            if (res.status == 'success'){
+              alert("添加成功")
             }else{
                 alert(res.message);
             }

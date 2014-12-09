@@ -4,6 +4,7 @@
 import os
 import time
 import random
+import requests
 
 from __header__ import AdminView, FlaskView, DB, route, request, session, redirect, url_for
 from bson.objectid import ObjectId
@@ -88,4 +89,13 @@ class UploadView(View):
                 raise Exception(u'必须是IPA文件')
         except Exception, ex:
             status, message = 'error', u'上传失败:' + str(ex)
+        return self._view.ajax_response(status, message)
+
+
+class SignQueueView(View):
+    @route('/sign', methods=['GET'], endpoint='admin_app_ipa_sign')
+    def do_request(self):
+        hash_v = request.args.get('ha', None)
+        requests.get("http://app_resign.appvv.com/resign/resign?ha=" + hash_v)
+        status, message = 'success', u'提交成功'
         return self._view.ajax_response(status, message)
