@@ -56,7 +56,7 @@ class AppController(ControllerBase):
         data = mongo_db.AppBase.find_one({'bundleId': bundle_id})
         return self._output_format(data)
 
-    def get_app_detail(self, object_id):
+    def get_app_detail(self, object_id, vv_version="common"):
         data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id)})
         if self._language == "zh-Hans":
             data_cn = mongo_db.AppBase_CN.find_one({'bundleId': data.get('bundleId', "")})
@@ -69,7 +69,7 @@ class AppController(ControllerBase):
             data["trackName"] = data["trackName"] if data.get("arname", "") == "" else data["arname"]
         data = self.filter_app_output(data)
 
-        downloads = self.get_app_downloads(data['bundleId'])
+        downloads = self.get_app_downloads(data['bundleId'], vv_version)
         data['systemRequirements'] = "ios" + data.get("minimumOsVersion", "6.0") + "+"
         try: rating = data['averageUserRating']
         except: rating = 0
@@ -420,11 +420,11 @@ class AppController(ControllerBase):
         langs = ["CN"]
         return langs
 
-    def get_app_downloads(self, bundle_id):
+    def get_app_downloads(self, bundle_id, vv_version="common"):
         """
         获取应用详细信息
         """
-        all_downloads = self.get_all_downloads(bundle_id)
+        all_downloads = self.get_all_downloads(bundle_id, vv_version)
         jb, signed = all_downloads["jb"], all_downloads["sign"]
 
         # #越狱版
@@ -694,12 +694,12 @@ class AppController(ControllerBase):
             ipaHistoryDownloads = tmp_download_list
         return {'ipaHistoryDownloads': ipaHistoryDownloads}
 
-    def get_all_downloads(self, bundle_id):
+    def get_all_downloads(self, bundle_id, vv_version="common"):
         """取得该应用下的所有下载包"""
         #直接下载数据
 
         download = AppDownloadController()
-        sign_downloads, jb_downloads = download.get_all_downloads_of_app(bundle_id)
+        sign_downloads, jb_downloads = download.get_all_downloads_of_app(bundle_id, vv_version)
         sign_downloads_info = self._extract_direct_download_info(sign_downloads)
         jb_downloads_info = self._extract_direct_download_info(jb_downloads)
 

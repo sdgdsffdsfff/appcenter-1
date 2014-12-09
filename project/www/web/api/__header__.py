@@ -30,7 +30,7 @@ class ApiView(WebView):
         #国家
         self._country = request.args.get('country', None)
 
-        self.vv_version = request.args.get('app_type', 'common')
+        self.vv_version = request.args.get('appType', 'common')
 
         #渠道包类型
         self._client_type = request.args.get('client_type', 'common')
