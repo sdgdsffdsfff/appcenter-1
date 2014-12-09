@@ -89,7 +89,13 @@ class AppController(ControllerBase):
             isu.replace("#IMG_HOST#", settings["pic_url_host"] + "/") for isu in data["screenshotUrls"]]
         data["ipadScreenshotUrls"] = ipadScreenshotUrls
         data["screenshotUrls"] = screenshotUrls
-        return convertAppIpaHashToIpaURL(data)
+
+        app_info_result =  convertAppIpaHashToIpaURL(data)
+        superurl = data.get("superurl", "").strip()
+        superurl_sign = data.get("superurl_sign", "").strip()
+        if superurl != "": app_info_result["ipaDownloadUrl"]["jb"] = superurl
+        if superurl_sign != "": app_info_result["ipaDownloadUrl"]["signed"] = superurl_sign
+        return app_info_result
 
 
     def set_app_cache(self, object_id):

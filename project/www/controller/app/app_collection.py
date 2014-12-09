@@ -67,6 +67,14 @@ class AppCollectionController(ControllerBase):
                     download_info.pop("ipaHistoryDownloads")
                 except Exception, e: pass 
                 download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
+
+                superurl = item.get("superurl", "").strip()
+                superurl_sign = item.get("superurl_sign", "").strip()
+                if superurl != "" and sign != 1:
+                    download_info["ipaDownloadUrl"] = superurl
+                if superurl_sign != "" and sign != 0:
+                    download_info["ipaDownloadUrl"] = superurl_sign
+
                 app_trackName = tmp_item['trackName']
                 if self._language in lang_collection:
                     t_item = mongo_db[lang_collection[self._language]].find_one({"bundleId": tmp_item["bundleId"]})
