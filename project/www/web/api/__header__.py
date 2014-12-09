@@ -32,6 +32,7 @@ class ApiView(WebView):
         #渠道包类型
         self._client_type = request.args.get('client_type', 'common')
         #用于判断签名和越狱
+        self.ifo = int(request.args.get('ifo', 1))
         try: self._sign = 1 - int(request.args.get('jb', 1))
         except: self._sign = 0
 

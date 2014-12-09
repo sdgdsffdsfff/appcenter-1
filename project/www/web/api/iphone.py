@@ -40,6 +40,9 @@ class HomePageView(View):
         jb = 1 - self._view._sign
         collection_name = 'iphone_index_app_list' if self._view._sign else 'iphone_index_app_list_jb'
         advertising_name = 'iphone_index_flash' if self._view._sign else 'iphone_index_flash_jb'
+        if self._view.ifo == 0:
+            collection_name += "_first"
+            advertising_name += "_first"
         data['apps'] = self._get_app_collection(collection_name)
         data['slider'] = self._get_advertising(advertising_name)
         data['topic'] = self._get_app_topic(int(jb))

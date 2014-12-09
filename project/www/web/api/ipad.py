@@ -34,15 +34,18 @@ class HomePageView(View):
     iphone home page feture
     """
     @route('/home_page', endpoint='api_ipad_home_page')
-    # @main.cache.cached(timeout=CACHE_TIME)
     def get(self):
         data = {}
         jb = request.args.get("jb", 0)
-        #今日推荐|#滚动幻灯片
         if int(jb) == 0:
-            data['apps'] = self._get_app_collection('ipad_index_app_list')
-            data['slider'] = self._get_advertising('ipad_index_flash')
+            collection_name = 'ipad_index_app_list'
+            advertising_name = 'ipad_index_flash'
         else:
-            data['apps'] = self._get_app_collection('ipad_index_app_list_jb')
-            data['slider'] = self._get_advertising('ipad_index_flash_jb')
+            collection_name = 'ipad_index_app_list_jb'
+            advertising_name = 'ipad_index_flash_jb'
+        if self._view.ifo == 0:
+            collection_name += "_first"
+            advertising_name += "_first"
+        data['apps'] = self._get_app_collection(collection_name)
+        data['slider'] = self._get_advertising(advertising_name)
         return self._view.render(1000, data)
