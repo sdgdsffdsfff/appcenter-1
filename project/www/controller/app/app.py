@@ -93,8 +93,13 @@ class AppController(ControllerBase):
         app_info_result =  convertAppIpaHashToIpaURL(data)
         superurl = data.get("superurl", "").strip()
         superurl_sign = data.get("superurl_sign", "").strip()
-        if superurl != "": app_info_result["ipaDownloadUrl"]["jb"] = superurl
-        if superurl_sign != "": app_info_result["ipaDownloadUrl"]["signed"] = superurl_sign
+        if superurl != "":
+            app_info_result["ipaDownloadUrl"]["jb"] = superurl
+            app_info_result["issuperurl"] = 1
+        if superurl_sign != "":
+            app_info_result["ipaDownloadUrl"]["signed"] = superurl_sign
+            app_info_result["issuperurl"] = 1
+
         return app_info_result
 
 
