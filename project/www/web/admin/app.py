@@ -631,10 +631,10 @@ class ScreenshotView(View):
                     data = data["results"][0]
                     if lang == "us":
                         DB.AppBase.update({"bundleId": bundle_id}, {"$set": {"ipadScreenshotUrls": data["ipadScreenshotUrls"],
-                                                                             "screenshotUrls": data["screenshotUrls"]}}, upsert=True)
+                                                                             "screenshotUrls": data["screenshotUrls"]}})
                     elif lang == "cn":
                         DB.AppBase_CN.update({"bundleId": bundle_id}, {"$set": {"ipadScreenshotUrls": data["ipadScreenshotUrls"],
-                                                                               "screenshotUrls": data["screenshotUrls"]}}, upsert=True)
+                                                                               "screenshotUrls": data["screenshotUrls"]}})
                     status, message = 'success', '更新截图成功'
         except Exception:
             status, message = 'error', str(ex)
