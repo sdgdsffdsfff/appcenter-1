@@ -95,10 +95,10 @@ class AppController(ControllerBase):
         superurl_sign = data.get("superurl_sign", "").strip()
         if superurl != "":
             app_info_result["ipaDownloadUrl"]["jb"] = superurl
-            app_info_result["ipaDownloadUrl"]["issuperurl"] = 1
+            app_info_result["issuperurl"] = 1
         if superurl_sign != "":
             app_info_result["ipaDownloadUrl"]["signed"] = superurl_sign
-            app_info_result["ipaDownloadUrl"]["issuperurl_sign"] = 1
+            app_info_result["issuperurl_sign"] = 1
         return app_info_result
 
 
