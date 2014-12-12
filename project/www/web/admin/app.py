@@ -384,6 +384,7 @@ class EditView(AppDetailBaseView):
         self._form.add_field('file', '上传图标', 'pic', data={'attributes': {}})
         self._form.add_field('text', 'trackId', 'trackId', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', 'trackName', 'trackName', data={'attributes':{'class':'m-wrap large'}})
+        self._form.add_field('text', '应用评分', 'averageUserRating', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '文件大小', 'fileSizeBytes', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '正版下载地址', 'superurl_sign', data={'attributes':{'class':'m-wrap large'}})
         self._form.add_field('text', '越狱下载地址', 'superurl', data={'attributes':{'class':'m-wrap large'}})
@@ -429,6 +430,7 @@ class EditView(AppDetailBaseView):
             data = {
                 'trackId':int(request.form['trackId']),
                 'trackName':request.form['trackName'],
+                'averageUserRating': int(request.form['averageUserRating']),
                 'cnname': request.form["cnname"],
                 'arname': request.form["arname"],
                 'bundleId':request.form['bundleId'],
