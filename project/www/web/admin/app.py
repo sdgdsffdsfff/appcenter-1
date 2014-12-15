@@ -430,7 +430,7 @@ class EditView(AppDetailBaseView):
             data = {
                 'trackId':int(request.form['trackId']),
                 'trackName':request.form['trackName'],
-                'averageUserRating': int(request.form['averageUserRating']),
+                'averageUserRating': float(request.form['averageUserRating']),
                 'cnname': request.form["cnname"],
                 'arname': request.form["arname"],
                 'bundleId':request.form['bundleId'],
