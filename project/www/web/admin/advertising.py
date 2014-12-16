@@ -10,7 +10,7 @@ from conf.settings import settings
 from www.lib.form import Form, FormElementField, FormElementSubmit, FormException, FormValidatorAbstract
 from www.controller.app.header import create_pic_url
 from bson.objectid import ObjectId
-
+import pymongo
 
 class View(FlaskView):
 
@@ -26,7 +26,7 @@ class ListView(View):
     '''
     @route('/list', endpoint='admin_advertising_list')
     def get(self):
-        advertising_list = DB.advertising.find()
+        advertising_list = DB.advertising.find().sort("_id", pymongo.ASCENDING)
         return self._view.render('advertising_list', advertising_list=list(advertising_list))
 
 
