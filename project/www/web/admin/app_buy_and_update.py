@@ -187,7 +187,7 @@ class DeleteAppView(View):
     @route('/delete', methods=['POST'], endpoint='delete_app')
     def post(self):
         try:
-            track_id = int(request.form.get('track_id', 0))
+            track_id = int(request.args.get('track_id', 0))
             DB.app_process.remove({'track_id': track_id})
             status, message = 'success', ''
             return redirect(url_for('app_buy'))
