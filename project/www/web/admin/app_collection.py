@@ -21,7 +21,7 @@ class ListView(View):
 
     @route('/list', endpoint='admin_app_collection_list')
     def get(self):
-        res = DB.app_collection.find()
+        res = DB.app_collection.find().sort("_id", pymongo.ASCENDING)
         languages = DB.client_support_language.find()
         if languages:
             languages = list(languages)

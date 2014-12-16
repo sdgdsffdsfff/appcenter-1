@@ -190,6 +190,7 @@ class DeleteAppView(View):
             track_id = int(request.form.get('track_id', 0))
             DB.app_process.remove({'track_id': track_id})
             status, message = 'success', ''
+            return redirect(url_for('app_buy'))
         except Exception, ex:
             status, message = 'error', str(ex.message)
-        return redirect(url_for('app_buy'))
+            return message
