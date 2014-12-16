@@ -8,6 +8,7 @@ from __header__ import AdminView, FlaskView, DB, route, request, session, redire
 from bson.objectid import ObjectId
 from www.controller.app.app_collection import AppCollectionController
 from www.controller.app.header import artworkUrl512_to_114_icon
+import pymongo
 
 class View(FlaskView):
 
