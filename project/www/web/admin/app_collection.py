@@ -8,7 +8,7 @@ from __header__ import AdminView, FlaskView, DB, route, request, session, redire
 from bson.objectid import ObjectId
 from www.controller.app.app_collection import AppCollectionController
 from www.controller.app.header import artworkUrl512_to_114_icon
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 class View(FlaskView):
 
@@ -105,8 +105,9 @@ class ItemListView(View):
                         if country in item["country"]:
                             collection_list[item['bundleId']] = [item]
             self._view.assign('use', 'list')
+            result_collection_list = OrderedDict(sorted(collection_list.items(),key=lambda x: x[1][0]["sort"], reverse=True))
             return self._view.ajax_render('app_collection_item_list_ajax',
-                                          collection_list=collection_list,
+                                          collection_list=result_collection_list,
                                           identifier=identifier)
         if request.method == 'GET':
             identifier = request.args.get('identifier')
