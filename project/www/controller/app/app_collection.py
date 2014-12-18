@@ -76,12 +76,11 @@ class AppCollectionController(ControllerBase):
                 if superurl_sign != "" and sign != 0:
                     download_info["ipaDownloadUrl"] = superurl_sign
                     download_info["issuperurl_sign"] = 1
-
                 app_trackName = tmp_item['trackName']
                 if self._language in lang_collection:
                     t_item = mongo_db[lang_collection[self._language]].find_one({"bundleId": tmp_item["bundleId"]})
                     if t_item:
-                        app_trackName = t_item["trackName"]
+                        app_trackName = t_item.get("trackName", app_trackName)
 
                 if self._language == "ar":
                     app_trackName = app_trackName if tmp_item.get("arname", "") == "" else tmp_item["arname"]
