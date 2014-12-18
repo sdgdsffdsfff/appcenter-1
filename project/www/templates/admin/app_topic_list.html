@@ -65,6 +65,7 @@
 			<thead>
 				<tr>
                     <th style="width: 8%">ICON</th>
+					<th style="width: 25%">ID</th>
 					<th style="width: 25%">专题名称</th>
 					<th style="width: 15%">语言</th>
 					<th style="width: 15%">国家</th>
@@ -77,6 +78,7 @@
 			<tbody>
 				{% for app_topic in topic_list %}
 				<tr>
+                                  <td>{{ app_topic['_id']}}</td>
                     <td><img src="{{ create_pic_url(app_topic['icon_store_path']) }}" alt="{{ app_topic['name'] }}" style="width: 60px; height: 60px" /></td>
 					<td><strong>{{ app_topic['name'] }}</strong></td>
 					<td>

@@ -313,6 +313,14 @@ class ItemAddView(View):
                 download_version = app['downloadVersion']
             except:
                 download_version = ''
+            app_cn = DB.AppBase_CN.find_one({"trackId": app.get("trackId", 0)})
+            if app_cn:
+                app_topic = DB.app_topic.find_one({"_id": ObjectId(_id)})
+                languages = app_topic["language"]
+                for lang in languages:
+                    if lang == "zh-Hans":
+                        app["trackName"] = app_cn["trackName"] if app_cn.get("trackName", "") != "" else app["trackName"]
+                        break
             #check if items already in app_topic
             if DB.app_topic.find({"_id": ObjectId(_id), "items":\
                 {"$elemMatch": {"trackName": app['trackName']}}}).count() != 0:
