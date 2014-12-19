@@ -96,15 +96,12 @@
 						</form>
 					</div>
 					<div id="collection_data_grad"></div>
-					<div class="table-toolbar">
-						<div class="btn-group">
-							<a class="btn red" href="javascript:;" onclick="updateSort()">更新排序</a>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+    <div id="edit_box" class="modal container hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+      </div>
 </div>
 <!-- END  TABLE PORTLET-->
 {% endblock %}
@@ -123,9 +120,51 @@ function loadCollection() {
 	}, true);
 }
 
+function openModal(_id){
+  var url =	"{{url_for('admin_app_collection_item_list', identifier=app_collection['identifier'])}}&_id="+_id;
+  ajax.Get(url, function(res){
+    if(res.data){
+      $('#edit_box').html(res.data);
+      $('#edit_box').modal('toggle');
+      $("a[title='Remove']").click(function(){
+        $(this).parent().remove();
+      });
+      //重新渲染
+    }
+  });
+  
+  node = new Array();
+  choosed_node = new Array();
+  $("input[name='edit_language']").change(function(){
+    if(this.checked){
+      node.push(this.value)
+    }
+    if(!this.checked){
+      node.pop(this.value)
+    }
+  });
+}
+
+function addToRes() {
+  var div = $('#edit_res');
+  var sort = $("input[name='edit_sort']").val();
+  var res = sort + " | " + node.toString().replace(/,/g, ' ');
+  $("input[name='edit_sort']").val(0);
+  $("input[name='edit_language']").prop('checked', false);
+  $("input[name='edit_language']").parent().removeClass('checked');
+  div.append("<span class='tag'> <span> "+ res + " </span> <input type='hidden' name='edit_res' value='" + res + "' class='m-wrap small' /> <a href='javascript:void(0);' title='Remove'>x</a> </span>");
+
+  node = []
+  $("a[title='Remove']").click(function(){
+    $(this).parent().remove();
+  });
+
+}
+
+
 function addToCollection(_id) {
-	var form = $('#'+_id+"_form");
-	var data = form.serialize().replace(new RegExp(_id+'_', 'g'), '');
+	var form = $('#edit_form');
+	var data = form.serialize();
 	data += '&_id='+_id;
 	ajax.Post("{{url_for('admin_app_collection_item_add', identifier=app_collection['identifier'])}}", data, function(res){
 		if(res.status == 'success'){
@@ -159,15 +198,6 @@ function changeVersionForm() {
 	});
 }
 
-function updateSort(){
-	var url = '{{ url_for("admin_app_collection_item_sort", identifier=app_collection["identifier"]) }}';
-	var data = $('#app-collection-form').serialize();
-	ajax.Post(url, data, function(res){
-		if(res.status == 'success'){
-			loadCollection();
-		}
-	});
-}
 //加载可选应用列表
 ajaxAppListLoad("{{url_for('admin_app_ajaxlist', use='collection')}}");
 //加载集合应用列表

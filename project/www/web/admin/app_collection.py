@@ -9,6 +9,7 @@ from bson.objectid import ObjectId
 from www.controller.app.app_collection import AppCollectionController
 from www.controller.app.header import artworkUrl512_to_114_icon
 import pymongo
+from collections import defaultdict, OrderedDict
 
 class View(FlaskView):
 
@@ -45,7 +46,6 @@ class AddView(View):
                     continue
                 language_code = item.replace('title_', '')
                 if len(request.form[item]) > 0:
-                    print request.form[item]
                     data['title'][language_code] = request.form[item]
                     if request.form[item]:
                         language_count += 1
@@ -79,27 +79,57 @@ class ItemListView(View):
     '''
     集合列表ajax
     '''
-    @route('/item/list', methods=['POST'], endpoint='admin_app_collection_item_list')
+    @route('/item/list', methods=['GET', 'POST'], endpoint='admin_app_collection_item_list')
     def do_request(self):
-        identifier = request.args.get('identifier')
-        language=request.form['language']
-        country=request.form['country']
-        #col = AppCollectionController(identifier, language=request.form['language'], country=request.form['country'])
-        #collection = col.get()
-        collection = {}
-        collection_list = []
-        for item in DB.app_collection.find_one({'identifier': identifier})["items"]:
-            if language == "" and country == "":
-                collection_list.append(item)
-            else:
-                if language in item["language"]:
-                    collection_list.append(item)
-                if country in item["country"]:
-                    collection_list.append(item) 
-        new_collection_list = sorted(collection_list, key=lambda k: k.get("sort", ""), reverse=True)
-        collection['data'] = new_collection_list
-        collection['identifier'] = identifier
-        return self._view.ajax_render('app_collection_item_list_ajax', collection_list=collection['data'], identifier=collection['identifier'])
+        if request.method == 'POST':
+            identifier = request.args.get('identifier')
+            language = request.form['language']
+            country = request.form['country']
+            collection_list = defaultdict(list)
+            for item in DB.app_collection.find_one(
+                    {'identifier': identifier})["items"]:
+                if item['bundleId'] in collection_list:
+                    if language == "" and country == "":
+                        collection_list[item['bundleId']].append(item)
+                    else:
+                        if language in item["language"]:
+                            collection_list[item['bundleId']].append(item)
+                        if country in item["country"]:
+                            collection_list[item['bundleId']].append(item)
+                else:
+                    if language == "" and country == "":
+                        collection_list[item['bundleId']] = [item]
+                    else:
+                        if language in item["language"]:
+                            collection_list[item['bundleId']] = [item]
+                        if country in item["country"]:
+                            collection_list[item['bundleId']] = [item]
+            self._view.assign('use', 'list')
+            result_collection_list = OrderedDict(sorted(collection_list.items(),key=lambda x: x[1][0]["sort"], reverse=True))
+            return self._view.ajax_render('app_collection_item_list_ajax',
+                                          collection_list=result_collection_list,
+                                          identifier=identifier)
+        if request.method == 'GET':
+            identifier = request.args.get('identifier')
+            _id = request.args.get('_id')
+
+            collection = []
+            for item in DB.app_collection.find_one(
+                    {'identifier': identifier})["items"]:
+                if item['ID'] == _id:
+                    collection.append(item)
+
+            # 语言选项
+            langs = DB.client_support_language.find()
+            self._view.assign('lang_options', list(langs))
+
+            # 国家选项
+            countries = DB.country.find()
+            self._view.assign('country_options', list(countries))
+            self._view.assign('use', 'edit')
+            return self._view.ajax_render('app_collection_item_list_ajax',
+                                          collection=collection,
+                                          identifier=identifier,_id=_id)
 
     def sort_item(self, items, filters):
         '''
@@ -162,8 +192,25 @@ class ItemAddView(View):
 
             return self._view.render('app_collection_item_add')
 
+        # Get each tag from webpage
+        temp_data = request.form.getlist('edit_res')
+        data = []
+        language_list = []
+        for ele in temp_data:
+            sort = int(ele.split('|')[0].strip())
+            lan_list = []
+            if ele.split('|')[1].strip() == "":
+                return self._view.ajax_response('error', '不能选择空的语言', '')
+            for lan in ele.split('|')[1].split(' '):
+                if len(lan) > 0:
+                    if lan in language_list:
+                        status, message = 'error', '请勿重复选择语言'
+                        return self._view.ajax_response(status, message, '')
+                    lan_list.append(lan)
+                    language_list.append(lan)
+            data.append({'sort': sort, 'lan': lan_list})
         try:
-            app = DB.AppBase.find_one({'_id':ObjectId(request.form['_id'])})
+            app = DB.AppBase.find_one({'_id': ObjectId(request.form['_id'])})
             if app is None:
                 raise Exception("应用不存在")
 
@@ -176,27 +223,25 @@ class ItemAddView(View):
                 download_version = app['downloadVersion']
             except:
                 download_version = ''
-            #check if items already in app_collection
-            print(DB.app_collection.find({'identifier':self._identifier, "items":\
-                 {"$elemMatch": {"trackName": app['trackName']}}}).count())
-            i_collection = list(DB.app_collection.find({'identifier':self._identifier, "items":{"$elemMatch": {"trackName": app['trackName']}}}))
+            # check if items already in app_collection
+            i_collection = list(DB.app_collection.find(
+                {'identifier': self._identifier,
+                 "items": {"$elemMatch": {"trackName": app['trackName']}}}))
+            # remove old records directly --- web page has old records kept
             if len(i_collection) != 0:
                 items = i_collection[0]["items"]
                 for item in items:
                     if item["trackName"] == app['trackName']:
-                        temp_language = item["language"]
-                        for language in request.form.getlist('language'):
-                            if language not in temp_language:
-                                item["language"].append(language)
-                DB.app_collection.update({'identifier':request.args.get('identifier')}, {'$set':{'items':items}})
-                return self._view.ajax_response('success', '', '')
+                        DB.app_collection.update(
+                            {'identifier': request.args.get('identifier')},
+                            {'$pull': {'items':
+                                       {'trackName': app['trackName']}}})
 
+            # add new record
             items = {
                 'id': int(item_id),
-                'sort':int(request.form['sort']),
-                'language':request.form.getlist('language'),
-                'country':request.form.getlist('country'),
-                'trackName':app['trackName'],
+                'country': request.form.getlist('country'),
+                'trackName': app['trackName'],
                 'cnname': app.get('cnname', ""),
                 'arname': app.get('arname', ""),
                 'averageUserRating': rating,
@@ -209,7 +254,17 @@ class ItemAddView(View):
                 'superurl_sign': app.get("superurl_sign", "")
             }
 
-            DB.app_collection.update({'identifier':request.args.get('identifier')}, {'$push':{'items':items}})
+            item_list = []
+            for ele in data:
+                if len(ele['lan']) > 0:
+                    temp_item = dict(items)
+                    temp_item['sort'] = ele['sort']
+                    temp_item['language'] = ele['lan']
+                    item_list.append(temp_item)
+
+            DB.app_collection.update(
+                {'identifier': request.args.get('identifier')},
+                {'$push': {'items': {'$each': item_list}}})
             status, message = 'success', ''
         except Exception, ex:
             status, message = 'error', str(ex)
@@ -224,7 +279,8 @@ class ItemDeleteView(View):
         try:
             identifier = request.args.get('identifier')
             item_id = request.args.get('id')
-            DB.app_collection.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
+            DB.app_collection.update({'identifier': identifier},
+                                     {'$pull': {'items': {'ID': item_id}}})
             status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)
