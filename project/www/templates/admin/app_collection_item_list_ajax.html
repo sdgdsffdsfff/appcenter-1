@@ -29,16 +29,16 @@
                 </td>
 				<td>
                   <a class="btn blue" href="javascript:void(0);" onclick="openModal('{{collection_list[a][0].get('ID', '')}}')" >编辑</a>
-                  <a class="btn red" data-toggle="modal" href="#confirm_del_box_{{collection_list[a][0].get('ID', '')}}">删除</a>
-                  <div id="confirm_del_box_{{collection_list[a][0].get('ID', '')}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
-                      <div class="modal-body">
-                          <p>确定要删除吗?</p>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" data-dismiss="modal" class="btn">取消</button>
-                          <button type="button" data-dismiss="modal" class="btn red" onclick="deleteCollectionItem('{{identifier}}', '{{collection_list[a][0].get('ID', '')}}')">确定</button>
-                      </div>
-                  </div>
+                  <!-- <a class="btn red" data-toggle="modal" href="#confirm_del_box_{{collection_list[a][0].get('ID', '')}}">删除</a> -->
+                  <!-- <div id="confirm_del_box_{{collection_list[a][0].get('ID', '')}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false"> -->
+                  <!--     <div class="modal-body"> -->
+                  <!--         <p>确定要删除吗?</p> -->
+                  <!--     </div> -->
+                  <!--     <div class="modal-footer"> -->
+                  <!--         <button type="button" data-dismiss="modal" class="btn">取消</button> -->
+                  <!--         <button type="button" data-dismiss="modal" class="btn red" onclick="deleteCollectionItem('{{identifier}}', '{{collection_list[a][0].get('ID', '')}}')">确定</button> -->
+                  <!--     </div> -->
+                  <!-- </div> -->
 				</td>
 			</tr>
 			{% endfor %}

@@ -45,7 +45,6 @@ class AddView(View):
                     continue
                 language_code = item.replace('title_', '')
                 if len(request.form[item]) > 0:
-                    print request.form[item]
                     data['title'][language_code] = request.form[item]
                     if request.form[item]:
                         language_count += 1
@@ -197,8 +196,10 @@ class ItemAddView(View):
         data = []
         language_list = []
         for ele in temp_data:
-            sort = int(ele.split('|')[0])
+            sort = int(ele.split('|')[0].strip())
             lan_list = []
+            if ele.split('|')[1].strip() == "":
+                return self._view.ajax_response('error', '不能选择空的语言', '')
             for lan in ele.split('|')[1].split(' '):
                 if len(lan) > 0:
                     if lan in language_list:
