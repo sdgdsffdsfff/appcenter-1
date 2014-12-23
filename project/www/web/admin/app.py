@@ -466,7 +466,8 @@ class EditView(AppDetailBaseView):
                     "trackId": int(request.form["trackId"]),
                     "trackName": request.form["trackName_CN"],
                     "description": request.form["description_cn"],
-                    "releaseNotes": request.form["releaseNotes_cn"]
+                    "releaseNotes": request.form["releaseNotes_cn"],
+                    'bundleId': request.form['bundleId']
                 }
                 DB.AppBase_CN.insert(data_cn)
             file = request.files["pic"]
