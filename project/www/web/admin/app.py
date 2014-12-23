@@ -673,10 +673,10 @@ class ScreenshotView(View):
                     DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
                 else:
                     try:
-                        DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data}, upsert=True)
+                        DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data})
                     except Exception:
                         data = data.update({'bundleId': bundle_id})
-                        DB.AppBase_CN.insert(data)
+                        #DB.AppBase_CN.insert(data)
                 status, message = 'success', u'上传成功'
             else:
                 raise Exception(u'必须是jpg,png文件')
