@@ -1,0 +1,135 @@
+<table class="table table-striped table-hover table-bordered">
+						<thead>
+							<tr>
+								<td>ICON</td>
+								<th>名称(BundleId)</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for item in items_list %}
+						   <tr>
+								<td><img style="width:40px; height:40px" src="{{ item['icon'] }}" /></td>
+								<td><strong>{{ item['trackName'] }}</strong><br/>{{ item['bundleId'] }}</td>
+								<td>
+									  <a data-toggle="modal" href="#confirm_box_{{item['_id']}}" class="btn blue icn-only" title="添加">
+							     		<i class="m-icon-swapright m-icon-white"></i>
+									  </a>
+									<div id="confirm_box_{{item['_id']}}" class="modal container hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+											<div class="modal-header">
+												<h3>添加到应用集合</h3>
+											</div>
+											<div class="modal-body form">
+												<form action="#"  id="{{item['_id']}}_form" name="{{item['bundleId']}}_form" class="form-horizontal" data-value="{{ item['bundleId'] }}"">
+													<div class="control-group">
+														<label class="control-label">排序</label>
+														<div class="controls">
+															<input type="text" placeholder="输入数字" name="order" value="0" class="m-wrap small"/>
+															<span class="help-inline"></span>
+														</div>
+														<div class="control-group">
+															<label class="control-label">语言 (不限语言不选)</label>
+															<div class="controls">
+																{% for lang in lang_options %}
+																<label class="checkbox">
+																	<input type="checkbox" name="language" value="{{ lang['code'] }}" /> {{ lang['name'] }}
+																</label>
+																{% endfor %}
+															</div>
+															<div confirm_box_{{item['_id']}}class="controls">
+																<label class="radio">
+																	<input type="radio" name="all" class="alllang" data-attr="language"/>全选
+														</label>
+															<label class="radio">
+															<input type="radio" name="all" class="noneofthem" data-attr="language"/>反选
+																</label>
+															</div>
+														</div>
+														<div class ="control-group">
+															<label class="control-label">版本选择</label>
+															<div class="controls control-check">
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="iphone_1"/>iphone(正版)
+																</label>
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="iphone_0"/>iphone(越狱版)
+																</label>
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="ipad_1"/>ipad(正版)
+																</label>
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="ipad_0"/>ipad(越狱版)
+																</label>
+
+															</div>								
+														</div>
+														<div class ="control-group">
+															<label class="control-label">选择栏目</label>
+															<div class="controls">
+																<label class="radio">
+																	<input type = "radio" name= "sort" value="sort"/>推荐
+																</label>
+																<label class="radio">
+																	<input type = "radio" name= "sort" value="hot"/>热门
+																</label>
+																<label class="radio">
+																	<input type = "radio" name= "sort" value="new"/>最新
+																</label>
+															</div>								
+														</div>		
+													</div>
+												</form>
+											</div>
+										<div class="modal-footer">
+											<button type="button" data-dismiss="modal" class="btn">取消</button>
+											<button type="button" data-dismiss="modal" class="btn red" onclick="addToLeft('{{item['bundleId']}}', '{{item['_id']}}')">确定添加</button>
+										</div>
+									</div>
+				                </td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+					<div class="pagination">
+					  <ul>	
+					  	<li><a href="javascript:;">总计{{ count }}条记录, 共{{ total_page }}页</a></li>
+						
+					    <li><a href="javascript:;" onclick="ajaxPage('{{ url_for('admin_genre_left') }}?page={{prev_page}}')">上一页</a></li>
+					    <li><a href="javascript:;" onclick="ajaxPage('{{ url_for('admin_genre_left') }}?page={{next_page}}')">下一页</a></li>
+					  </ul>
+					</div>
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".alllang").click(function(){
+		console.log($(".alllang"))
+		var name = $(this).attr('data-attr')
+		$("input[name=" + name + "]").attr("checked", "checked")
+		$("input[name=" + name + "]").parent().addClass("checked")
+	})
+
+	$(".noneofthem").click(function(){
+		var name = $(this).attr('data-attr')
+		var name_array = $("input[name=" + name + "]")
+		for(var i=0;i<name_array.length;i++){
+			if($(name_array[i]).attr("checked") == "checked"){
+				$(name_array[i]).removeAttr("checked")
+				$(name_array[i]).parent().removeClass("checked")
+			}else{
+				$(name_array[i]).attr("checked", "checked")
+				$(name_array[i]).parent().addClass("checked")
+			}
+		var b= $('.modal-body').children("form").eq(0).attr('data-value')
+		
+		}
+	})
+
+
+	
+})
+</script>
+{% endblock %}
+
+
+

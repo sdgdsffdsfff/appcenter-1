@@ -1,0 +1,33 @@
+
+<table class="table table-striped table-hover table-bordered">
+										<thead>
+											<tr>
+												<td>ICON</td>
+												<th>排序</th>
+												<th>名称(BundleId)</th>
+												<th>操作</th>
+											</tr>
+										</thead>
+										<tbody>
+										{% for item in item_list %}
+										<tr>
+											<td><img style="width:40px; height:40px" src="{{ item['icon'] }}" /></td>
+											<td>{{ item['order'] }}</td>
+											<td><strong>{{ item['trackName'] }}</strong><br/>{{ item['bundleId'] }}</td>
+											<td>
+												<a data-toggle="modal" href="#confirm_box_{{item['_id']}}" class="btn red" title="删除">删除
+												</a>
+												<div id="confirm_box_{{item['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+													<div class="modal-body">
+														<p>确定要删除吗?</p>					
+													</div>
+													<div class="modal-footer">
+														<button type="button" data-dismiss="modal" class="btn">取消</button>
+														<button type="button" data-dismiss="modal" class="btn red" onclick="deleteRight('{{ item['bundleId'] }}')">确定</button>
+													</div>
+												</div>
+											</td>
+										</tr>
+										{% endfor %}
+										</tbody>
+								</table>
