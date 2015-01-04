@@ -224,7 +224,7 @@ function ajaxPage(url) {
 	}
 	$('#loading').css({"visibility":"visible"});
 	var ajax = NG.Ajax();
-	ajax.Get(url+'&genre_id=6001', function(res){
+	ajax.Get(url,function(res){
 		if(res.status='success'){
 			$('#app_data_grad_left').html(res.data);
 		}

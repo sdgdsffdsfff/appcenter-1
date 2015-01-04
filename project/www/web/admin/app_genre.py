@@ -2,10 +2,10 @@
 #code by LP
 #2014-12-29
 
+
 import re
 import requests
 import HTMLParser
-
 from __header__ import (AdminView, FlaskView, DB, route, request,
                         upload_hash_file, settings, redirect, url_for,
                         hash_to_path, create_pic_url_by_path)
@@ -14,21 +14,19 @@ from flask.ext.login import login_required
 import pymongo
 import math
 
+
 class View(FlaskView):
-
     route_base = '/genre'
-
     def before_request(self, name):
         self._view = AdminView()
 
-
 class ListView(View):
-
     @route('/list', endpoint='admin_genre_list')
     @login_required
     def get(self):
         genre_list = DB.app_genre.find().sort('genre_id', -1)
         genre_id = request.args.get("genre_id", "")
+
         self._view.assign('create_pic_url', create_pic_url)
         self._view.assign('create_pic_url_by_path', create_pic_url_by_path)
         self._view.assign('genre_list', genre_list)
@@ -49,7 +47,7 @@ class ListView(View):
         langs = list(DB.client_support_language.find())
 
         self._view.assign('lang_options', langs)
-        self._view.assign('genre_id', genre_id)
+        #self._view.assign('genre_id', genre_id)
         self._view.assign('page', 1)
         return self._view.render("app_genre_items")
 
@@ -61,16 +59,20 @@ class ListView(View):
         bundleId = request.args.get("bundleId", "")
         page= int(request.args.get("page",1))
         langs = list(DB.client_support_language.find())
+
         if genre_id:
             page_size = 12
-            count = DB.AppBase.find({"genreIds": {"$all": [genre_id]}}).count()
+            #count = DB.AppBase.find({"genreIds": {"$all": [genre_id]}}).count()
+            count = DB.AppBase.find().count()
             total_page = int(math.ceil(count / float(page_size)))
             prev_page = (page - 1) if page - 1 > 0 else 1
             next_page = (page + 1) if page + 1 < total_page else total_page
-            items_list = list(DB.AppBase.find({"genreIds": {"$all": [genre_id]}}).skip((page-1)*page_size).limit(page_size))
+            #items_list = list(DB.AppBase.find({"genreIds": {"$all": [genre_id]}}).skip((page-1)*page_size).limit(page_size))
+            items_list = list(DB.AppBase.find({'review': 1}).sort([('_id',pymongo.DESCENDING)]).skip((page-1)*page_size).limit(page_size))
         else:
             items_list = list(DB.AppBase.find({'bundleId':bundleId}))
             count = total_page = prev_page = next_page = 1
+
         for item in items_list:
             item['icon'] = artworkUrl512_to_114_icon(item['artworkUrl512'])
         self._view.assign('lang_options', langs)
@@ -173,16 +175,13 @@ class DeleteView(View):
 
 
 class SyncView(View):
-
     @route('/sync', endpoint='admin_genre_sync')
     @login_required
     def get(self):
-
         countries = {'EN': 'us', 'ZH': 'cn', 'RU': 'ru', 'FR': 'fr', 'ES': 'es', 'JP': 'jp'}
         url = 'https://itunes.apple.com/%s/genre/ios/id36?mt=8'
         message = '同步完成'
         status = 'success'
-
         for language in countries.keys():
             country = countries[language]
             try:
@@ -191,14 +190,12 @@ class SyncView(View):
                 message = '同步失败: %s' % ex
                 status = 'error'
                 continue
-
             for genre_id, genre_name in  re.findall(r'''<a\s+href="https:\/\/itunes\.apple\.com\/%s\/genre\/[a-zA-Z0-9\-]+\/id([0-9]+?)\?mt=8"\s+class="top\-level\-genre"\s+title=".+?">(.+?)<\/a>''' % country, res.content):
                 try:
                     self._save(language, genre_id, genre_name, 36)
                 except Exception, ex:
                     message = '同步失败: %s' % ex
                     status = 'error'
-
             for parent_genre_id, html in re.findall(r'id([0-9]+?)\?mt=8"\s+class="top\-level\-genre"\s+title="[^<]+?">[^<]+?<\/a><ul.*?>(.+?)<\/ul>', res.content):
                 for genre_id, genre_name in re.findall(r'<a\s+href="https:\/\/itunes\.apple\.com\/%s\/genre\/[a-zA-Z0-9\-]+\/id([0-9]+?)\?mt=8"\s+title=".*?">(.*?)<\/a>' % country, html):
                     self._save(language, genre_id, genre_name, parent_genre_id)
