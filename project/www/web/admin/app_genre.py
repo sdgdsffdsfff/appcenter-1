@@ -47,7 +47,7 @@ class ListView(View):
         langs = list(DB.client_support_language.find())
 
         self._view.assign('lang_options', langs)
-        #self._view.assign('genre_id', genre_id)
+        self._view.assign('genre_id', genre_id)
         self._view.assign('page', 1)
         return self._view.render("app_genre_items")
 
@@ -63,7 +63,7 @@ class ListView(View):
         if genre_id:
             page_size = 12
             #count = DB.AppBase.find({"genreIds": {"$all": [genre_id]}}).count()
-            count = DB.AppBase.find().count()
+            count = DB.AppBase.find({'review': 1}).count()
             total_page = int(math.ceil(count / float(page_size)))
             prev_page = (page - 1) if page - 1 > 0 else 1
             next_page = (page + 1) if page + 1 < total_page else total_page
@@ -150,9 +150,14 @@ class ItemListView(View):
         sort = request.args.get("sort", "sort")
         language = request.args.get("language", "en") if request.args.get("language", "en") in ['zh-Hans','en', 'ar'] else 'en'
         device = request.args.get("device", "iphone")
-        appkey = re.compile(r'^%s.*%s.*%s$' % (device, language, sort))
+        genre_id = request.args.get("genre_id", 0)
+        if genre_id:
+            appkey = re.compile(r'.*_%s_.*' % genre_id)
+        else:
+            appkey = re.compile(r'^%s.*%s.*%s$' % (device, language, sort))
 
         item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
+	print item_list
         self._view.ajax_response('success', 'message')
         return self._view.ajax_render('app_genre_ajaxright',item_list=item_list)   # P0ST
         #return self._view.render('app_genre_ajaxright',item_list=item_list)  #  GET
@@ -222,3 +227,4 @@ class SyncView(View):
         DB.app_genre.update({'genreId':1000}, {'$set': {'genreId': 1000, 'genreName':{'RU': 'All', 'FR': 'All', 'ZH': '全部', 'EN': 'All', 'JP': 'All', 'ES': 'All'}, 'parentGenre': 36}}, upsert=True)
         DB.app_genre.update({'genreId':6014}, {'$set': {'genreId': 6014, 'genreName':{'RU': 'All', 'FR': 'All', 'ZH': '全部', 'EN': 'All', 'JP': 'All', 'ES': 'All'}, 'parentGenre': 36}}, upsert=True)
         DB.app_genre.update({'genreId':6021}, {'$set': {'genreId': 6021, 'genreName':{'RU': 'All', 'FR': 'All', 'ZH': '全部', 'EN': 'All', 'JP': 'All', 'ES': 'All'}, 'parentGenre': 36}}, upsert=True)
+
