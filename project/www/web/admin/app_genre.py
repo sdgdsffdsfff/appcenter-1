@@ -103,14 +103,16 @@ class ItemAddView(View):
             languages = request.args.get('language', 'en').split(',')
             device_sign = request.args.get('device_sign', '').split(':')
             sort = request.args.get('sort', 'sort')
+	    genre_id = request.args.get("genre_id", 0)
             order = int(request.args.get('order', 0))
+
             appinfo = dict(DB.AppBase.find_one({'bundleId':bundleId}))
             appkeys = []
             mylanguage = []
-
             [mylanguage.append(language) for language in languages if language in ['zh-Hans', 'ar']]
             [mylanguage.append('en') for language in languages if language not in ['zh-Hans', 'ar']]
-            [appkeys.append("%s_%s_%s_%s" % (ds, la, genreid, sort)) for ds in device_sign for genreid in appinfo['genreIds'] for la in set(mylanguage)]
+            [appkeys.append("%s_%s_%s_%s" % (ds, la, genre_id, sort)) for ds in device_sign for la in set(mylanguage)]
+
             try: appinfo['icon'] = artworkUrl512_to_114_icon(appinfo['artworkUrl512'])
             except: appinfo['icon'] = ''
             if 'screenshotUrls' in appinfo and len(appinfo['screenshotUrls']) > 0: appinfo['supportIphone'] = 1
@@ -151,13 +153,8 @@ class ItemListView(View):
         language = request.args.get("language", "en") if request.args.get("language", "en") in ['zh-Hans','en', 'ar'] else 'en'
         device = request.args.get("device", "iphone")
         genre_id = request.args.get("genre_id", 0)
-        if genre_id:
-            appkey = re.compile(r'.*_%s_.*' % genre_id)
-        else:
-            appkey = re.compile(r'^%s.*%s.*%s$' % (device, language, sort))
-
+        appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
         item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
-	print item_list
         self._view.ajax_response('success', 'message')
         return self._view.ajax_render('app_genre_ajaxright',item_list=item_list)   # P0ST
         #return self._view.render('app_genre_ajaxright',item_list=item_list)  #  GET
@@ -227,4 +224,5 @@ class SyncView(View):
         DB.app_genre.update({'genreId':1000}, {'$set': {'genreId': 1000, 'genreName':{'RU': 'All', 'FR': 'All', 'ZH': '全部', 'EN': 'All', 'JP': 'All', 'ES': 'All'}, 'parentGenre': 36}}, upsert=True)
         DB.app_genre.update({'genreId':6014}, {'$set': {'genreId': 6014, 'genreName':{'RU': 'All', 'FR': 'All', 'ZH': '全部', 'EN': 'All', 'JP': 'All', 'ES': 'All'}, 'parentGenre': 36}}, upsert=True)
         DB.app_genre.update({'genreId':6021}, {'$set': {'genreId': 6021, 'genreName':{'RU': 'All', 'FR': 'All', 'ZH': '全部', 'EN': 'All', 'JP': 'All', 'ES': 'All'}, 'parentGenre': 36}}, upsert=True)
+
 
