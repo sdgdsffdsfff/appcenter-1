@@ -297,6 +297,46 @@ class AppController(ControllerBase):
                         redis_master_pipeline.lpush(keys['iphone_'+ s +'_key'], data)
             redis_master_pipeline.execute()
 
+    def set_apps_cache_new(self, genre_id, sort):
+        """
+        设置应用列表缓存 50页 每页12个  luoluo0
+        """
+        genre_id = int(genre_id)
+        myappkey = ''
+        if (7000 <= genre_id < 8000) or (13000 <= genre_id < 14000):
+            where = {'review': 1, 'genreIds': {'$all': [str(genre_id)]}}
+        else:
+            where = {'review': 1, 'primaryGenreId': genre_id}
+        larguage = self._language if self._language in ['zh-Hans','en', 'ar'] else 'en'
+        for lang in self._get_ext_data_language():
+            sign = {'signed': 1, 'jb': 0}
+            for s in sign.keys():
+                #print 'Push to redis, lang:%s, genre: %s, sign: %s' % (lang, genre_id, s)
+                #查询签名的
+                if sign[s] == 1: where['sign'] = 1
+                else :where['sign'] = 0
+                apps = self.get_apps(where, lang, sort, self.limit)
+
+                for app in apps:
+                    try:app["order"]
+                    except: app["order"] = 0
+                    if app['supportIpad'] == 1 or app['supportIphone'] == 1:
+                        myappkey = "%s_%s_%s_%s_%s" % ('ipad', where['sign'], larguage, genre_id, sort[0])
+                    if app['supportIphone'] == 1:
+                        myappkey = "%s_%s_%s_%s_%s" % ('iphone', where['sign'], larguage, genre_id, sort[0])
+
+                    mongo_db.AppKeylists.insert({
+                        "appKey" : myappkey,
+                        "bundleId" : app["bundleId"],
+                        "trackName" : app["trackName"],
+                        "supportIpad" : app["supportIpad"],
+                        "supportIphone" :app["supportIphone"],
+                        "icon" : app["icon"],
+                        "averageUserRating" : app["averageUserRating"],
+                        "size" : app["size"],
+                        "order" : app["order"]
+                    })
+
     def get_apps_cache(self, device, sign, genre_id, page, sort):
         """
         获取app列表缓存
@@ -317,6 +357,45 @@ class AppController(ControllerBase):
 
         lists = redis_master.lrange(key, start, end-1)
         lists = [convertAppIpaHashToIpaURL(cjson.decode(x)) for x in lists]
+        return {
+            'results': lists,
+            'pageInfo': {
+                'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
+                'nextPage': next_page
+            }
+        }
+
+    def get_apps_cache_mg(self, device, sign, genre_id, page, sort):
+        """
+        获取app列表展示  luoluo0
+        """
+        language = self._language if self._language in ['zh-Hans','en', 'ar'] else 'en'
+        key = "%s_%s_%s_%s_%s" % (device, sign, language, genre_id, sort)
+        count = mongo_db.AppKeylists.find({'appKey':key}).count()
+
+        page_size = 12 # 每页显示12行
+        total_page = int(math.ceil(count / float(page_size)))
+        prev_page = (page - 1) if page - 1 > 0 else 1
+        next_page = (page + 1) if page + 1 < total_page else total_page
+
+        lists1 = list(mongo_db.AppKeylists.find(
+            {'appKey':key},
+            {'appKey':0,'order':0}
+        ).sort([('order',pymongo.DESCENDING)]).skip((page-1)*page_size).limit(page_size))
+
+        bundleIdlist = [i['bundleId'] for i in lists1 if 'bundleId' in i]
+        download = AppDownloadController()
+        ipaHashdic = download.get_by_bundleids(bundleIdlist)
+        ipaHashlist = [i[0] for i in ipaHashdic.values()]
+
+        for i in lists1:
+            i['ID'] = str(i['_id'])
+            del i['_id']
+            for x in ipaHashlist:
+                if i['bundleId'] == x['bundleId']:
+                    i['ipaHash'] = str(x['hash'])
+                    i['ipaVersion'] = x.get('version', '1.0')
+        lists = [convertAppIpaHashToIpaURL(x) for x in lists1]
         return {
             'results': lists,
             'pageInfo': {
