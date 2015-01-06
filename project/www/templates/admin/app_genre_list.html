@@ -33,10 +33,8 @@
 	<div class="portlet-body">
 		<div class="table-toolbar">
 			<div class="btn-group">
-				<button id="sync_genre" class="btn green">
-				同步官方分类 <i class="icon-cloud"></i>
-				</button>
-				<div id="loadingbar-frame">
+				
+    			<div id="loadingbar-frame">
 					<img src="/static/metronic1.4/assets/img/ajax-loader.gif"/>
 				</div>
 			</div>
@@ -46,9 +44,10 @@
 			<thead>
 				<tr>
 					<th>Icon</th>
-					<th>genreId</th>
 					<th>名称</th>
-					<td>操作</td>
+                    <th>操作</th>
+					<th>编辑LOGO</th>
+                    <th>显示下载次数</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -57,20 +56,24 @@
 					<td>
 						<img src="{{ create_pic_url_by_path(genre.get('icon_file', '')) }}" alt="{{ genre['genreId'] }}" style="width: 60px; height: 60px" /></td>
 					<td>{{ genre['genreId'] }}</td>
+					
+                    <td>
+			
+                        <a class="btn green" href="{{ url_for('admin_genre_items', genre_id=genre['genreId']) }}">管理</a>			
+                    </td>
 					<td>
-						{% for name in genre['genreName'].items() %}
-						{{ name[1] }}({{ name[0] }}) <br />
-						{% endfor %}
-					</td>
-					<td>
-						<a class="btn green" href="{{ url_for('admin_genre_icon', genre_id=genre['genreId']) }}">添加/编辑Icon<i class="icon-edit"></i></a>		
+						<a class="btn green" href="{{ url_for('admin_genre_icon', genre_id=genre['genreId']) }}">编辑Icon<i class="icon-edit"></i></a>
+                    </td>
+                    <td>
+                        <input type="text" value="">
                     </td>
 
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-	</div>
+        
+    </div>
 </div>
 <!-- END  TABLE PORTLET-->
 {% endblock %}
@@ -105,4 +108,3 @@ jQuery.ajaxSetup({
 
 </script>
 {% endblock %}
-

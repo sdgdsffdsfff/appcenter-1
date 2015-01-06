@@ -87,6 +87,13 @@ def register_view():
     admin.users.DeleteView.register(app, route_prefix='/admin/')
     admin.language.ListView.register(app, route_prefix='/admin/')
     admin.language.AddView.register(app, route_prefix='/admin/')
+    
+    admin.app_genre.ItemAddView.register(app, route_prefix='/admin/')
+    admin.app_genre.ItemListView.register(app, route_prefix='/admin/')
+    admin.app_genre.DeleteView.register(app, route_prefix='/admin/')
+
+    
+
     admin.language.DeleteView.register(app, route_prefix='/admin/')
     admin.country.ListView.register(app, route_prefix='/admin/')
     admin.country.AddView.register(app, route_prefix='/admin/')
