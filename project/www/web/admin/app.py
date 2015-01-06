@@ -678,8 +678,11 @@ class ScreenshotView(View):
                         DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data})
                     else:
                         app_base = DB.AppBase.find_one({'bundleId': bundle_id}, {"_id": 0})
-                        app_base.update(data)
-                        DB.AppBase_CN.insert(data)
+                        su = data.get('screenshotUrls', None)
+                        isu = data.get('ipadScreenshotUrls', None)
+                        app_base['screenshotUrls'] = [su] if su else []
+                        app_base['ipadScreenshotUrls'] = [isu] if isu else []
+                        DB.AppBase_CN.insert(app_base)
                 status, message = 'success', u'上传成功'
             else:
                 raise Exception(u'必须是jpg,png文件')
