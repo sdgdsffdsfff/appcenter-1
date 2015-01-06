@@ -38,7 +38,7 @@
 <div class="row-fluid">
 
 	<!--页面的左边部分-->
-	
+
 	<div class="span5">
 		<div class="portlet box blue">
 			<div class="portlet-title">
@@ -57,12 +57,12 @@
 				</div>
 				<form action="" id="app-collection-filter-version-form">
 						<div class="form-horizontal">
-							
+
 						</div>
 						</form>
 				<div id="app_data_grad_left">
 				这里是zuo边的数据显示
-				<!--left-->				
+				<!--left-->
 			</div>
 		</div>
 	</div>
@@ -79,7 +79,8 @@
 			<div class="portlet-body">
 				<div class="row-fluid">
 					<div class="span12">
-						<form action="" id="app-aplication-filter-form">
+
+						<form action="" id="app-aplication-filter-form" data-value="{{ genre_id }}">
 							<div class="form-horizontal">
 								<label>
 									语言
@@ -88,13 +89,13 @@
 										{% for lang in lang_options %}
 										<option value="{{ lang['code'] }}">{{ lang['name'] }}</option>
 										{% endfor %}
-									</select> 
+									</select>
 	                                最新
 	                                <select size="1" onchange="changeForm()" name="sort" aria-controls="sort" class="m-wrap small new">
 	                                    				    <option value="sort" selected="">推荐</option>
 									    <option value="hot" selected="">热门</option>
-									    <option value="new" selected="selected">最新</option>                                
-	                                    
+									    <option value="new" selected="selected">最新</option>
+
 	                                </select>
 	                                设备
 	                                <select size="1" onchange="changeForm()" name='device' aria-controls='device' class="m-wrap small device">
@@ -104,9 +105,9 @@
 								</label>
 							</div>
 						</form>
-					</div>						
+					</div>
 					<div id="aplication_data_grad">
-						
+
 					</div>
 					<div class="table-toolbar"></div>
 				</div>
@@ -123,15 +124,16 @@
 
 var ajax = NG.Ajax();
 function loadRight(){
-	var data = $('#app-aplication-filter-form').serialize();
+	var data =$('#app-aplication-filter-form').data('value')
+	//var data = $('#app-aplication-filter-form').serialize();
 	var ajax= NG.Ajax();
-	var url= "{{url_for('admin_genre_right')}}?"+data;
-	ajax.Post(url,data,function(res){ 
-		if (res.status =="success"){		
+	var url= "{{url_for('admin_genre_right')}}?genre_id="+data;
+	ajax.Post(url,data,function(res){
+		if (res.status =="success"){
 			$("#aplication_data_grad").html(res.data);
 		}
-		App.initUniform();		
-	}, true);	
+		App.initUniform();
+	}, true);
 }
 
 
@@ -167,14 +169,22 @@ function deleteRight(bundleId){
 	});
 }
 function changeForm(){
-	loadRight();
+	var data = $('#app-aplication-filter-form').serialize();
+	var ajax= NG.Ajax();
+	var url= "{{url_for('admin_genre_right')}}?"+data;
+	ajax.Post(url,data,function(res){
+		if (res.status =="success"){
+			$("#aplication_data_grad").html(res.data);
+		}
+		App.initUniform();
+	}, true);
 }
 
 function changeVersionForm() {
 	$('#loading').css({"visibility":"visible"});
 	var theurl = window.location.href;
 	var index = theurl.indexOf('genre_id');
-	var paramVal=theurl.substr(index,theurl.length);	
+	var paramVal=theurl.substr(index,theurl.length);
 	var ajax = NG.Ajax();
 	var url = "{{url_for('admin_genre_left')}}?"+paramVal;
 	ajax.Get(url,function(res){
@@ -185,7 +195,7 @@ function changeVersionForm() {
 		//重新渲染
 		App.initUniform();
 	},true);
-	
+
 }
 
 function updateSort(){
@@ -201,22 +211,23 @@ function updateSort(){
 function searchApp(){
 	var valSer= $('.search-bunlid').val();
 	if (valSer== ""){
-		return false;	
+		return false;
 	}else{
 	    var url = "{{url_for('admin_genre_left')}}?bundleId=" + valSer;
 	}
-	
+
 	var ajax= NG.Ajax();
-	ajax.Get(url,function(res){ 
+	ajax.Get(url,function(res){
 		$('#loading').css({"visibility":"visible"});
 		if (res.status='success'){
-			$('#app_data_grad_left').html(res.data);		
+			$('#app_data_grad_left').html(res.data);
 		}
 		$('#loading').css({"visibility":"hidden"});
-		App.initUniform();	
+		App.initUniform();
 	},true);
-	
+
 }
+//sdasdasdasdasd
 function ajaxPage(url) {
 	var p = url.split('?');
 	if(p[1]){
@@ -224,7 +235,7 @@ function ajaxPage(url) {
 	}
 	$('#loading').css({"visibility":"visible"});
 	var ajax = NG.Ajax();
-	ajax.Get(url,function(res){
+	ajax.Get(url, function(res){
 		if(res.status='success'){
 			$('#app_data_grad_left').html(res.data);
 		}
@@ -246,4 +257,3 @@ changeVersionForm()
 {% endblock %}
 
 {% block menuName %}应用分类{% endblock %}
-
