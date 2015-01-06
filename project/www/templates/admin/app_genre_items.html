@@ -85,7 +85,7 @@
 								<label>
 									语言
 									<select size="1" onchange="changeForm()" name="language" aria-controls="language" class="m-wrap small lang">
-										<option value="" selected="selected">全部</option>
+										<option value="" selected="selected">英文</option>
 										{% for lang in lang_options %}
 										<option value="{{ lang['code'] }}">{{ lang['name'] }}</option>
 										{% endfor %}
@@ -124,10 +124,10 @@
 
 var ajax = NG.Ajax();
 function loadRight(){
-	var data =$('#app-aplication-filter-form').data('value')
-	//var data = $('#app-aplication-filter-form').serialize();
+	var genid =$('#app-aplication-filter-form').data('value')
+	var data = $('#app-aplication-filter-form').serialize();
 	var ajax= NG.Ajax();
-	var url= "{{url_for('admin_genre_right')}}?genre_id="+data;
+	var url= "{{url_for('admin_genre_right')}}?genre_id="+genid +'&'+data;
 	ajax.Post(url,data,function(res){
 		if (res.status =="success"){
 			$("#aplication_data_grad").html(res.data);
@@ -141,20 +141,31 @@ function addToLeft(_id, itemId) {
 	var ajax= NG.Ajax();
 	var form = $('#'+_id+"_form");
 	var itsss = $('input[name=sort]:checked').val();
-	var checkboxval = $('input[name=device_sign]:checked').val();
+	var theurl = window.location.href;
+	var index = theurl.indexOf('genre_id=');
+	var paramVal=theurl.substr(index,theurl.length);
 	var bunldid= $('#'+itemId+'_form').attr('data-value')
+
+
 	var lang1 = $('#'+itemId+'_form').serialize().replace(new RegExp('&language=','g'),',');
 	var lang2 =lang1.replace(',','&language=');
 	var lang3 = lang2.replace(new RegExp('&device_sign=','g'),':');
 	var lang4 = lang3.replace(':','&device_sign=');
-	var url = "{{url_for('app_genre_item_add')}}?"+ lang4 +"&bundleId="+bunldid;
-	ajax.Get(url, function(res){
-		if(res.status == 'success'){
-			loadRight();
-		}else{
-			alert(res.message);
-		}
-	});
+
+	if(lang1 == lang4){
+		alert("请勾选选项！！")
+		return false
+	}else{
+		var url = "{{url_for('app_genre_item_add')}}?"+ lang4 +"&bundleId="+bunldid + '&'+paramVal;
+		ajax.Get(url, function(res){
+			if(res.status == 'success'){
+				loadRight();
+			}
+			else{
+				alert(res.message);
+			}
+		 });
+	}
 }
 
 
@@ -169,15 +180,7 @@ function deleteRight(bundleId){
 	});
 }
 function changeForm(){
-	var data = $('#app-aplication-filter-form').serialize();
-	var ajax= NG.Ajax();
-	var url= "{{url_for('admin_genre_right')}}?"+data;
-	ajax.Post(url,data,function(res){
-		if (res.status =="success"){
-			$("#aplication_data_grad").html(res.data);
-		}
-		App.initUniform();
-	}, true);
+	loadRight()
 }
 
 function changeVersionForm() {
@@ -227,7 +230,6 @@ function searchApp(){
 	},true);
 
 }
-//sdasdasdasdasd
 function ajaxPage(url) {
 	var p = url.split('?');
 	if(p[1]){
