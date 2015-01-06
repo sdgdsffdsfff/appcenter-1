@@ -670,13 +670,13 @@ class ScreenshotView(View):
                     data = {'screenshotUrls': pic_url}
                 if request.form['device'] == 'ipad':
                     data = {'ipadScreenshotUrls': pic_url}
-                if request.form["lang"] == "en":
-                    DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
-                else:
+                DB.AppBase.update({'bundleId': bundle_id}, {'$addToSet': data})
+                if request.form["lang"] == "cn":
                     try:
                         DB.AppBase_CN.update({'bundleId': bundle_id}, {'$addToSet': data})
                     except Exception:
-                        data = data.update({'bundleId': bundle_id})
+                        pass
+                        # data = data.update({'bundleId': bundle_id})
                         #DB.AppBase_CN.insert(data)
                 status, message = 'success', u'上传成功'
             else:
