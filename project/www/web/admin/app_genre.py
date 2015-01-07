@@ -123,10 +123,8 @@ class ItemAddView(View):
             except: appinfo['size'] = 'unknown'
             try: int(appinfo['averageUserRating'])
             except: appinfo['averageUserRating'] = 3
-
             for appkey in appkeys:
-                DB.AppKeylists.insert({
-                            "appKey" : appkey,
+                DB.AppKeylists.update({"appKey" : appkey}, {"$set": {
                             "bundleId" : bundleId,
                             "trackName" : appinfo["trackName"],
                             "supportIpad" :appinfo['supportIpad'] ,
@@ -135,7 +133,7 @@ class ItemAddView(View):
                             "averageUserRating" : appinfo["averageUserRating"],
                             "size" : appinfo["size"],
                             "order" : order
-                        })
+                        }}, True)
             status, message = 'success', ''
         except Exception, ex:
             status, message = 'error', str(ex)
