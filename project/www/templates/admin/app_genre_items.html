@@ -97,10 +97,13 @@
 									    <option value="new" selected="selected">最新</option>
 
 	                                </select>
-	                                设备
+	                                设备版本
 	                                <select size="1" onchange="changeForm()" name='device' aria-controls='device' class="m-wrap small device">
-	                                    <option value="ipad" selected="selected">Ipad</option>
-					    <option value="iphone" selected="selected">Iphone</option>
+	                                    <option value="ipad_0" selected="selected">Ipad越狱版</option>
+					    <option value="ipad_1" selected="selected">Ipad正版</option>
+					    <option value="iphone_0" selected="selected">Iphone越狱版</option>
+					    <option value="iphone_1" selected="selected">Iphone正版</option>
+
 	                                </select>
 								</label>
 							</div>
@@ -151,12 +154,16 @@ function addToLeft(_id, itemId) {
 	var lang2 =lang1.replace(',','&language=');
 	var lang3 = lang2.replace(new RegExp('&device_sign=','g'),':');
 	var lang4 = lang3.replace(':','&device_sign=');
+	var lang5 = lang4.replace(new RegExp('&sort=','g'),'*');
+	var lang6 = lang5.replace('*','&sort=');
 
-	if(lang1 == lang4){
+	if(lang1 == lang6){
 		alert("请勾选选项！！")
 		return false
 	}else{
-		var url = "{{url_for('app_genre_item_add')}}?"+ lang4 +"&bundleId="+bunldid + '&'+paramVal;
+
+		var url = "{{url_for('app_genre_item_add')}}?"+ lang6 +"&bundleId="+bunldid + '&'+paramVal;
+		alert(url)
 		ajax.Get(url, function(res){
 			if(res.status == 'success'){
 				loadRight();
@@ -230,6 +237,7 @@ function searchApp(){
 	},true);
 
 }
+//sdasdasdasdasd
 function ajaxPage(url) {
 	var p = url.split('?');
 	if(p[1]){
