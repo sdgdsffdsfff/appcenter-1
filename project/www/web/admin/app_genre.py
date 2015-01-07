@@ -102,16 +102,17 @@ class ItemAddView(View):
             bundleId = request.args.get('bundleId', '')
             languages = request.args.get('language', 'en').split(',')
             device_sign = request.args.get('device_sign', '').split(':')
-            sort = request.args.get('sort', 'sort')
+            sort = request.args.get('sort', 'sort').split('*')
 	    genre_id = request.args.get("genre_id", 0)
             order = int(request.args.get('order', 0))
+
 
             appinfo = dict(DB.AppBase.find_one({'bundleId':bundleId}))
             appkeys = []
             mylanguage = []
             [mylanguage.append(language) for language in languages if language in ['zh-Hans', 'ar']]
             [mylanguage.append('en') for language in languages if language not in ['zh-Hans', 'ar']]
-            [appkeys.append("%s_%s_%s_%s" % (ds, la, genre_id, sort)) for ds in device_sign for la in set(mylanguage)]
+            [appkeys.append("%s_%s_%s_%s" % (ds, la, genre_id, so)) for ds in device_sign for la in set(mylanguage) for so in sort]
 
             try: appinfo['icon'] = artworkUrl512_to_114_icon(appinfo['artworkUrl512'])
             except: appinfo['icon'] = ''
@@ -149,9 +150,10 @@ class ItemListView(View):
     def show_itemright(self):
         sort = request.args.get("sort", "sort")
         language = request.args.get("language", "en") if request.args.get("language", "en") in ['zh-Hans','en', 'ar'] else 'en'
-        device = request.args.get("device", "iphone")
+        device = request.args.get("device", "iphone_1")
         genre_id = request.args.get("genre_id", 0)
-        appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
+        #appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
+	appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
         item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
         self._view.ajax_response('success', 'message')
         return self._view.ajax_render('app_genre_ajaxright',item_list=item_list)   # P0ST
