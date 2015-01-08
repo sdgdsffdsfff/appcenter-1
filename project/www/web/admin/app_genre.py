@@ -103,7 +103,7 @@ class ItemAddView(View):
             languages = request.args.get('language', 'en').split(',')
             device_sign = request.args.get('device_sign', '').split(':')
             sort = request.args.get('sort', 'sort').split('*')
-	    genre_id = request.args.get("genre_id", 0)
+            genre_id = request.args.get("genre_id", 0)
             order = int(request.args.get('order', 0))
 
 
@@ -153,7 +153,7 @@ class ItemListView(View):
         device = request.args.get("device", "iphone_1")
         genre_id = request.args.get("genre_id", 0)
         #appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
-	appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
+        appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
         item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
         self._view.ajax_response('success', 'message')
         return self._view.ajax_render('app_genre_ajaxright',item_list=item_list)   # P0ST

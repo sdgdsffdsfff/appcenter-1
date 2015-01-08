@@ -12,7 +12,7 @@ from collections import defaultdict
 import pytz
 import json
 import pymongo
-import urllib
+
 
 class View(FlaskView):
     route_base = '/app-buy-manager'
@@ -112,7 +112,9 @@ class GetTaskView(View):
     @route('/get-task', endpoint='get_buy_task')
     def get(self):
         while True:
-            data = json.loads(rsm.rpop('app_process'))
+            #data = json.loads(rsm.rpop('app_process'))
+            value = rsm.rpop('app_process_first')
+            data = json.loads(value) if value else json.loads(rsm.rpop('app_process'))
             if not DB.app_process.find_one({'track_id': data['track_id']}):
                 break
         country = None
