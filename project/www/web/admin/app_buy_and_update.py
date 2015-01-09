@@ -118,15 +118,19 @@ class GetTaskView(View):
             if not DB.app_process.find_one({'track_id': data['track_id']}):
                 break
         country = None
-        if 'US' in data['info']:
-            q_res = data['info']['US']
-            country = 'US'
-            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
         if 'CN' in data['info']:
             q_res = data['info']['CN']
             country = 'CN'
             DB.AppBase_CN.update({"trackId": data['track_id']}, {"$set": q_res}, True)
             if 'US' not in data['info']: DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+        if 'US' in data['info']:
+            q_res = data['info']['US']
+            country = 'US'
+            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+        if 'SA' in data['info']:
+            q_res = data['info']['SA']
+            country = 'SA'
+            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
         if country is None:
             country = data['info'].keys()[0]
             q_res = data['info'][country]
