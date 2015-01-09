@@ -83,7 +83,7 @@ class UpdateListView(View):
         res = DB.app_process.find(
             {'$or': [{'status': 'update'}, {'status': 'updating'}],
              'editor': current_user.username}).sort(
-                 'status', pymongo.ASCENDING).skip(
+                 [('status', pymongo.ASCENDING),('apple_account', pymongo.ASCENDING)]).skip(
                      (page - 1)*page_size).limit(page_size)
 
         self.pagination(res, page, page_size)
