@@ -31,9 +31,10 @@ class AppProcess(object):
             process2 = mongo_db.app_process.update(conditions, {'$set': sets})
             sets['storage_time'] = storage_time
             log2 = mongo_db.app_process_log.update(conditions, {'$set': sets})
-            if process1['nModified'] == 1 and log1 == 1:
+
+            if process1['nModified'] == 1 and log1['nModified'] == 1:
                 return 1000
-            if process2['nModified'] == 1 and log2 == 1:
+            if process2['nModified'] == 1 and log2['nModified'] == 1:
                 return 1000
             return 2000
         except:
