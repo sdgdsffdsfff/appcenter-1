@@ -21,3 +21,4 @@ import app_buy_and_update
 import apple_account
 import notification
 import download_batch
+import adslink
