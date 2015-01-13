@@ -1,0 +1,135 @@
+{% extends "admin/_layout.html" %}
+
+{% block page_title %} 广告链接管理 {% endblock %}
+{% block title %} 广告链接 <small>列表</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+    <i class="icon-home"></i>
+    <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+    <i class="icon-angle-right"></i>
+  </li>
+  <li>广告链接列表</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade  hide in" data-width="700" id="add_modal">
+  <div class="modal-header">
+    <a class="close" href="#" data-dismiss="modal"></a>
+    <h3>广告链接添加</h3>
+  </div>
+  <div class="modal-body inner">
+    <div class="alert hide" id="form-alert"></div>
+    <form action="" id="adslink-add-form" class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label">edit_id</label>
+        <div class="controls">
+          <input type="text" name="edit_id" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">bundle_id</label>
+        <div class="controls">
+          <input type="text" name="bundle_id" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">url</label>
+        <div class="controls">
+          <input type="text" name="url" class="m-wrap large" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">取消</button>
+    <button  class="btn red" onclick="addAdslink()">确定添加</button>
+  </div>
+</div>
+
+<!-- BEGIN  TABLE PORTLET-->
+<div class="portlet box blue">
+  <div class="portlet-title">
+    <div class="caption"><i class="icon-edit"></i>广告链接列表</div>
+    <div class="tools"></div>
+  </div>
+  <div class="portlet-body">
+    <div class="table-toolbar">
+      <div class="btn-group">
+        <a class="btn green" data-toggle="modal" href="#add_modal">添加 <i class="icon-plus"></i></a>
+      </div>
+    </div>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>edit_id</th>
+          <th>bundle_id</th>
+          <th>url</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for adslink in adslink_list %}
+        <tr>
+          <td><strong>{{ adslink['edit_id'] }}</strong></td>
+          <td>{{ adslink['bundle_id'] }}</td>
+          <td>{{ adslink['url'] }}</td>
+          <td>
+            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{adslink['_id']}}">删除</a>
+            <div id="confirm_box_{{adslink['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+              <div class="modal-body">
+                <p>确定要删除吗?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">取消</button>
+                <button type="button" data-dismiss="modal" class="btn red" onclick="deleteAdslink('{{adslink['_id']}}')">确定</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- END  TABLE PORTLET-->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var ajax = NG.Ajax();
+
+function deleteAdslink(_id){
+        var url = "{{url_for('admin_adslink_delete')}}?_id="+_id;
+        ajax.Get(url, function(res){
+                if(res.status == 'success'){
+                        location.reload();
+                } else{
+                        alert(res)
+                }
+        });
+}
+
+function addAdslink(){
+        var url = '{{ url_for("admin_adslink_add") }}';
+        var data = $('#adslink-add-form').serialize();
+        ajax.Post(url, data, function(res){
+                if(res.status == 'success'){
+                        $('#add_modal').modal('hide');
+                        location.reload();
+                }else{
+                        $('#form-alert').html(res.message);
+                        $('#form-alert').show();
+                }
+        });
+}
+</script>
+{% endblock %}
+
+{% block menuName %}广告链接管理{% endblock %}
