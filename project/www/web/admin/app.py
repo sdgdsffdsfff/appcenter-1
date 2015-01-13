@@ -567,6 +567,8 @@ class SyncInfoView(View):
                         _id = db.insert(data)
                     else:
                         _id = app['_id']
+                        if db is DB.AppBase_CN:
+                            data['trackName'] = app.get('trackName', '')
                         db.update({'_id':ObjectId(_id)}, {'$set':data})
                 status, message = 'success', '更新应用信息成功'
         except Exception, ex:
