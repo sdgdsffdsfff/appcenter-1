@@ -83,7 +83,7 @@ class UpdateListView(View):
         res = DB.app_process.find(
             {'$or': [{'status': 'update'}, {'status': 'updating'}],
              'editor': current_user.username}).sort(
-                 'status', pymongo.ASCENDING).skip(
+                 [('status', pymongo.ASCENDING),('apple_account', pymongo.ASCENDING)]).skip(
                      (page - 1)*page_size).limit(page_size)
 
         self.pagination(res, page, page_size)
@@ -112,19 +112,27 @@ class GetTaskView(View):
     @route('/get-task', endpoint='get_buy_task')
     def get(self):
         while True:
-            data = json.loads(rsm.rpop('app_process'))
+            #data = json.loads(rsm.rpop('app_process'))
+            value = rsm.rpop('app_process_first')
+            data = json.loads(value) if value else json.loads(rsm.rpop('app_process'))
             if not DB.app_process.find_one({'track_id': data['track_id']}):
                 break
         country = None
-        if 'US' in data['info']:
-            q_res = data['info']['US']
-            country = 'US'
-            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+
         if 'CN' in data['info']:
             q_res = data['info']['CN']
             country = 'CN'
             DB.AppBase_CN.update({"trackId": data['track_id']}, {"$set": q_res}, True)
             if 'US' not in data['info']: DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+
+        if 'US' in data['info']:
+            q_res = data['info']['US']
+            country = 'US'
+            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
+        if 'SA' in data['info']:
+            q_res = data['info']['SA']
+            country = 'SA'
+            DB.AppBase.update({"trackId": data['track_id']}, {"$set": q_res}, True)
         if country is None:
             country = data['info'].keys()[0]
             q_res = data['info'][country]

@@ -44,6 +44,10 @@ def register_view():
     admin.visual_editor.IphoneTopicScreenView.register(app, route_prefix='/admin/')
     admin.app_genre.ListView.register(app, route_prefix='/admin/')
     admin.app_genre.SyncView.register(app, route_prefix='/admin/')
+    admin.app_genre.ItemAddView.register(app, route_prefix='/admin/')
+    admin.app_genre.ItemListView.register(app, route_prefix='/admin/')
+    admin.app_genre.DeleteView.register(app, route_prefix='/admin/')
+
     admin.advertising.ListView.register(app, route_prefix='/admin/')
     admin.advertising.AddView.register(app, route_prefix='/admin/')
     admin.advertising.DeleteView.register(app, route_prefix='/admin/')
@@ -87,12 +91,11 @@ def register_view():
     admin.users.DeleteView.register(app, route_prefix='/admin/')
     admin.language.ListView.register(app, route_prefix='/admin/')
     admin.language.AddView.register(app, route_prefix='/admin/')
-    
-    admin.app_genre.ItemAddView.register(app, route_prefix='/admin/')
-    admin.app_genre.ItemListView.register(app, route_prefix='/admin/')
-    admin.app_genre.DeleteView.register(app, route_prefix='/admin/')
+    admin.adslink.ListView.register(app, route_prefix='/admin/')
+    admin.adslink.AddView.register(app, route_prefix='/admin/')
+    admin.adslink.DeleteView.register(app, route_prefix='/admin/')
 
-    
+
 
     admin.language.DeleteView.register(app, route_prefix='/admin/')
     admin.country.ListView.register(app, route_prefix='/admin/')
