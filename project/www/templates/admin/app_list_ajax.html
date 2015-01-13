@@ -25,14 +25,22 @@
 			<td>{{ app['version'] }} | {{ app['downloadVersion'] }}</td>
             <td width=40>
               {% set t_a, t_b = 1, 1 %}
-              {% for name in app['supportedDevices'] if 'iPhone' in name and t_a == 1 %}
+              {% if app.get("supportIphone")|int == 1 %}
               <img src="/static/img/iphone.png" alt="{{ name }}">
-              {% set t_a = 2 %}
-              {% endfor %}
-              {% for name in app['supportedDevices'] if 'iPad' in name and t_b == 1 %}
+              {% else %}
+                {% for name in app['supportedDevices'] if 'iPhone' in name and t_a == 1 %}
+                <img src="/static/img/iphone.png" alt="{{ name }}">
+                {% set t_a = 2 %}
+                {% endfor %}
+              {% endif %}
+              {% if app.get("supportIpad")|int == 1 %}
               <img src="/static/img/ipad.png" alt="{{ name }}">
-              {% set t_b = 2 %}
-              {% endfor %}
+              {% else %}
+                {% for name in app['supportedDevices'] if 'iPad' in name and t_b == 1 %}
+                <img src="/static/img/ipad.png" alt="{{ name }}">
+                {% set t_b = 2 %}
+                {% endfor %}
+              {% endif %}
             </td>
             <td>
               {% if app.get("review")|int == 1 %}

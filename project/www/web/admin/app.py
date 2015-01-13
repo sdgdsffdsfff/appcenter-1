@@ -63,7 +63,6 @@ class ListView(View):
             where['bundleId'] = bundle_id
 
         app_list, page_info = self.app.get_base_apps(where, None, int(page), 10)
-
         query_params = {'trackName': track_name, 'trackId': track_id, 'bundleId': bundle_id, 'use': use,
                         'page': page_info['prev_page']}
         prev_page_params = query_params
