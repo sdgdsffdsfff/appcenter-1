@@ -144,7 +144,7 @@ function openModal(_id){
   choosed_node = new Array();
   $("input[name='edit_language']").change(function(){
     if(this.checked){
-      node.remove(this.value)
+      node.push(this.value)
     }
     if(!this.checked){
       node.remove(this.value)
