@@ -258,7 +258,14 @@ class ItemDeleteView(View):
         try:
             identifier = request.args.get('identifier')
             item_id = request.args.get('id')
-            res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
+            lans = request.args.get('lans').split('*')[:-1]
+            sel = list(DB.advertising.find({'identifier':identifier,'items':{"$elemMatch":{'id':int(item_id)}}},{'items.$.language':1}))[0]
+            if sel['items'][0]['language'] == lans:
+                res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
+            else:
+                res = DB.advertising.update({'identifier':identifier,'items':{"$elemMatch":{'id':int(item_id)}}},{'$pullAll':{'items.$.language':lans}})
+
+            #res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
             status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)

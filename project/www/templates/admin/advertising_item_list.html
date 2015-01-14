@@ -105,13 +105,32 @@
                         <td>
                             <a class=" btn red" data-toggle="modal" href="#confirm_box_{{a['id']}}">删除</a>
                             <div id="confirm_box_{{a['id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
-                                <div class="modal-body">
-                                    <p>确定要删除吗?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" data-dismiss="modal" class="btn">取消</button>
-                                    <button type="button" data-dismiss="modal" class="btn red" onclick="deleteAdvertisingItem('{{ad['identifier']}}', '{{a['id']}}')">确定</button>
-                                </div>
+                            <form action="" id="sl_advertising_item_delete">
+                                    <div class="modal-body" >
+                                         <div class="control-group" >
+                                            <label class="control-label">选择要删除的语言</label>
+                                            <div class="controls" >
+                                                {% for la in a['language'] %}
+                                                <label class="checkbox">
+                                                    <input type="checkbox" name="language_{{a['id']}}" value="{{ la }}" /> {{ la}}
+                                                </label>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="controls">
+                                                <label class="radio">
+                                                    <input type="radio" name="all" class="alllang" data-attr="language_{{a['id']}}"/>全选
+                                                </label>
+                                                <label class="radio">
+                                                    <input type="radio" name="all" class="noneofthem" data-attr="language_{{a['id']}}"/>反选
+                                                </label>
+                                            </div>
+                                        </div>
+                                     </div>
+                                    <div class="modal-footer">
+                                        <button type="button" data-dismiss="modal" class="btn">取消</button>
+                                        <button type="button" data-dismiss="modal" class="btn red" onclick="deleteAdvertisingItem('{{ identifier }}', '{{a['id']}}')">确定</button>
+                                    </div>
+                            </form>
                             </div>
                         </td>
                     </tr>
@@ -139,8 +158,11 @@ jQuery(document).ready(function() {
 });
 
 function deleteAdvertisingItem(identifier, id){
+    var lans=''
+    var chenked=$("input[type='checkbox']:checked").val([])
+     for(var i=0;i<chenked.length;i++){lans=lans+chenked[i].value+'*';}
     var ajax = NG.Ajax();
-    var url = "{{url_for('admin_advertising_item_delete')}}?identifier="+identifier+"&id="+id;
+    var url = "{{url_for('admin_advertising_item_delete')}}?identifier="+identifier+"&id="+id+"&lans="+lans;
     ajax.Get(url, function(res){
         location.reload();
     });
@@ -153,6 +175,38 @@ $("#ad_search").click(function(event) {
     var url = "{{url_for('admin_advertising_item_list')}}?identifier="+"{{ad['identifier']}}"+"&lang=" + lang + "&country="+country;
     window.location.href = url;
 })
+
+
+$(document).ready(function(){
+	$(".alllang").click(function(){
+		console.log($(".alllang"))
+		var name = $(this).attr('data-attr')
+		$("input[name=" + name + "]").attr("checked", "checked")
+		$("input[name=" + name + "]").parent().addClass("checked")
+	})
+
+	$(".noneofthem").click(function(){
+		var name = $(this).attr('data-attr')
+		var name_array = $("input[name=" + name + "]")
+		for(var i=0;i<name_array.length;i++){
+			if($(name_array[i]).attr("checked") == "checked"){
+				$(name_array[i]).removeAttr("checked")
+				$(name_array[i]).parent().removeClass("checked")
+			}else{
+				$(name_array[i]).attr("checked", "checked")
+				$(name_array[i]).parent().addClass("checked")
+			}
+		var b= $('.modal-body').children("form").eq(0).attr('data-value')
+
+		}
+	})
+
+
+
+})
+
+
+
 </script>
 {% endblock %}
 
