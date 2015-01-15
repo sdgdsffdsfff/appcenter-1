@@ -122,6 +122,7 @@ class ItemListView(View):
             ad_list = sorted(tmp_ad_list, key=lambda k: k.get("order", ""))
             if lang_s != "" or country_s != "":
                 ad_list = [item for item in ad_list if lang_s in item["language"] or country_s in item["country"]]
+
         #语言选项
         lang_options = []
         langs = DB.client_support_language.find()
@@ -136,7 +137,6 @@ class ItemListView(View):
         self._view.assign("lang_options", lang_options)
         self._view.assign("country_options", country_options)
         self._view.assign("lang_s", lang_s)
-
         return self._view.render('advertising_item_list', ad_list=ad_list, ad=res,
                                  identifier=identifier, country_s=country_s)
 
@@ -259,13 +259,12 @@ class ItemDeleteView(View):
             identifier = request.args.get('identifier')
             item_id = request.args.get('id')
             lans = request.args.get('lans').split('*')[:-1]
-            sel = list(DB.advertising.find({'identifier':identifier,'items':{"$elemMatch":{'id':int(item_id)}}},{'items.$.language':1}))[0]
-            if sel['items'][0]['language'] == lans:
-                res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
+            if len(lans):
+                res = DB.advertising.update({'identifier':identifier,'items':{"$elemMatch":{'id':int(item_id)}}},{'$set':{'items.$.language':lans}})
             else:
-                res = DB.advertising.update({'identifier':identifier,'items':{"$elemMatch":{'id':int(item_id)}}},{'$pullAll':{'items.$.language':lans}})
-
+                res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
             #res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
+
             status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)

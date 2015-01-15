@@ -103,16 +103,16 @@
                         <td>{% for lang in a['language'] %} {{lang}} {% endfor %}</td>
                         <td>{% for country in a['country'] %} {{country}} {% endfor %}</td>
                         <td>
-                            <a class=" btn red" data-toggle="modal" href="#confirm_box_{{a['id']}}">删除</a>
+                            <a class=" btn green" data-toggle="modal" href="#confirm_box_{{a['id']}}">编辑</a>
                             <div id="confirm_box_{{a['id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
-                            <form action="" id="sl_advertising_item_delete">
                                     <div class="modal-body" >
                                          <div class="control-group" >
-                                            <label class="control-label">选择要删除的语言</label>
+                                            <label class="control-label">选择要保留的语言</label>
                                             <div class="controls" >
-                                                {% for la in a['language'] %}
+                                                <!--{% for la in a['language'] %}{% endfor %}-->
+                                                {% for la in lang_options %}
                                                 <label class="checkbox">
-                                                    <input type="checkbox" name="language_{{a['id']}}" value="{{ la }}"  checked="checked" /> {{ la}}
+                                                    <input type="checkbox" name="language_{{a['id']}}" value="{{ la[1] }}" {% if la[1] in a['language'] %} checked="checked"{% endif %} /> {{ la[1] }}
                                                 </label>
                                                 {% endfor %}
                                             </div>
@@ -130,7 +130,6 @@
                                         <button type="button" data-dismiss="modal" class="btn">取消</button>
                                         <button type="button" data-dismiss="modal" class="btn red" onclick="deleteAdvertisingItem('{{ identifier }}', '{{a['id']}}')">确定</button>
                                     </div>
-                            </form>
                             </div>
                         </td>
                     </tr>
@@ -158,9 +157,10 @@ jQuery(document).ready(function() {
 });
 
 function deleteAdvertisingItem(identifier, id){
-    var lans=''
-    var chenked=$("input[type='checkbox']:checked").val([])
-     for(var i=0;i<chenked.length;i++){lans=lans+chenked[i].value+'*';}
+    var lans='';
+    //var chenked=$("input[type='checkbox']:checked").val([]);
+    var chenked=$("input[name=language_" + id + "]:checked").val([]);
+    for(var i=0;i<chenked.length;i++){lans=lans+chenked[i].value+'*';}
     var ajax = NG.Ajax();
     var url = "{{url_for('admin_advertising_item_delete')}}?identifier="+identifier+"&id="+id+"&lans="+lans;
     ajax.Get(url, function(res){
