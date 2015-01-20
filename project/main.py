@@ -129,6 +129,20 @@ def register_view():
     admin.app_buy_and_update.UpdateAppView.register(app, route_prefix='/admin/')
     admin.app_buy_and_update.DeleteAppView.register(app, route_prefix='/admin/')
 
+
+
+    admin.limit_free_app_buy_update.LimitFreeListView.register(app,route_prefix='/admin/')
+    admin.limit_free_app_buy_update.LimitFreeGetTaskView.register(app,route_prefix='/admin/')
+    admin.limit_free_app_buy_update.LimitFreeDeleteAppView.register(app,route_prefix='/admin/')
+    admin.limit_free_app_buy_update.LimitFreeBuyAppView.register(app,route_prefix='/admin/')
+    admin.limit_free_app_buy_update.LimitUpdateListView.register(app,route_prefix='/admin/')
+    admin.limit_free_app_buy_update.LimitUpdateAppView.register(app,route_prefix='/admin/')
+    admin.limit_free_app_buy_update.LimitAllListView.register(app,route_prefix='/admin/')
+
+
+
+
+
     admin.apple_account.ListView.register(app, route_prefix='/admin/')
     admin.apple_account.AddView.register(app, route_prefix='/admin/')
     admin.apple_account.DeleteView.register(app, route_prefix='/admin/')
@@ -159,3 +173,5 @@ def register_view():
     api.app_ad_image.ListView.register(app, route_prefix='/api/')
     api.other_ad.InfoView.register(app, route_prefix='/api/')
     api.app_process.FinishView.register(app, route_prefix='/api/')
+    api.limit_app_process.LimitFinishView.register(app, route_prefix='/api/')
+

@@ -22,3 +22,4 @@ import apple_account
 import notification
 import download_batch
 import adslink
+import limit_free_app_buy_update

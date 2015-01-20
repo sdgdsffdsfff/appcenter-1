@@ -1,0 +1,75 @@
+{% extends "admin/limit_app_layout.html" %}
+{% block limit_free_apps %}
+
+<div class="portlet-body buy-list">
+  <table class="table table-striped table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>苹果ID</th>
+        <th>应用名称</th>
+        <th>国家</th>
+        <th>更新版本|本地版本</th>
+        <th>价格</th>
+        <th>对应苹果账号</th>
+        <th>购买链接</th>
+        <th>标记</th>
+      </tr>
+    </thead>
+    <tbody id='list_body'>
+      {% for res in results %}
+      <tr>
+        <td>{{ res.get('track_id', 0) }}</td>
+        <td>{{ res.get('track_name', '') }}</td>
+        <td>{{ res.get('country','') }}</td>
+        <td>{{ res.get('new_version', '') }}|{{ res.get('local_version', '')}}</td>
+        <td class="cred">{{res.get('currency', '')}}:{{ res.get('price', '') }}</td>
+        <td>{{ res.get('apple_account', '') }}</td>
+        <td><a target="_blank" href="{{ res['link_url'] }}">苹果购买</a></td>
+        <td width=140>
+        {% if res.get('status', '') == 'update' %}
+        <span class="label label-info"><a href='javascript:void(0);' class='updatebtn' vale_country = {{ res.get('country','') }}  vale_track_id={{res.get('track_id', '')}}>更新</a>
+        {% elif res.get('status', '') == 'updating' %}
+        <span class="label label-success">正在入库
+        {% else %}
+        <span class="label">未知
+        {% endif %}
+        </span></td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination">
+    <ul>
+      <li><a href="javascript:;">总计{{ page_info['count']}}条记录, 当前{{page_info['page']}} / {{ page_info['total_page']}}页</a></li>
+      <li><a href="{{ url_for('limit_app_update_list') }}?page={{ page_info['prev_page'] }}">上一页</a></li>
+      <li><a href="{{ url_for('limit_app_update_list') }}?page={{ page_info['next_page']}}">下一页</a></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{%block scripts %}
+<script type="text/javascript">
+  function process() {
+    ajax = NG.Ajax();
+    $('a.updatebtn').bind('click', function(){
+      var update_btn = $(this);
+      if (update_btn.text() == '更新'){
+        var url = "{{ url_for('limit_update_app') }}";
+        var data = {'track_id': update_btn.attr('vale_track_id'),'country': update_btn.attr('vale_country')};
+        ajax.Post(url, data, function(res){
+          if(res.status == 'success'){
+            update_btn.removeClass('buybtn');
+            update_btn.text('正在入库');
+            update_btn.parent().toggleClass('label-info label-success');
+          } else{
+            alert(res)
+          }
+        });
+      }
+    });
+  }
+process()
+</script>
+{% endblock %}

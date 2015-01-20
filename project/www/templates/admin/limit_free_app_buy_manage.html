@@ -1,0 +1,124 @@
+{% extends "admin/limit_app_layout.html" %}
+{% block limit_free_apps %}
+
+<div class="portlet-body buy-list">
+  <p class='span4'>
+    <span id='to_buy_count'>当前正在购买数量：{{ to_buy_count}}</span><br>
+    <span class='cgreen'>待更新应用数量：{{ to_update_count }}</span><br>
+    <span id='all_job' class='cred'>所有任务列表：{{ to_process_count }}</span><br>
+  </p>
+  <p class='misson-btn span6'>
+    <a class="btn blue big" onclick='load_quest()'><i>领取任务</i></a>
+  </p>
+  <table class="table table-striped table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>苹果ID</th>
+        <th>应用名称</th>
+        <th>国家</th>
+        <th>版本</th>
+        <th>价格</th>
+        <th>领取任务时间</th>
+        <th>购买链接</th>
+        <th>标记</th>
+        <th>删除</th>
+      </tr>
+    </thead>
+    <tbody id='list_body'>
+      {% for res in results %}
+      <tr>
+        <td>{{ res.get('track_id', 0) }}</td>
+        <td>{{ res.get('track_name', '') }}</td>
+        <td>{{ res.get('country','') }}</td>
+        <td>{{ res.get('new_version', '')}}</td>
+        <td class="cred">{{res.get('currency', '')}}:{{ res.get('price', '') }}</td>
+        <td>{{ res.get('recieve_time', '').strftime('%Y-%m-%d') }}</td>
+        <td><a target="_blank" href="{{ res['link_url'] }}">苹果购买</a></td>
+        <td width=140>
+        {% if res.get('status', '') == 'buy' %}
+        <span class="label label-info"><a href='javascript:void(0);' class='buybtn' vale_country = {{ res.get('country','') }}  vale_track_id={{res.get('track_id', '')}}>购买</a>
+        {% elif res.get('status', '') == 'buying' %}
+        <span class="label label-success">正在入库
+        {% else %}
+        <span class="label">未知
+        {% endif %}
+        </span></td>
+        <td>
+          <form method="post" action="{{ url_for('limit_free_delete_app', track_id=res.get('track_id', 0),country = res.get('country','')) }}">
+            <input type="submit"  value="删除" />
+          </form>
+        </td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination">
+    <ul>
+      <li><a href="javascript:;">总计{{ page_info['count']}}条记录, 当前{{page_info['page']}} / {{ page_info['total_page']}}页</a></li>
+      <li><a href="{{ url_for('limit_app_buy') }}?page={{ page_info['prev_page'] }}">上一页</a></li>
+      <li><a href="{{ url_for('limit_app_buy') }}?page={{ page_info['next_page']}}">下一页</a></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{%block scripts %}
+<script type="text/javascript">
+  ajax = NG.Ajax();
+
+  function load_quest() {
+    var url = '{{ url_for('limit_free_get_buy_task') }}'
+      if ($('a.buybtn').size() >= 1000){
+        alert('请先完成当前购买工作')
+      } else {
+        ajax.Get(url, function(res){
+          if (res.status == 'success'){
+            var res = res.message;
+            var rstatus = ''
+            if (res['status'] == 'buy') {
+              rstatus = "<a href='javascript:void(0);' class='buybtn' vale=" + res['track_id'] + ">购买</a>";
+            } else if (res['status'] == 'buying'){
+              rstatus = '正在入库';
+            }
+            var content = "<tr> <td>" + res['track_id'] + "</td> <td>" + res['track_name'] + "</td> <td>" + res['country'] + "</td> <td>" + res['new_version'] + "</td> <td class='cred'>" + res['currency'] + ":" + res['price'] + "</td> <td>" + res['recieve_time'] + "</td> <td><a href='" +res['link_url'] + "'>苹果购买</a></td> <td><span class='label label-info'>" + rstatus + "</span></td> </tr> ";
+            $('#list_body').prepend(content);
+            //修改购买数量
+            var words = $('#to_buy_count').text().split('：')[0];
+            var number = Number($('#to_buy_count').text().split('：')[1]) + 1;
+            $('#to_buy_count').text(words + '：' + number);
+            var awords = $('#all_job').text().split('：')[0];
+            var anumber = Number($('#all_job').text().split('：')[1]) + 1;
+            $('#all_job').text(awords + '：' + anumber);
+
+            $('a.buybtn').unbind('click');
+            process();
+            window.location.reload();
+          }
+          else {
+            alert(res.message)
+          }
+        });
+      }
+  }
+  function process() {
+    $('a.buybtn').bind('click', function(){
+      var buy_btn = $(this);
+      if (buy_btn.text() == '购买'){
+        var url = "{{ url_for('limit_buy_app') }}";
+        var data = {'track_id': buy_btn.attr('vale_track_id'),'country': buy_btn.attr('vale_country')};
+        ajax.Post(url, data, function(res){
+          if(res.status == 'success'){
+            buy_btn.removeClass('buybtn');
+            buy_btn.text('正在入库');
+            buy_btn.parent().toggleClass('label-info label-success');
+          } else{
+            alert(res.message)
+          }
+        });
+      }
+    });
+  }
+process()
+</script>
+{% endblock %}

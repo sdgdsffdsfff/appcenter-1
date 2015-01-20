@@ -1,0 +1,113 @@
+{% extends "admin/_layout.html" %}
+{% block head %}
+<style>
+.fl{
+    float: left;
+}
+.b{
+    font-weight: bold;
+}
+.f16{
+    font-size: 16px;
+}
+.cl{
+    clear: both;
+}
+.cred{
+    color: red;
+}
+.cgreen{
+    color: green;
+}
+.cblue{
+    color: #4B8DF8;
+}
+.mr2{
+    margin-right: 2px;
+}
+.bdbgrey{
+    border: 1px solid #EEEEEE;
+}
+.bdblue{
+    border: 1px solid #4B8DF8;
+}
+.misson-btn .btn{
+    padding:14px 58px;
+    border-radius: 10px !important;
+
+}
+
+</style>
+{% endblock %}
+{% block page_title %} 限免更新 {% endblock %}
+{% block title %} 限免应用 <small>购买更新</small> {% endblock %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+  <li>
+    <i class="icon-home"></i>
+    <a href="{{ url_for('admin_index_dashboard') }}">首页</a>
+    <i class="icon-angle-right"></i>
+  </li>
+  <li>限免更新</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class='f16'>
+  <div>
+    <p class='fl b'>购买统计考核：</p>
+    <br>
+    <!-- <p class='fl'> -->
+      <table class='table' style='font-size:14px'>
+        <tr>
+          <td>编辑</td>
+          <td>购买|更新</td>
+          <td>编辑</td>
+          <td>购买|更新</td>
+          <td>编辑</td>
+          <td>购买|更新</td>
+          </tr>
+        {% for i in indicators %}
+        <tr>
+          {% for item in indicators[i] %}
+          <td>{{ item[0] }}</td>
+          <td>{{ item[1]['buy'] }}|{{ item[1]['update'] }}</td>
+          {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+
+    <!-- </p> -->
+  </div>
+  <div class="cl"></div>
+  <div class="bdbgrey cl"></div>
+</div>
+<h3 ><span class='cblue'>我的限免应用列表<span></h3>
+<div class="span12" style="margin-left: 0px;">
+  <!-- BEGIN SAMPLE TABLE PORTLET-->
+  <div class="portlet box blue">
+    <div class="portlet-title">
+      <div class="caption">
+        <a class="btn red" id='buy-list-btn' href="{{ url_for('limit_app_buy') }}">购买应用</a>
+        <a class="btn green" id='tobeupdate-list' href="{{ url_for('limit_app_update_list') }}">待更新列表</a>
+        <a class="btn yellow" id='all-list' href="{{ url_for('limit_app_all_list') }}">所有任务记录</a>
+      </div>
+    </div>
+    {% block limit_free_apps%}
+    {% endblock %}
+
+    <!-- END SAMPLE TABLE PORTLET-->
+  </div>
+  {% endblock %}
+
+  {% block scripts %}
+  <script type="text/javascript">
+  $('#add-btn').on('click',function(){
+    var new_ipt = $('<input type="text" class="m-wrap medium mr2" placeholder="">')
+    $('#ipts').append(new_ipt);
+  });
+  </script>
+  {% endblock %}
+  {% block menuName %}限免更新{% endblock %}
+  {% block titleType %}a{% endblock %}
