@@ -15,7 +15,7 @@ class AppCollectionController(ControllerBase):
         else:
             self._country = country
 
-    def get(self, num=None, front=False, sign=0):
+    def get(self, num=None, front=False, sign=0, vv_version="common"):
         '''
         Get app collection
         num 获取数量  front是否前端显示
@@ -25,21 +25,15 @@ class AppCollectionController(ControllerBase):
         lang_collection = {"zh-Hans": "AppBase_CN", "en": "AppBase"}
         try:
             res = mongo_db.app_collection.find_one({'identifier': self._identifier})
-            if not res or 'items' not in res:
-                return {}
-            try:
-                title = res['title']['en']
-            except:
-                title = res['title']['zh-Hans']
-            try:
-                title = res['title'][self._language]
-            except:
-                pass
-
+            if not res or 'items' not in res: return {}
+            try: title = res['title']['en']
+            except: title = res['title']['zh-Hans']
+            try: title = res['title'][self._language]
+            except: pass
             filter_items = []
             app_controller = AppController()
             bundleids = [itemq.get('bundleId', '') for itemq in res['items']]
-            download_infos = app_controller.get_downloads_of_allbundleids(bundleids, sign)
+            download_infos = app_controller.get_downloads_of_allbundleids(bundleids, sign, vv_version)
             for item in res['items']:
                 tmp_item = None
                 if self._language == "":
@@ -76,6 +70,7 @@ class AppCollectionController(ControllerBase):
                 if superurl_sign != "" and sign != 0:
                     download_info["ipaDownloadUrl"] = superurl_sign
                     download_info["issuperurl_sign"] = 1
+
                 app_trackName = tmp_item['trackName']
                 if self._language in lang_collection:
                     t_item = mongo_db[lang_collection[self._language]].find_one({"bundleId": tmp_item["bundleId"]})
@@ -114,6 +109,3 @@ class AppCollectionController(ControllerBase):
         except Exception, ex:
             print ex
             return {}
-
-
-

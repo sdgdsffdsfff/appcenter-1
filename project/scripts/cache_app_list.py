@@ -17,9 +17,12 @@ mongo_db = mongo.get_database('appcenter')
 def cache_app_list(genre_id):
     app = AppController()
     print "Begin Caching Genre: %s App List" % genre_id
-    app.set_apps_cache(genre_id, ('sort', -1))
-    app.set_apps_cache(genre_id, ('downloadCount', -1))
-    app.set_apps_cache(genre_id, ('_id', -1))
+    #app.set_apps_cache(genre_id, ('sort', -1))
+    #app.set_apps_cache(genre_id, ('downloadCount', -1))
+    #app.set_apps_cache(genre_id, ('_id', -1))
+    app.set_apps_cache_new(genre_id, ('sort', -1))
+    app.set_apps_cache_new(genre_id, ('hot', -1))
+    app.set_apps_cache_new(genre_id, ('new', -1))
     print "Finish Caching Genre: %s App List" % genre_id
 
 def asynchronous_cache_genres():

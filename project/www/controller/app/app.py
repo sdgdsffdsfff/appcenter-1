@@ -56,7 +56,7 @@ class AppController(ControllerBase):
         data = mongo_db.AppBase.find_one({'bundleId': bundle_id})
         return self._output_format(data)
 
-    def get_app_detail(self, object_id):
+    def get_app_detail(self, object_id, vv_version="common"):
         data = mongo_db.AppBase.find_one({'_id': ObjectId(object_id)})
         if self._language == "zh-Hans":
             data_cn = mongo_db.AppBase_CN.find_one({'bundleId': data.get('bundleId', "")})
@@ -69,7 +69,7 @@ class AppController(ControllerBase):
             data["trackName"] = data["trackName"] if data.get("arname", "") == "" else data["arname"]
         data = self.filter_app_output(data)
 
-        downloads = self.get_app_downloads(data['bundleId'])
+        downloads = self.get_app_downloads(data['bundleId'], vv_version)
         data['systemRequirements'] = "ios" + data.get("minimumOsVersion", "6.0") + "+"
         try: rating = data['averageUserRating']
         except: rating = 0
@@ -100,7 +100,6 @@ class AppController(ControllerBase):
             app_info_result["ipaDownloadUrl"]["signed"] = superurl_sign
             app_info_result["issuperurl_sign"] = 1
         return app_info_result
-
 
     def set_app_cache(self, object_id):
         """
@@ -303,6 +302,46 @@ class AppController(ControllerBase):
                         redis_master_pipeline.lpush(keys['iphone_'+ s +'_key'], data)
             redis_master_pipeline.execute()
 
+    def set_apps_cache_new(self, genre_id, sort):
+        """
+        设置应用列表缓存 50页 每页12个  luoluo0
+        """
+        genre_id = int(genre_id)
+        myappkey = ''
+        if (7000 <= genre_id < 8000) or (13000 <= genre_id < 14000):
+            where = {'review': 1, 'genreIds': {'$all': [str(genre_id)]}}
+        else:
+            where = {'review': 1, 'primaryGenreId': genre_id}
+        larguage = self._language if self._language in ['zh-Hans','en', 'ar'] else 'en'
+        for lang in self._get_ext_data_language():
+            sign = {'signed': 1, 'jb': 0}
+            for s in sign.keys():
+                #print 'Push to redis, lang:%s, genre: %s, sign: %s' % (lang, genre_id, s)
+                #查询签名的
+                if sign[s] == 1: where['sign'] = 1
+                else :where['sign'] = 0
+                apps = self.get_apps(where, lang, sort, self.limit)
+
+                for app in apps:
+                    try:app["order"]
+                    except: app["order"] = 0
+                    if app['supportIpad'] == 1 or app['supportIphone'] == 1:
+                        myappkey = "%s_%s_%s_%s_%s" % ('ipad', where['sign'], larguage, genre_id, sort[0])
+                    if app['supportIphone'] == 1:
+                        myappkey = "%s_%s_%s_%s_%s" % ('iphone', where['sign'], larguage, genre_id, sort[0])
+
+                    mongo_db.AppKeylists.insert({
+                        "appKey" : myappkey,
+                        "bundleId" : app["bundleId"],
+                        "trackName" : app["trackName"],
+                        "supportIpad" : app["supportIpad"],
+                        "supportIphone" :app["supportIphone"],
+                        "icon" : app["icon"],
+                        "averageUserRating" : app["averageUserRating"],
+                        "size" : app["size"],
+                        "order" : app["order"]
+                    })
+
     def get_apps_cache(self, device, sign, genre_id, page, sort):
         """
         获取app列表缓存
@@ -323,6 +362,45 @@ class AppController(ControllerBase):
 
         lists = redis_master.lrange(key, start, end-1)
         lists = [convertAppIpaHashToIpaURL(cjson.decode(x)) for x in lists]
+        return {
+            'results': lists,
+            'pageInfo': {
+                'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
+                'nextPage': next_page
+            }
+        }
+
+    def get_apps_cache_mg(self, device, sign, genre_id, page, sort):
+        """
+        获取app列表展示  luoluo0
+        """
+        language = self._language if self._language in ['zh-Hans','en', 'ar'] else 'en'
+        key = "%s_%s_%s_%s_%s" % (device, sign, language, genre_id, sort)
+        count = mongo_db.AppKeylists.find({'appKey':key}).count()
+
+        page_size = 12 # 每页显示12行
+        total_page = int(math.ceil(count / float(page_size)))
+        prev_page = (page - 1) if page - 1 > 0 else 1
+        next_page = (page + 1) if page + 1 < total_page else total_page
+
+        lists1 = list(mongo_db.AppKeylists.find(
+            {'appKey':key},
+            {'appKey':0,'order':0}
+        ).sort([('order',pymongo.DESCENDING)]).skip((page-1)*page_size).limit(page_size))
+
+        bundleIdlist = [i['bundleId'] for i in lists1 if 'bundleId' in i]
+        download = AppDownloadController()
+        ipaHashdic = download.get_by_bundleids(bundleIdlist)
+        ipaHashlist = [i[0] for i in ipaHashdic.values()]
+
+        for i in lists1:
+            i['ID'] = str(i['_id'])
+            del i['_id']
+            for x in ipaHashlist:
+                if i['bundleId'] == x['bundleId']:
+                    i['ipaHash'] = str(x['hash'])
+                    i['ipaVersion'] = x.get('version', '1.0')
+        lists = [convertAppIpaHashToIpaURL(x) for x in lists1]
         return {
             'results': lists,
             'pageInfo': {
@@ -426,11 +504,11 @@ class AppController(ControllerBase):
         langs = ["CN"]
         return langs
 
-    def get_app_downloads(self, bundle_id):
+    def get_app_downloads(self, bundle_id, vv_version="common"):
         """
         获取应用详细信息
         """
-        all_downloads = self.get_all_downloads(bundle_id)
+        all_downloads = self.get_all_downloads(bundle_id, vv_version)
         jb, signed = all_downloads["jb"], all_downloads["sign"]
 
         # #越狱版
@@ -456,11 +534,11 @@ class AppController(ControllerBase):
         }
         return data
 
-    def get_downloads_of_allbundleids(self, bundle_ids, sign):
+    def get_downloads_of_allbundleids(self, bundle_ids, sign, vv_version="common"):
         """add by kq for bundle search"""
 
         download_direct = AppDownloadController()
-        reses = download_direct.get_by_bundleids(bundle_ids, sign)
+        reses = download_direct.get_by_bundleids(bundle_ids, sign, vv_version)
         download_netdisk = AppDownloadNetDiskController()
         reses2 = download_netdisk.get_by_bundleids(bundle_ids, sign)
 
@@ -700,12 +778,12 @@ class AppController(ControllerBase):
             ipaHistoryDownloads = tmp_download_list
         return {'ipaHistoryDownloads': ipaHistoryDownloads}
 
-    def get_all_downloads(self, bundle_id):
+    def get_all_downloads(self, bundle_id, vv_version="common"):
         """取得该应用下的所有下载包"""
         #直接下载数据
 
         download = AppDownloadController()
-        sign_downloads, jb_downloads = download.get_all_downloads_of_app(bundle_id)
+        sign_downloads, jb_downloads = download.get_all_downloads_of_app(bundle_id, vv_version)
         sign_downloads_info = self._extract_direct_download_info(sign_downloads)
         jb_downloads_info = self._extract_direct_download_info(jb_downloads)
 

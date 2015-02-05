@@ -26,7 +26,7 @@ class DetailView(View):
         data = {}
         object_id = request.args.get('id', None)
         if object_id is not None:
-            try: data = self.app.get_app_detail(object_id)
+            try: data = self.app.get_app_detail(object_id, self._view.vv_version)
             except Exception, ex: pass
         return self._view.render(1000, data)
 
@@ -36,21 +36,26 @@ class ListView(View):
     获取应用列表
     """
     @route('/list', endpoint='api_app_list')
-    @main.cache.cached(timeout=CACHE_TIME)
+    #@main.cache.cached(timeout=CACHE_TIME)
     def get(self):
         genre_id = request.args.get('genre_id', 0)
         device = request.args.get('device', "1")
         sort = request.args.get('sort', 'sort')
         page = request.args.get('page', 1)
-
+        '''
         xsort = 'sort'
         if sort == 'new': xsort = '_id'
         elif sort == 'hot': xsort = 'downloadCount'
-
+        '''
+        # 手机api 热门与最新 对应所传过来的值颠倒了
+        if sort =='hot':
+            sort ='new'
+        elif sort =='new':
+            sort ='hot'
         if device == 'ipad' or device == "2": device = 'ipad'
         else: device = 'iphone'
-        data = self.app.get_apps_cache(device, self._view._sign, genre_id, int(page), xsort)
-
+        #data = self.app.get_apps_cache(device, self._view._sign, genre_id, int(page), xsort)
+        data = self.app.get_apps_cache_mg(device, self._view._sign, genre_id, int(page), sort)
         return self._view.render(1000, data)
 
 
