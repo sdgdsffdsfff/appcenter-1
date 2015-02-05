@@ -2,7 +2,9 @@
 #code by LP
 #2014-4-9
 
-from flask import Flask, url_for
+import sys
+
+from flask import Flask
 from flask.ext.login import LoginManager
 from jinja2 import Environment
 from flask.ext.cache import Cache
@@ -35,6 +37,7 @@ app.jinja_options['extensions'].append('jinja2.ext.loopcontrols')
 def register_view():
     import www.web.admin as admin
     import www.web.api as api
+    import www.web.tuling as tuling
     admin.account.LoginView.register(app, route_prefix='/admin/')
     admin.account.LogoutView.register(app, route_prefix='/admin/')
     admin.index.DashboardView.register(app, route_prefix='/admin/')
@@ -131,3 +134,7 @@ def register_view():
     api.app_collection.AppListView.register(app, route_prefix='/api/')
     api.notification.ListView.register(app, route_prefix='/api/')
     api.adslinks.AdsLinkView.register(app, route_prefix='/api/')
+	tuling.tuling_PictCla.ListView.register(app, route_prefix='/tuling/')
+	tuling.tuling_PictDetail.ListView.register(app, route_prefix='/tuling/')
+	tuling.tuling_RingCla.ListView.register(app, route_prefix='/tuling/')
+	tuling.tuling_RingDetail.ListView.register(app,route_prefix='/tuling/')
