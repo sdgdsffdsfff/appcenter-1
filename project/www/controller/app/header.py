@@ -194,7 +194,7 @@ def datetime_format(date_time):
     return date_time.strftime('%Y-%m-%d')
 
 def convertAppIpaHashToIpaURL(app):
-    if type(app["ipaHash"])== str:
+    if "ipaHash" in app and type(app["ipaHash"])== str:
         try:
             ipa = create_ipa_url(app['ipaHash'])
         except:
