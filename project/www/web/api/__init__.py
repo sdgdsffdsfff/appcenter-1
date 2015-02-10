@@ -12,3 +12,4 @@ import web_on
 import app_collection
 import notification
 import adslinks
+import global_config

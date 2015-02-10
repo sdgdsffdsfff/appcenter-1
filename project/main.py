@@ -134,6 +134,7 @@ def register_view():
     api.app_collection.AppListView.register(app, route_prefix='/api/')
     api.notification.ListView.register(app, route_prefix='/api/')
     api.adslinks.AdsLinkView.register(app, route_prefix='/api/')
+    api.global_config.GloablConfigView.register(app, route_prefix='/api/')
     tuling.tuling_PictCla.ListView.register(app, route_prefix='/tuling/')
     tuling.tuling_PictDetail.ListView.register(app, route_prefix='/tuling/')
     tuling.tuling_RingCla.ListView.register(app, route_prefix='/tuling/')
