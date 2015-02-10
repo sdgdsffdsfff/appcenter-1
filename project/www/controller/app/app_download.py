@@ -23,7 +23,7 @@ class AppDownloadController(ControllerBase):
         for re in res: results[re.get("sign", 0)].append(re)
         return results.get(1, []), results.get(0, [])
 
-    def get_by_bundleids(self, bundleids, sign=0):
+    def get_by_bundleids(self, bundleids, sign=0, vv_version="common"):
         results = defaultdict(list)
         results2 = dict()
 
@@ -38,7 +38,7 @@ class AppDownloadController(ControllerBase):
                 results2[key] = list(value)
         return results2
 
-    def get_by_bundleid(self, bundleid, sign=0):
+    def get_by_bundleid(self, bundleid, sign=0, vv_version="common"):
         """
         通过bundleid获取app
         """
