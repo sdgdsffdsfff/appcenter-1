@@ -391,7 +391,7 @@ class AppController(ControllerBase):
 
         bundleIdlist = [i['bundleId'] for i in lists1 if 'bundleId' in i]
         download = AppDownloadController()
-        ipaHashdic = download.get_by_bundleids(bundleIdlist)
+        ipaHashdic = download.get_by_bundleids(bundleIdlist, sign)
         ipaHashlist = [i[0] for i in ipaHashdic.values()]
 
         for i in lists1:
