@@ -68,10 +68,13 @@ class LimitFreeListView(View):
             {'$or': [{'status': 'update'}, {'status': 'updating'}]}).count()
         to_process_count = to_buy_count + to_update_count
 
+        not_receive_count = DB.limit_free_app.find().count()
+
         return self._view.render('limit_free_app_buy_manage', results=res,
                                  to_buy_count=to_buy_count,
                                  to_update_count=to_update_count,
-                                 to_process_count=to_process_count)
+                                 to_process_count=to_process_count,
+                                 not_receive_count = not_receive_count)
 
 class LimitFreeGetTaskView(View):
     @route('/get-task', endpoint='limit_free_get_buy_task')
