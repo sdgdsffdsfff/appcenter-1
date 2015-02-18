@@ -395,7 +395,7 @@ class AppController(ControllerBase):
         ipaHashlist = [i[0] for i in ipaHashdic.values()]
 
         for i in lists1:
-            i['ID'] = str(i['_id'])
+            i['ID'] = str(i['ID'])
             del i['_id']
             for x in ipaHashlist:
                 if i['bundleId'] == x['bundleId']:
