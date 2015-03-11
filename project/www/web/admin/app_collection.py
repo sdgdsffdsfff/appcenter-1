@@ -198,17 +198,19 @@ class ItemAddView(View):
         language_list = []
         for ele in temp_data:
             sort = int(ele.split('|')[0].strip())
+            isAdvertisement = str(ele.split('|')[2].strip())
             lan_list = []
             if ele.split('|')[1].strip() == "":
                 return self._view.ajax_response('error', '不能选择空的语言', '')
-            for lan in ele.split('|')[1].split(' '):
+            for lan in ele.split('|')[1].strip().split(' '):
                 if len(lan) > 0:
                     if lan in language_list:
                         status, message = 'error', '请勿重复选择语言'
                         return self._view.ajax_response(status, message, '')
                     lan_list.append(lan)
                     language_list.append(lan)
-            data.append({'sort': sort, 'lan': lan_list})
+
+            data.append({'sort': sort, 'isAdvertisement':isAdvertisement,'lan': lan_list})
         try:
             app = DB.AppBase.find_one({'_id': ObjectId(request.form['_id'])})
             if app is None:
@@ -259,6 +261,7 @@ class ItemAddView(View):
                 if len(ele['lan']) > 0:
                     temp_item = dict(items)
                     temp_item['sort'] = ele['sort']
+                    temp_item['isAdvertisement'] = ele['isAdvertisement']
                     temp_item['language'] = ele['lan']
                     item_list.append(temp_item)
 

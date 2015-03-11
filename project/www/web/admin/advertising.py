@@ -171,9 +171,9 @@ class ItemAddView(View):
         ads = DB.advertising.find()
         for ad in ads:
             identifier_options.append((ad['name'], ad['identifier']))
-
         self._form = Form('advertising_add_form', request, session)
         self._form.add_field('text', '标题', 'title', data={'attributes':{'class':'m-wrap large', 'placeholder': '标题'}})
+        #self._form.add_field('checkbox','是否为广告(勾选为是)','edit_advertisement',data={'value':'','option':[('advertisement',"advertisement")]})
         self._form.add_field('select', '所属广告位', 'identifier', data={'value':identifier, 'option': identifier_options, 'attributes':{'class':'m-wrap large'}})
         self._form.add_field('radio', '广告类型', 'adtype', data={'value': '1', 'option': [("应用", "1"), ("专题", "0"), ("web", "2")]})
         #self._form.add_field('text', '链接', 'link', data={'attributes':{'class':'m-wrap large', 'placeholder': 'id=应用ID/topic_id=专题ID'}})
@@ -181,6 +181,7 @@ class ItemAddView(View):
         self._form.add_field('text', '排序', 'order', data={'attributes':{'class':'m-wrap large', 'placeholder': '排序'}})
         self._form.add_field('checkbox', '投放语言', 'language', data={ 'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家（优先）', 'country', data={ 'value': '', 'option': country_options})
+        self._form.add_field('checkbox','是否为广告(勾选为是)','edit_advertisement',data={'value':'','option':[(' ',"advertisement")]})
         self._form.add_field('file', '上传图片(jpg格式，iPhone 640*251，iPad 408*178)', 'pic', data={ 'attributes': {}})
         self._form.add_validator(AdvertisingItemValidator)
 
@@ -197,12 +198,17 @@ class ItemAddView(View):
 
         language = []
         country = []
+        isAdvertisement = None
         try:
             language = request.form.getlist('language')
             country = request.form.getlist('country')
+            advertisement = request.form.getlist('edit_advertisement')
         except:
             pass
-
+        if len(advertisement)==0:
+            isAdvertisement = "notadvertisement"
+        else:
+            isAdvertisement = "advertisement"
         if self._form.validate():
             if request.form["adtype"] == "1":
                 #it's a app
@@ -222,7 +228,8 @@ class ItemAddView(View):
                 'hash': hash_str,
                 'store_path': save_file,
                 'language': language,
-                'country': country
+                'country': country,
+                'isAdvertisement':isAdvertisement,
             }
             try:
                 DB.advertising.update({'identifier':request.form['identifier']}, {'$push':{'items':items}})
@@ -259,8 +266,9 @@ class ItemDeleteView(View):
             identifier = request.args.get('identifier')
             item_id = request.args.get('id')
             lans = request.args.get('lans').split('*')[:-1]
+            isAdvertisement = request.args.get('isAdvertisement')
             if len(lans):
-                res = DB.advertising.update({'identifier':identifier,'items':{"$elemMatch":{'id':int(item_id)}}},{'$set':{'items.$.language':lans}})
+                res = DB.advertising.update({'identifier':identifier,'items':{"$elemMatch":{'id':int(item_id)}}},{'$set':{'items.$.language':lans,'items.$.isAdvertisement':isAdvertisement}})
             else:
                 res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})
             #res = DB.advertising.update({'identifier':identifier}, {'$pull':{'items':{'id':int(item_id)}}})

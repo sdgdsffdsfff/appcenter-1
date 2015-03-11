@@ -150,17 +150,32 @@ function openModal(_id){
       node.remove(this.value)
     }
   });
+  is_advertisement=0;
+  $("input[name='edit_advertisement']").change(function(){
+    if(this.checked){
+      is_advertisement=1
+    }
+    if(!this.checked){
+      is_advertisement=0
+    }
+  });
+
 }
 
 function addToRes() {
   var div = $('#edit_res');
   var sort = $("input[name='edit_sort']").val();
   var res = sort + " | " + node.toString().replace(/,/g, ' ');
+  if(is_advertisement ==1){
+	  res = res + " | " + "advertisement"
+  }
+  if(is_advertisement ==0){
+	  res = res + " | " + "notadvertisement"
+  }
   $("input[name='edit_sort']").val(0);
   $("input[name='edit_language']").prop('checked', false);
   $("input[name='edit_language']").parent().removeClass('checked');
   div.append("<span class='tag'> <span> "+ res + " </span> <input type='hidden' name='edit_res' value='" + res + "' class='m-wrap small' /> <a href='javascript:void(0);' title='Remove'>x</a> </span>");
-
   node = []
   $("a[title='Remove']").click(function(){
     $(this).parent().remove();

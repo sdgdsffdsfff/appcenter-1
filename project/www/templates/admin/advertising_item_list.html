@@ -80,6 +80,7 @@
                         <td>图片</td>
                         <th>标题</th>
                         <th>链接</th>
+                        <th>是否是广告</th>
                         <th>排序(点击修改)</th>
                         <th>投放语言</th>
                         <th>投放国家</th>
@@ -99,6 +100,13 @@
                         </td>
                         <td>{{ a['title'] }}</td>
                         <td>{{ a['link'] }}</td>
+                        <td>
+                            {%if a['isAdvertisement'] == "advertisement"%}
+                            <span style="width:16px;height: 16px;background:blue;border-radius:10px!important;display: inline-block;"></span>
+                            {%else%}
+                            <span style="width:16px;height: 16px;background:white;border-radius:10px!important;display: inline-block;"></span>
+                            {%endif%}
+                        </td>
                         <td><a href="#" id="order" data-type="text" data-pk="{{ a['id'], identifier }}" data-original-title="Enter order" class="editable editable-click order" style="display: inline;">{{ a.get('order', 1000)|int }}</a></td>
                         <td>{% for lang in a['language'] %} {{lang}} {% endfor %}</td>
                         <td>{% for country in a['country'] %} {{country}} {% endfor %}</td>
@@ -122,6 +130,11 @@
                                                 </label>
                                                 <label class="radio">
                                                     <input type="radio" name="all" class="noneofthem" data-attr="language_{{a['id']}}"/>反选
+                                                </label>
+                                            </div>
+                                            <div class="controls">
+                                                <label class="checkbox">
+                                                    是否是广告(勾选为是)<input type="checkbox" id = "edit_advertisement" name="advertisement" {%if a['isAdvertisement'] == "advertisement" %} value="advertisement" checked="checked" {%else%} value="notadvertisement" {%endif%}/>
                                                 </label>
                                             </div>
                                         </div>
@@ -158,15 +171,35 @@ jQuery(document).ready(function() {
 
 function deleteAdvertisingItem(identifier, id){
     var lans='';
+    var isAdver='';
     //var chenked=$("input[type='checkbox']:checked").val([]);
     var chenked=$("input[name=language_" + id + "]:checked").val([]);
+    if($("input[name=advertisement]").attr("checked") == "checked"){
+        isAdver = "advertisement";
+    }
+    else{
+        isAdver = "notadvertisement";
+    }
     for(var i=0;i<chenked.length;i++){lans=lans+chenked[i].value+'*';}
     var ajax = NG.Ajax();
-    var url = "{{url_for('admin_advertising_item_delete')}}?identifier="+identifier+"&id="+id+"&lans="+lans;
+    var url = "{{url_for('admin_advertising_item_delete')}}?identifier="+identifier+"&id="+id+"&lans="+lans+"&isAdvertisement="+isAdver;
     ajax.Get(url, function(res){
         location.reload();
     });
 }
+
+$("input[name='advertisement']").click(function(){
+        if($("input[name=advertisement]").attr("checked") == "checked"){
+            $("input[name=advertisement]").removeAttr("checked")
+            //$("input[name=advertisement]").parent().removeClass("checked")
+            $("input[name=advertisement]").attr("value", "notadvertisement")
+        }else{
+            $("input[name=advertisement]").attr("checked", "checked")
+            $("input[name=advertisement]").attr("value", "advertisement")
+            //$("input[name=advertisement]").parent().addClass("checked")
+        }
+	});
+
 
 $("#ad_search").click(function(event) {
     event.preventDefault();

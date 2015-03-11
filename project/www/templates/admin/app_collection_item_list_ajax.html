@@ -4,9 +4,9 @@
 		<thead>
 			<tr>
 				<th>ICON</th>
-				<td>名称(BundleId)</td>
+				<th>名称(BundleId)</th>
                                 <th>国家</th>
-				<th>排序 | 语言</th>
+				<th>是否是广告 | 排序 | 语言</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -21,7 +21,11 @@
                     {% for item in collection_list[a] %}
                     <li>
                       <span>
-                      {{ item['sort'] }} | {% for lang in item['language'] %} {{lang}}  {% endfor %}
+                        {%if item['isAdvertisement'] == "advertisement"%}
+                        <span style="width:16px;height: 16px;background:blue;border-radius:10px!important;display: inline-block;"></span>
+                        {%else%}
+                        <span style="width:16px;height: 16px;background:white;border-radius:10px!important;display: inline-block;"></span>
+                        {%endif%} | {{ item['sort'] }} | {% for lang in item['language'] %} {{lang}}  {% endfor %}
                       </span>
                     </li>
                     {% endfor %}
@@ -57,9 +61,9 @@
                   {% for item in collection %}
                   <span class='tag'>
                     <span>
-                      {{ item['sort'] }} | {% for lang in item['language'] %} {{lang}}  {% endfor %}
+                      {{ item['sort'] }} | {% for lang in item['language'] %} {{lang}}  {% endfor %} | {{ item['isAdvertisement'] }}
                     </span>
-                    <input type='hidden' name='edit_res' value="{{ item['sort'] }} | {% for lang in item['language'] %} {{lang}}  {% endfor %}" class='m-wrap small' />
+                    <input type='hidden' name='edit_res' value="{{ item['sort'] }} | {% for lang in item['language'] %} {{lang}}  {% endfor %} | {{ item['isAdvertisement'] }}" class='m-wrap small' />
                     <a href='javascript:void(0);' title='Remove'>x</a>
                   </span>
                   {% endfor %}
@@ -70,6 +74,11 @@
                 <div class="controls">
                     <input type="text" placeholder="small" name="edit_sort" value="0" class="m-wrap small" />
                     <span class="help-inline"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    是否是广告(勾选为是)<input type="checkbox" name="edit_advertisement"/>
                 </div>
             </div>
             <div class="control-group">
