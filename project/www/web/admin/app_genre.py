@@ -24,13 +24,22 @@ class ListView(View):
     @route('/list', endpoint='admin_genre_list')
     @login_required
     def get(self):
-        genre_list = DB.app_genre.find().sort('genre_id', -1)
-        genre_id = request.args.get("genre_id", "")
 
+        get_genre = request.args.get("get_genre", "6014")  # 默认为游戏
+        if get_genre == '1000':
+            where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021, 36, 1000]}}
+            genre_list = list(DB.app_genre.find(where).sort('genre_id', -1))
+        else:
+            genre_list = list(DB.app_genre.find({"parentGenre":int(get_genre)}).sort('genre_id', -1))
+
+        genre_id = request.args.get("genre_id", "")
         self._view.assign('create_pic_url', create_pic_url)
         self._view.assign('create_pic_url_by_path', create_pic_url_by_path)
         self._view.assign('genre_list', genre_list)
-        return self._view.render('app_genre_list', genre_id=genre_id)
+        self._view.assign('get_genre', get_genre)
+
+        return self._view.render('app_genre_list', genre_id=genre_id,genre_list= genre_list)
+
 
     @route("/icon", endpoint="admin_genre_icon")
     @login_required

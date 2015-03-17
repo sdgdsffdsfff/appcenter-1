@@ -240,8 +240,8 @@ class CreateView(View):
                     'releaseNotes':request.form['releaseNotes'],
                     'supportedDevices': request.form.getlist('supportedDevices'),
                     'fileSizeBytes': request.form['fileSizeBytes'],
-                    "superurl": request.form["superurl"],
-                    "superurl_sign": request.form["superurl_sign"]
+                    "superurl": request.form["superurl"].strip(),
+                    "superurl_sign": request.form["superurl_sign"].strip()
                 }
                 DB.AppBase.update({'bundleId':request.form['bundleId']}, {'$set':data}, upsert=True)
                 app = DB.AppBase.find_one({"trackId": int(request.form["trackId"])})
