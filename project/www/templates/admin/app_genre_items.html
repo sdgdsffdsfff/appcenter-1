@@ -162,7 +162,42 @@ function addToLeft(_id, itemId) {
 	}else{
 
 		var url = "{{url_for('app_genre_item_add')}}?"+ lang6 +"&bundleId="+bunldid + '&'+paramVal;
-		alert(url)
+		//alert(url)
+		ajax.Get(url, function(res){
+			if(res.status == 'success'){
+				loadRight();
+			}
+			else{
+				alert(res.message);
+			}
+		 });
+	}
+}
+
+function updateRight(_id, itemId) {
+	var ajax= NG.Ajax();
+	var form = $('#'+_id+"_form");
+	var itsss = $('input[name=sort]:checked').val();
+	var theurl = window.location.href;
+	var index = theurl.indexOf('genre_id=');
+	var paramVal=theurl.substr(index,theurl.length);
+	var bunldid= $('#'+itemId+'_form').attr('data-value')
+
+
+	var lang1 = $('#'+itemId+'_form').serialize().replace(new RegExp('&language=','g'),',');
+	var lang2 =lang1.replace(',','&language=');
+	var lang3 = lang2.replace(new RegExp('&device_sign=','g'),':');
+	var lang4 = lang3.replace(':','&device_sign=');
+	var lang5 = lang4.replace(new RegExp('&sort=','g'),'*');
+	var lang6 = lang5.replace('*','&sort=');
+
+	if(lang1 == lang6){
+		alert("请勾选选项！！")
+		return false
+	}else{
+
+		var url = "{{url_for('app_genre_item_add')}}?update=1&itemId="+ itemId +"&"+ lang6 +"&bundleId="+bunldid + '&'+paramVal;
+		//alert(url)
 		ajax.Get(url, function(res){
 			if(res.status == 'success'){
 				loadRight();
@@ -175,8 +210,8 @@ function addToLeft(_id, itemId) {
 }
 
 
-function deleteRight(bundleId){
-	var url = "{{url_for('app_genre_item_delete')}}?bundleId="+bundleId;
+function deleteRight(id){
+	var url = "{{url_for('app_genre_item_delete')}}?id="+id;
 	ajax.Get(url, function(res){
 		if(res.status == 'success'){
 			loadRight();

@@ -13,7 +13,7 @@ from www.controller.app.header import create_pic_url,artworkUrl512_to_114_icon
 from flask.ext.login import login_required
 import pymongo
 import math
-
+from bson import ObjectId
 
 class View(FlaskView):
     route_base = '/genre'
@@ -24,7 +24,6 @@ class ListView(View):
     @route('/list', endpoint='admin_genre_list')
     @login_required
     def get(self):
-
         get_genre = request.args.get("get_genre", "6014")  # 默认为游戏
         if get_genre == '1000':
             where = {'parentGenre':{'$nin': [6014, 6021]}, 'genreId':{'$nin':[6014, 6021, 36, 1000]}}
@@ -118,8 +117,12 @@ class ItemAddView(View):
             genre_id = request.args.get("genre_id", 0)
             order = int(request.args.get('order', 0))
 
+            upd = int(request.args.get('update', 0))
+            itemId = request.args.get('itemId', 0)
 
             appinfo = dict(DB.AppBase.find_one({'bundleId':bundleId}))
+            ID = list(DB.AppBase.find({'bundleId':bundleId}))[0]['_id']
+
             appkeys = []
             mylanguage = []
             [mylanguage.append(language) for language in languages if language in ['zh-Hans', 'ar']]
@@ -136,8 +139,12 @@ class ItemAddView(View):
             except: appinfo['size'] = 'unknown'
             try: int(appinfo['averageUserRating'])
             except: appinfo['averageUserRating'] = 3
+
+
+            if upd:
+                DB.AppKeylists.remove({'_id':ObjectId(itemId)})
             for appkey in appkeys:
-                DB.AppKeylists.update({"appKey" : appkey}, {"$set": {
+                DB.AppKeylists.insert({"appKey" : appkey,
                             "bundleId" : bundleId,
                             "trackName" : appinfo["trackName"],
                             "supportIpad" :appinfo['supportIpad'] ,
@@ -145,8 +152,9 @@ class ItemAddView(View):
                             "icon" :appinfo['icon'] ,
                             "averageUserRating" : appinfo["averageUserRating"],
                             "size" : appinfo["size"],
-                            "order" : order
-                        }}, True)
+                            "order" : order,
+                            "ID":ID
+                        })
             status, message = 'success', ''
         except Exception, ex:
             status, message = 'error', str(ex)
@@ -164,11 +172,18 @@ class ItemListView(View):
         language = request.args.get("language", "en") if request.args.get("language", "en") in ['zh-Hans','en', 'ar'] else 'en'
         device = request.args.get("device", "iphone_1")
         genre_id = request.args.get("genre_id", 0)
+
+        langs = list(DB.client_support_language.find())  # by 0317 17:32
+
         #appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
         appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
         item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
+
+        for item in item_list:
+            item['trackId'] = list(DB.AppBase.find({'bundleId':item['bundleId']}))[0]['trackId']
+
         self._view.ajax_response('success', 'message')
-        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list)   # P0ST
+        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list,langs=langs)   # P0ST
         #return self._view.render('app_genre_ajaxright',item_list=item_list)  #  GET
 
 
@@ -181,7 +196,8 @@ class DeleteView(View):
     def delete_items(self):
         try:
             bundleId = request.args.get('bundleId')
-            DB.AppKeylists.remove({'bundleId':bundleId})
+            id = request.args.get('id', 0)
+            DB.AppKeylists.remove({'_id':ObjectId(id)})
             status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)

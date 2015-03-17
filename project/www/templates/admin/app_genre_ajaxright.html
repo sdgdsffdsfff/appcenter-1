@@ -4,7 +4,8 @@
 											<tr>
 												<td>ICON</td>
 												<th>排序</th>
-												<th>名称(BundleId)</th>
+												<th>名称&nbsp;(BundleId | TrackId)</th>
+                                                <th>更新</th>
 												<th>操作</th>
 											</tr>
 										</thead>
@@ -13,7 +14,84 @@
 										<tr>
 											<td><img style="width:40px; height:40px" src="{{ item['icon'] }}" /></td>
 											<td>{{ item['order'] }}</td>
-											<td><strong>{{ item['trackName'] }}</strong><br/>{{ item['bundleId'] }}</td>
+											<td><strong>{{ item['trackName'] }}</strong><br/>{{ item['bundleId'] }} &nbsp;|&nbsp; {{ item['trackId'] }}</td>
+
+											<td>
+												<a data-toggle="modal" href="#confirm_box0_{{item['_id']}}" class="btn blue" title="更新">更新
+												</a>
+												<div id="confirm_box0_{{item['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+													<div class="modal-body">
+
+
+												<form action="#"  id="{{item['_id']}}_form" name="{{item['bundleId']}}_form" class="form-horizontal" data-value="{{ item['bundleId'] }}"">
+													<div class="control-group">
+														<label class="control-label">排序</label>
+														<div class="controls">
+															<input type="text" placeholder="输入数字" name="order" value="0" class="m-wrap small"/>
+															<span class="help-inline"></span>
+														</div>
+														<div class="control-group">
+															<label class="control-label">语言 (不限语言不选)</label>
+															<div class="controls">
+																{% for lang in langs %}
+																<label class="checkbox">
+																	<input type="checkbox" name="language" value="{{ lang['code'] }}" /> {{ lang['name'] }}
+																</label>
+																{% endfor %}
+															</div>
+															<div confirm_box_{{item['_id']}}class="controls">
+																<label class="radio">
+																	<input type="radio" name="all" class="alllang" data-attr="language"/>全选
+														        </label>
+															    <label class="radio">
+															        <input type="radio" name="all" class="noneofthem" data-attr="language"/>反选
+																</label>
+															</div>
+														</div>
+														<div class ="control-group">
+															<label class="control-label">版本选择</label>
+															<div class="controls control-check">
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="iphone_1"/>iphone(正版)
+																</label>
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="iphone_0"/>iphone(越狱版)
+																</label>
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="ipad_1"/>ipad(正版)
+																</label>
+																<label class="checkbox">
+																	<input type = "checkbox" name= "device_sign" value="ipad_0"/>ipad(越狱版)
+																</label>
+
+															</div>
+														</div>
+														<div class ="control-group">
+															<label class="control-label">选择栏目</label>
+															<div class="controls">
+																<label class="radio">
+																	<input type = "checkbox" name= "sort" value="sort"/>推荐
+																</label>
+																<label class="radio">
+																	<input type = "checkbox" name= "sort" value="hot"/>热门
+																</label>
+																<label class="radio">
+																	<input type = "checkbox" name= "sort" value="new"/>最新
+																</label>
+															</div>
+														</div>
+													</div>
+												</form>
+
+
+													</div>
+													<div class="modal-footer">
+														<button type="button" data-dismiss="modal" class="btn">取消</button>
+														<button type="button" data-dismiss="modal" class="btn red" onclick="updateRight('{{item['bundleId']}}', '{{item['_id']}}')">更新</button>
+													</div>
+												</div>
+											</td>
+
 											<td>
 												<a data-toggle="modal" href="#confirm_box_{{item['_id']}}" class="btn red" title="删除">删除
 												</a>
@@ -23,10 +101,14 @@
 													</div>
 													<div class="modal-footer">
 														<button type="button" data-dismiss="modal" class="btn">取消</button>
-														<button type="button" data-dismiss="modal" class="btn red" onclick="deleteRight('{{ item['bundleId'] }}')">确定</button>
+														<button type="button" data-dismiss="modal" class="btn red" onclick="deleteRight('{{ item['_id'] }}')">确定</button>
 													</div>
 												</div>
 											</td>
+
+
+
+
 										</tr>
 										{% endfor %}
 										</tbody>
