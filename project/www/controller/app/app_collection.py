@@ -65,10 +65,10 @@ class AppCollectionController(ControllerBase):
                 superurl = item.get("superurl", "").strip()
                 superurl_sign = item.get("superurl_sign", "").strip()
                 if superurl != "" and sign != 1:
-                    download_info["ipaDownloadUrl"] = superurl
+                    download_info["ipaDownloadUrl"] = superurl.strip().replace(' ', '%20')
                     download_info["issuperurl"] = 1
                 if superurl_sign != "" and sign != 0:
-                    download_info["ipaDownloadUrl"] = superurl_sign
+                    download_info["ipaDownloadUrl"] = superurl_sign.strip().replace(' ', '%20')
                     download_info["issuperurl_sign"] = 1
 
                 app_trackName = tmp_item['trackName']
