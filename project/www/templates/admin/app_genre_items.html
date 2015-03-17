@@ -50,7 +50,7 @@
 					<div class="btn-group">
 						<a class="btn red" data-toggle="modal"  onclick="searchApp()">搜索 <i class="icon-search"></i></a>
 					</div>
-					<input type="text" class="search-bunlid" placeholder="BundleId" style="margin-top:10px;margin-left:10px;">
+					<input type="text" class="search-bunlid" placeholder="TrackId" style="margin-top:10px;margin-left:10px;">
 					<div class="btn-group pull-right">
 						<div id="loading" style="visibility:hidden;"><img src="/static/metronic1.4/assets/img/loading.gif" /></div>
 					</div>
@@ -61,7 +61,6 @@
 						</div>
 						</form>
 				<div id="app_data_grad_left">
-				这里是zuo边的数据显示
 				<!--left-->
 			</div>
 		</div>
@@ -223,7 +222,7 @@ function searchApp(){
 	if (valSer== ""){
 		return false;
 	}else{
-	    var url = "{{url_for('admin_genre_left')}}?bundleId=" + valSer;
+	    var url = "{{url_for('admin_genre_left')}}?trackId=" + valSer;
 	}
 
 	var ajax= NG.Ajax();

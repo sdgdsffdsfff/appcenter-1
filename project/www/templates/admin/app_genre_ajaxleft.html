@@ -2,7 +2,7 @@
 						<thead>
 							<tr>
 								<td>ICON</td>
-								<th>名称(BundleId)</th>
+								<th>名称(TrackId)</th>
 								<th>操作</th>
 							</tr>
 						</thead>
@@ -10,7 +10,7 @@
 						{% for item in items_list %}
 						   <tr>
 								<td><img style="width:40px; height:40px" src="{{ item['icon'] }}" /></td>
-								<td><strong>{{ item['trackName'] }}</strong><br/>{{ item['bundleId'] }}</td>
+								<td><strong>{{ item['trackName'] }}</strong><br/>{{ item['trackId'] }}</td>
 								<td>
 									  <a data-toggle="modal" href="#confirm_box_{{item['_id']}}" class="btn blue icn-only" title="添加">
 							     		<i class="m-icon-swapright m-icon-white"></i>

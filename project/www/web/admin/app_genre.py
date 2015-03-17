@@ -65,7 +65,9 @@ class ListView(View):
     @login_required
     def show_itemleft(self):
         genre_id = request.args.get("genre_id", 0)
-        bundleId = request.args.get("bundleId", "")
+        #bundleId = request.args.get("bundleId", "")
+        trackId = request.args.get("trackId")
+
         page= int(request.args.get("page",1))
         langs = list(DB.client_support_language.find())
 
@@ -79,7 +81,8 @@ class ListView(View):
             #items_list = list(DB.AppBase.find({"genreIds": {"$all": [genre_id]}}).skip((page-1)*page_size).limit(page_size))
             items_list = list(DB.AppBase.find({'review': 1}).sort([('_id',pymongo.DESCENDING)]).skip((page-1)*page_size).limit(page_size))
         else:
-            items_list = list(DB.AppBase.find({'bundleId':bundleId}))
+            #items_list = list(DB.AppBase.find({'bundleId':bundleId}))
+            items_list = list(DB.AppBase.find({'trackId':int(trackId)}))
             count = total_page = prev_page = next_page = 1
 
         for item in items_list:
