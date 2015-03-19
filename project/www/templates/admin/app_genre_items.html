@@ -84,7 +84,7 @@
 								<label>
 									语言
 									<select size="1" onchange="changeForm()" name="language" aria-controls="language" class="m-wrap small lang">
-										<option value="" selected="selected">英文</option>
+										<option value="all" selected="selected">全部</option>
 										{% for lang in lang_options %}
 										<option value="{{ lang['code'] }}">{{ lang['name'] }}</option>
 										{% endfor %}

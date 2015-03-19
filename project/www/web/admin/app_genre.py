@@ -146,7 +146,7 @@ class ItemAddView(View):
             if upd:
                 DB.AppKeylists.remove({'_id':ObjectId(itemId)})
             for appkey in appkeys:
-                DB.AppKeylists.insert({"appKey" : appkey,
+                hasfind = DB.AppKeylists.find({"appKey" : appkey,
                             "bundleId" : bundleId,
                             "trackName" : appinfo["trackName"],
                             "supportIpad" :appinfo['supportIpad'] ,
@@ -154,9 +154,20 @@ class ItemAddView(View):
                             "icon" :appinfo['icon'] ,
                             "averageUserRating" : appinfo["averageUserRating"],
                             "size" : appinfo["size"],
-                            "order" : order,
                             "ID":ID
-                        })
+                        }).count()
+                if not hasfind:
+                    DB.AppKeylists.insert({"appKey" : appkey,
+                                "bundleId" : bundleId,
+                                "trackName" : appinfo["trackName"],
+                                "supportIpad" :appinfo['supportIpad'] ,
+                                "supportIphone" : appinfo['supportIphone'],
+                                "icon" :appinfo['icon'] ,
+                                "averageUserRating" : appinfo["averageUserRating"],
+                                "size" : appinfo["size"],
+                                "order" : order,
+                                "ID":ID
+                            })
             status, message = 'success', ''
         except Exception, ex:
             status, message = 'error', str(ex)
@@ -171,12 +182,11 @@ class ItemListView(View):
     @login_required
     def show_itemright(self):
         sort = request.args.get("sort", "sort")
-        language = request.args.get("language", "en") if request.args.get("language", "en") in ['zh-Hans','en', 'ar'] else 'en'
+        language = request.args.get("language", "all") if request.args.get("language", "all") in ['zh-Hans','en', 'ar','all'] else 'en'
         device = request.args.get("device", "iphone_1")
         genre_id = request.args.get("genre_id", 0)
         appkey= request.args.get("appkey",0)
         page= int(request.args.get("pagerig",1))
-
         langs = list(DB.client_support_language.find())  # by 0317 17:32
 
         #appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
@@ -184,11 +194,14 @@ class ItemListView(View):
             appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
 
         page_size = 12
-        count = DB.AppKeylists.find({'appKey':appkey}).count()
+        if language=='all' or '_all_' in appkey:
+            appkey = '%s_.*_%s_%s'  % (device,genre_id, sort)
+
+        count = DB.AppKeylists.find({'appKey':re.compile(appkey)}).count()
         total_page = int(math.ceil(count / float(page_size)))
         prev_page = (page - 1) if page - 1 > 0 else 1
         next_page = (page + 1) if page + 1 < total_page else total_page
-        item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]).skip((page-1)*page_size).limit(page_size))
+        item_list = list(DB.AppKeylists.find({'appKey':re.compile(appkey)}).sort([('order',pymongo.DESCENDING)]).skip((page-1)*page_size).limit(page_size))
 
         #item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
         for item in item_list:
