@@ -289,6 +289,23 @@ function ajaxPage(url) {
 	}, true);
 }
 
+function ajaxPagerig(url) {
+	var p = url.split('?');
+	if(p[1]){
+		location.hash = '#' + p[1];
+	}
+	$('#loading').css({"visibility":"visible"});
+	var ajax = NG.Ajax();
+	ajax.Get(url, function(res){
+		if(res.status='success'){
+			$('#aplication_data_grad').html(res.data);
+		}
+		$('#loading').css({"visibility":"hidden"});
+		//重新渲染
+		App.initUniform();
+	}, true);
+}
+
 //加载可选应用列表
 ajaxPage("{{url_for('admin_genre_left')}}");
 

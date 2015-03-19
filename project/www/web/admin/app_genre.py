@@ -65,10 +65,12 @@ class ListView(View):
     def show_itemleft(self):
         genre_id = request.args.get("genre_id", 0)
         #bundleId = request.args.get("bundleId", "")
-        trackId = request.args.get("trackId")
+        trackId = request.args.get("trackId",0)
 
         page= int(request.args.get("page",1))
         langs = list(DB.client_support_language.find())
+
+        print genre_id,'genre_id'
 
         if genre_id:
             page_size = 12
@@ -172,18 +174,28 @@ class ItemListView(View):
         language = request.args.get("language", "en") if request.args.get("language", "en") in ['zh-Hans','en', 'ar'] else 'en'
         device = request.args.get("device", "iphone_1")
         genre_id = request.args.get("genre_id", 0)
+        appkey= request.args.get("appkey",0)
+        page= int(request.args.get("pagerig",1))
 
         langs = list(DB.client_support_language.find())  # by 0317 17:32
 
         #appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
-        appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
-        item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
+        if not appkey:
+            appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
 
+        page_size = 12
+        count = DB.AppKeylists.find({'appKey':appkey}).count()
+        total_page = int(math.ceil(count / float(page_size)))
+        prev_page = (page - 1) if page - 1 > 0 else 1
+        next_page = (page + 1) if page + 1 < total_page else total_page
+        item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]).skip((page-1)*page_size).limit(page_size))
+
+        #item_list = list(DB.AppKeylists.find({'appKey':appkey}).sort([('order',pymongo.DESCENDING)]))
         for item in item_list:
             item['trackId'] = list(DB.AppBase.find({'bundleId':item['bundleId']}))[0]['trackId']
 
         self._view.ajax_response('success', 'message')
-        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list,langs=langs)   # P0ST
+        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list,langs=langs,appkey=appkey,total_pagerig=total_page,countrig=count,prev_pagerig=prev_page,next_pagerig=next_page,genre_id=genre_id)   # P0ST
         #return self._view.render('app_genre_ajaxright',item_list=item_list)  #  GET
 
 

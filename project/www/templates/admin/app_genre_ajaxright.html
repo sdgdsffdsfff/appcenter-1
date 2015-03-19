@@ -6,7 +6,7 @@
 												<th>排序</th>
 												<th>名称&nbsp;(BundleId | TrackId)</th>
                                                 <th>更新</th>
-												<th>操作</th>
+												<th>删除</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -107,9 +107,17 @@
 											</td>
 
 
-
-
 										</tr>
 										{% endfor %}
 										</tbody>
 								</table>
+                                <div class="pagination">
+                                  <ul>
+                                    <li><a href="javascript:;">总计{{ countrig }}条记录, 共{{ total_pagerig }}页</a></li>
+
+                                    <li><a href="javascript:;" onclick="ajaxPagerig('{{ url_for('admin_genre_right') }}?appkey={{appkey}}&pagerig={{prev_pagerig}}&genre_id={{genre_id}}')">上一页</a></li>
+                                    <li><a href="javascript:;" onclick="ajaxPagerig('{{ url_for('admin_genre_right') }}?appkey={{appkey}}&pagerig={{next_pagerig}}&genre_id={{genre_id}}')">下一页</a></li>
+
+
+                                  </ul>
+                                </div>
