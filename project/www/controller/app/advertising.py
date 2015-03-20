@@ -9,7 +9,7 @@ class AdvertisingController(ControllerBase):
     def __init__(self, identifier, language='en', ip=None):
         self._identifier = identifier
         self._language = language
-        self._country = get_country_code(ip)
+        self._country = get_country_code_app_advertising(ip)
 
     def get(self, num):
         '''

@@ -187,6 +187,22 @@ def get_country_code(ip):
         pass
     return code if code != 'CN' else 'ZH'
 
+def get_country_code_app_advertising(ip):
+    '''
+    根据ip获取国家代码,用于首页推荐和广告幻灯片的接口使用
+    '''
+    code = ''
+    if ip == None:
+        return code
+    try:
+        gi4 = pygeoip.GeoIP(settings['geoip_data'], pygeoip.MEMORY_CACHE)
+        code2 = gi4.country_code_by_addr(ip)
+        if code2 != '':
+            code = code2
+    except:
+        pass
+    return code
+
 def file_size_format(size_byte):
     return '%.2fMB' % (int(size_byte) / 1024.0 / 1024)
 

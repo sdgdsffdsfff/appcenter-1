@@ -11,7 +11,7 @@ class AppCollectionController(ControllerBase):
         self._language = language
 
         if country is None:
-            self._country = get_country_code(ip)
+            self._country = get_country_code_app_advertising(ip)
         else:
             self._country = country
 
@@ -34,6 +34,18 @@ class AppCollectionController(ControllerBase):
             app_controller = AppController()
             bundleids = [itemq.get('bundleId', '') for itemq in res['items']]
             download_infos = app_controller.get_downloads_of_allbundleids(bundleids, sign, vv_version)
+            list_pop = []
+            #如果一个应用在不同语言和不同国家下都有推荐,则以国家优先
+            for item_lan in res['items']:
+                is_break = False
+                if 'language' in item_lan and self._language in item_lan['language']:
+                    for item_cou in res['items']:
+                        if 'country' in item_cou and self._country in item_cou['country']:
+                            if item_lan['bundleId'] == item_cou['bundleId']:
+                                list_pop.append(item_lan)
+            for pop in list_pop:
+                res['items'].pop(res['items'].index(pop))
+
             for item in res['items']:
                 tmp_item = None
                 if self._language == "":
@@ -48,7 +60,6 @@ class AppCollectionController(ControllerBase):
                         tmp_item = item
                     elif 'language' not in item and 'country' not in item:
                         tmp_item = item
-
                 if tmp_item is None:
                     continue
                 try:
