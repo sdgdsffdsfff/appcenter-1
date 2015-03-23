@@ -31,9 +31,11 @@
 															<label class="control-label">语言 (不限语言不选)</label>
 															<div class="controls">
 																{% for lang in lang_options %}
+                                                                {% if lang['code'] != "zh-Hant" %}
 																<label class="checkbox">
 																	<input type="checkbox" name="language" value="{{ lang['code'] }}" /> {{ lang['name'] }}
 																</label>
+                                                                {% endif %}
 																{% endfor %}
 															</div>
 															<div confirm_box_{{item['_id']}}class="controls">

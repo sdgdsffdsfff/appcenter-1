@@ -221,12 +221,31 @@ class DeleteView(View):
     def delete_items(self):
         try:
             bundleId = request.args.get('bundleId')
-            id = request.args.get('id', 0)
-            DB.AppKeylists.remove({'_id':ObjectId(id)})
-            status, message = 'success', '删除成功'
+            genre_id = request.args.get('genre_id')
+            de = request.args.get('de',0)
+            if de:
+                language = request.args.get('language','').split(',')
+                device_sign = request.args.get('device_sign','').split(':')
+                sort = request.args.get('sort','').split('*')
+
+                [DB.AppKeylists.remove({'appKey':re.compile('%s_%s_%s_%s'  % (d,l,genre_id,s))}) for d in device_sign for l in language for s in sort]
+                status, message,data = 'success', '删除成功',{}
+            else:
+                genre_apps = list(DB.AppKeylists.find({"bundleId":bundleId,'appKey':re.compile(genre_id)},{"appKey":1,"_id":0}))
+                #genre_apps = list(DB.AppKeylists.find({"bundleId":bundleId,'appKey':re.compile(genre_id)},{"appKey":1,"bundleId":1}))
+                appKeys = [i["appKey"] for i in genre_apps]
+                devices = list(set([a.split('_')[0] +'_'+a.split('_')[1] for a in appKeys]))
+                lans = list(set([a.split('_')[2] for a in appKeys]))
+                so = list(set([a.split('_')[-1] for a in appKeys]))
+
+                data={}
+                data['devices'] = devices
+                data['lans'] = lans
+                data['so'] = so
+                status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)
-        return self._view.ajax_response(status, message)
+        return self._view.ajax_response(status, message,data)
 
 
 class SyncView(View):

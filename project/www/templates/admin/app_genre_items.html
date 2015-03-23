@@ -86,7 +86,9 @@
 									<select size="1" onchange="changeForm()" name="language" aria-controls="language" class="m-wrap small lang">
 										<option value="all" selected="selected">全部</option>
 										{% for lang in lang_options %}
+                                        {% if lang['code'] != "zh-Hant" %}
 										<option value="{{ lang['code'] }}">{{ lang['name'] }}</option>
+                                        {% endif %}
 										{% endfor %}
 									</select>
 	                                最新
@@ -138,7 +140,6 @@ function loadRight(){
 	}, true);
 }
 
-
 function addToLeft(_id, itemId) {
 	var ajax= NG.Ajax();
 	var form = $('#'+_id+"_form");
@@ -156,10 +157,23 @@ function addToLeft(_id, itemId) {
 	var lang5 = lang4.replace(new RegExp('&sort=','g'),'*');
 	var lang6 = lang5.replace('*','&sort=');
 
-	if(lang1 == lang6){
-		alert("请勾选选项！！")
+    if(lang6.indexOf('&language=')<0){
+		alert("请选择语言 ！！！")
 		return false
-	}else{
+    }
+    else if(lang6.indexOf('&device_sign=')<0){
+		alert("请选择版本 ！！！")
+		return false
+    }
+    else if(lang6.indexOf('&sort=')<0){
+		alert("请选择栏目 ！！！")
+		return false
+    }
+	else if(lang1 == lang6){
+		alert("请勾选选项！！！")
+		return false
+	}
+    else{
 
 		var url = "{{url_for('app_genre_item_add')}}?"+ lang6 +"&bundleId="+bunldid + '&'+paramVal;
 		//alert(url)
@@ -191,11 +205,23 @@ function updateRight(_id, itemId) {
 	var lang5 = lang4.replace(new RegExp('&sort=','g'),'*');
 	var lang6 = lang5.replace('*','&sort=');
 
-	if(lang1 == lang6){
-		alert("请勾选选项！！")
+    if(lang6.indexOf('&language=')<0){
+		alert("请选择语言 ！！！")
 		return false
-	}else{
-
+    }
+    else if(lang6.indexOf('&device_sign=')<0){
+		alert("请选择版本 ！！！")
+		return false
+    }
+    else if(lang6.indexOf('&sort=')<0){
+		alert("请选择栏目 ！！！")
+		return false
+    }
+	else if(lang1 == lang6){
+		alert("请勾选选项 ！！！")
+		return false
+	}
+    else{
 		var url = "{{url_for('app_genre_item_add')}}?update=1&itemId="+ itemId +"&"+ lang6 +"&bundleId="+bunldid + '&'+paramVal;
 		//alert(url)
 		ajax.Get(url, function(res){
@@ -210,16 +236,98 @@ function updateRight(_id, itemId) {
 }
 
 
-function deleteRight(id){
-	var url = "{{url_for('app_genre_item_delete')}}?id="+id;
+function deleteRight(bundleId,genre_id,formid){
+    var data = $(formid).serialize();
+	var lang1 = $(formid).serialize().replace(new RegExp('&language=','g'),',');
+	var lang3 = lang1.replace(new RegExp('&device_sign=','g'),':');
+	var lang4 = lang3.replace(':','&device_sign=');
+	var lang5 = lang4.replace(new RegExp('&sort=','g'),'*');
+	var lang6 = lang5.replace('*','&sort=');
+    var url = "{{url_for('app_genre_item_delete')}}?de=1&bundleId="+bundleId +'&genre_id='+genre_id+'&'+lang6;
+
+    if(lang6.indexOf('language=')<0){
+		alert("请选择语言 ！！！")
+		return false
+    }
+    else if(lang6.indexOf('&device_sign=')<0){
+		alert("请选择版本 ！！！")
+		return false
+    }
+    else if(lang6.indexOf('&sort=')<0){
+		alert("请选择栏目 ！！！")
+		return false
+    }
+    else{
+        ajax.Get(url, function(res){
+            if(res.status == 'success'){
+                alert(res.message);
+                loadRight();
+            }else{
+                alert(res.message);
+            }
+        });
+    }
+}
+
+function deleteRight2(bundleId,genre_id){
+	var url = "{{url_for('app_genre_item_delete')}}?bundleId="+bundleId +'&genre_id='+genre_id;
 	ajax.Get(url, function(res){
 		if(res.status == 'success'){
-			loadRight();
+            $("#delete_lans").empty()
+            $("#delete_devices").empty()
+            $("#delete_so").empty()
+            var dehtml = ""
+            for(var i= 0;i<res.data.lans.length;i++){
+                if(res.data.lans[i]=='zh-Hans'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:17px;height:17px;' name='language' value='zh-Hans' /> 中文简体 Chinese &nbsp;&nbsp;</label>"
+                }
+                if(res.data.lans[i]=='ar'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:17px;height:17px;' name='language' value='ar' /> 阿拉伯语 Arabic &nbsp;&nbsp;</label>"
+                }
+                if(res.data.lans[i]=='en'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:17px;height:17px;' name='language' value='en' /> 英语 English &nbsp;&nbsp;</label>"
+                }
+            }
+            $("#delete_lans").append(dehtml)
+
+            var dehtml = ""
+            for(var i= 0;i<res.data.devices.length;i++){
+                if(res.data.devices[i]=='iphone_1'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:19px;height:19px;' name='device_sign' value='iphone_1' /> iphone(正版) &nbsp;&nbsp;</label>"
+                }
+                if(res.data.devices[i]=='iphone_0'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:19px;height:19px;' name='device_sign' value='iphone_0' /> iphone(越狱版) &nbsp;&nbsp;</label>"
+                }
+                if(res.data.devices[i]=='ipad_1'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:19px;height:19px;' name='device_sign' value='ipad_1' /> ipad(正版) &nbsp;&nbsp;</label>"
+                }
+                if(res.data.devices[i]=='ipad_0'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:19px;height:19px;'name='device_sign' value='ipad_0' /> ipad(越狱版) &nbsp;&nbsp;</label>"
+                }
+            }
+            $("#delete_devices").append(dehtml)
+
+            var dehtml = ""
+            for(var i= 0;i<res.data.so.length;i++){
+                if(res.data.so[i]=='sort'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:19px;height:19px;' name='sort' value='sort' /> 推荐&nbsp;&nbsp;</label>"
+                }
+                if(res.data.so[i]=='hot'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:19px;height:19px;' name='sort' value='hot' /> 热门&nbsp;&nbsp;</label>"
+                }
+                if(res.data.so[i]=='new'){
+                    dehtml+= "<label class='checkbox'><input type='checkbox' style='width:19px;height:19px;' name='sort' value='new' /> 最新&nbsp;&nbsp;</label>"
+                }
+            }
+            $("#delete_so").append(dehtml)
+            $("#delete2").css("display","block")
 		}else{
 			alert(res.message);
 		}
 	});
 }
+
+
 function changeForm(){
 	loadRight()
 }

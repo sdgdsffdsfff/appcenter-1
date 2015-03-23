@@ -19,70 +19,70 @@
 											<td>
 												<a data-toggle="modal" href="#confirm_box0_{{item['_id']}}" class="btn blue" title="更新">更新
 												</a>
+                                                <!--<button type="button" data-dismiss="modal" class="btn blue" onclick="loadBox('confirm_box0_{{item['_id']}}')">更新2</button>-->
 												<div id="confirm_box0_{{item['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
 													<div class="modal-body">
+                                                            <form action="#"  id="{{item['_id']}}_form" name="{{item['bundleId']}}_form" class="form-horizontal" data-value="{{ item['bundleId'] }}"">
+                                                                <div class="control-group">
+                                                                    <label class="control-label">排序</label>
+                                                                    <div class="controls">
+                                                                        <input type="text" placeholder="输入数字" name="order" value="0" class="m-wrap small"/>
+                                                                        <span class="help-inline"></span>
+                                                                    </div>
+                                                                    <div class="control-group">
+                                                                        <label class="control-label">语言 (不限语言不选)</label>
+                                                                        <div class="controls">
+                                                                            {% for lang in langs %}
+                                                                            {% if lang['code'] != "zh-Hant" %}
+                                                                            <label class="checkbox">
+                                                                                <input type="checkbox" name="language" value="{{ lang['code'] }}" /> {{ lang['name'] }}
+                                                                            </label>
+                                                                            {% endif %}
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                        <div confirm_box_{{item['_id']}}class="controls">
+                                                                            <label class="radio">
+                                                                                <input type="radio" name="all" class="alllang" data-attr="language"/>全选
+                                                                            </label>
+                                                                            <label class="radio">
+                                                                                <input type="radio" name="all" class="noneofthem" data-attr="language"/>反选
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class ="control-group">
+                                                                        <label class="control-label">版本选择</label>
+                                                                        <div class="controls control-check">
+                                                                            <label class="checkbox">
+                                                                                <input type = "checkbox" name= "device_sign" value="iphone_1"/>iphone(正版)
+                                                                            </label>
+                                                                            <label class="checkbox">
+                                                                                <input type = "checkbox" name= "device_sign" value="iphone_0"/>iphone(越狱版)
+                                                                            </label>
+                                                                            <label class="checkbox">
+                                                                                <input type = "checkbox" name= "device_sign" value="ipad_1"/>ipad(正版)
+                                                                            </label>
+                                                                            <label class="checkbox">
+                                                                                <input type = "checkbox" name= "device_sign" value="ipad_0"/>ipad(越狱版)
+                                                                            </label>
 
-
-												<form action="#"  id="{{item['_id']}}_form" name="{{item['bundleId']}}_form" class="form-horizontal" data-value="{{ item['bundleId'] }}"">
-													<div class="control-group">
-														<label class="control-label">排序</label>
-														<div class="controls">
-															<input type="text" placeholder="输入数字" name="order" value="0" class="m-wrap small"/>
-															<span class="help-inline"></span>
-														</div>
-														<div class="control-group">
-															<label class="control-label">语言 (不限语言不选)</label>
-															<div class="controls">
-																{% for lang in langs %}
-																<label class="checkbox">
-																	<input type="checkbox" name="language" value="{{ lang['code'] }}" /> {{ lang['name'] }}
-																</label>
-																{% endfor %}
-															</div>
-															<div confirm_box_{{item['_id']}}class="controls">
-																<label class="radio">
-																	<input type="radio" name="all" class="alllang" data-attr="language"/>全选
-														        </label>
-															    <label class="radio">
-															        <input type="radio" name="all" class="noneofthem" data-attr="language"/>反选
-																</label>
-															</div>
-														</div>
-														<div class ="control-group">
-															<label class="control-label">版本选择</label>
-															<div class="controls control-check">
-																<label class="checkbox">
-																	<input type = "checkbox" name= "device_sign" value="iphone_1"/>iphone(正版)
-																</label>
-																<label class="checkbox">
-																	<input type = "checkbox" name= "device_sign" value="iphone_0"/>iphone(越狱版)
-																</label>
-																<label class="checkbox">
-																	<input type = "checkbox" name= "device_sign" value="ipad_1"/>ipad(正版)
-																</label>
-																<label class="checkbox">
-																	<input type = "checkbox" name= "device_sign" value="ipad_0"/>ipad(越狱版)
-																</label>
-
-															</div>
-														</div>
-														<div class ="control-group">
-															<label class="control-label">选择栏目</label>
-															<div class="controls">
-																<label class="radio">
-																	<input type = "checkbox" name= "sort" value="sort"/>推荐
-																</label>
-																<label class="radio">
-																	<input type = "checkbox" name= "sort" value="hot"/>热门
-																</label>
-																<label class="radio">
-																	<input type = "checkbox" name= "sort" value="new"/>最新
-																</label>
-															</div>
-														</div>
-													</div>
-												</form>
-
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class ="control-group">
+                                                                        <label class="control-label">选择栏目</label>
+                                                                        <div class="controls">
+                                                                            <label class="radio">
+                                                                                <input type = "checkbox" name= "sort" value="sort"/>推荐
+                                                                            </label>
+                                                                            <label class="radio">
+                                                                                <input type = "checkbox" name= "sort" value="hot"/>热门
+                                                                            </label>
+                                                                            <label class="radio">
+                                                                                <input type = "checkbox" name= "sort" value="new"/>最新
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                </form>
 
 													</div>
 													<div class="modal-footer">
@@ -93,20 +93,51 @@
 											</td>
 
 											<td>
-												<a data-toggle="modal" href="#confirm_box_{{item['_id']}}" class="btn red" title="删除">删除
+												<!--<a data-toggle="modal" href="#confirm_box_{{item['_id']}}" class="btn red" title="删除">删除
 												</a>
-												<div id="confirm_box_{{item['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+											    <div id="confirm_box_{{item['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
 													<div class="modal-body">
-														<p>确定要删除吗?</p>					
+														<p>确定要删除吗?</p>
 													</div>
 													<div class="modal-footer">
 														<button type="button" data-dismiss="modal" class="btn">取消</button>
 														<button type="button" data-dismiss="modal" class="btn red" onclick="deleteRight('{{ item['_id'] }}')">确定</button>
 													</div>
-												</div>
+												</div>-->
+												<a data-toggle="modal" href="#delete2" class="btn red" onclick="deleteRight2('{{item['bundleId']}}', '{{genre_id}}')" title="删除">删除
+												</a>
+                                                <div id="delete2" class="modal container hide fade modal-overflow in " tabindex="-1" data-backdrop="static" data-keyboard="false">
+
+													<div class="modal-header">
+                                                        <h3>选择要删除的选项</h3>
+                                                    </div>
+                                                    <div class="modal-body form">
+                                                            <form action="#"  id="{{item['_id']}}_formde" name="{{item['bundleId']}}_formde" class="form-horizontal" data-value="{{ item['bundleId'] }}">
+                                                                <div class="control-group">
+                                                                <div class="control-group">
+                                                                        <label class="control-label">语言:&nbsp;&nbsp;&nbsp;</label>
+                                                                        <div id="delete_lans" class="controls">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class ="control-group">
+                                                                        <label class="control-label">版本选择:&nbsp;&nbsp;&nbsp;</label>
+                                                                        <div id="delete_devices" class="controls">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class ="control-group">
+                                                                        <label class="control-label">选择栏目:&nbsp;&nbsp;&nbsp;</label>
+                                                                        <div id="delete_so" class="controls">
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>
+                                                            </form>
+													</div>
+													<div class="modal-footer">
+														<button type="button" data-dismiss="modal" class="btn">取消</button>
+														<button type="button" data-dismiss="modal" class="btn red" onclick="deleteRight('{{item['bundleId']}}', '{{genre_id}}','#{{item['_id']}}_formde')">确定</button>
+													</div>
+                                                </div>
 											</td>
-
-
 										</tr>
 										{% endfor %}
 										</tbody>
@@ -121,3 +152,39 @@
 
                                   </ul>
                                 </div>
+
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".alllang").click(function(){
+		console.log($(".alllang"))
+		var name = $(this).attr('data-attr')
+		$("input[name=" + name + "]").attr("checked", "checked")
+		$("input[name=" + name + "]").parent().addClass("checked")
+	})
+
+	$(".noneofthem").click(function(){
+		var name = $(this).attr('data-attr')
+		var name_array = $("input[name=" + name + "]")
+		for(var i=0;i<name_array.length;i++){
+			if($(name_array[i]).attr("checked") == "checked"){
+				$(name_array[i]).removeAttr("checked")
+				$(name_array[i]).parent().removeClass("checked")
+			}else{
+				$(name_array[i]).attr("checked", "checked")
+				$(name_array[i]).parent().addClass("checked")
+			}
+		var b= $('.modal-body').children("form").eq(0).attr('data-value')
+		}
+	})
+})
+
+
+function loadBox(divid){
+	document.getElementById(divid).style.display="block";
+}
+
+
+</script>
+{% endblock %}
