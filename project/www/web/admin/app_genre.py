@@ -118,6 +118,10 @@ class ItemAddView(View):
             sort = request.args.get('sort', 'sort').split('*')
             genre_id = request.args.get("genre_id", 0)
             order = int(request.args.get('order', 0))
+            appinfo_zh={}
+            if 'zh-Hans' in language:
+                try:appinfo_zh = dict(DB.AppBase_CN.find_one({'bundleId':bundleId}))
+                except:appinfo_zh={}
 
             upd = int(request.args.get('update', 0))
             itemId = request.args.get('itemId', 0)
@@ -142,13 +146,14 @@ class ItemAddView(View):
             try: int(appinfo['averageUserRating'])
             except: appinfo['averageUserRating'] = 3
 
-
             if upd:
                 DB.AppKeylists.remove({'_id':ObjectId(itemId)})
             for appkey in appkeys:
+                if re.search('zh-Hans',appkey) and appinfo_zh:trackName = appinfo_zh["trackName"]
+                else:trackName = appinfo["trackName"]
                 hasfind = DB.AppKeylists.find({"appKey" : appkey,
                             "bundleId" : bundleId,
-                            "trackName" : appinfo["trackName"],
+                            "trackName" : trackName,#appinfo["trackName"],
                             "supportIpad" :appinfo['supportIpad'] ,
                             "supportIphone" : appinfo['supportIphone'],
                             "icon" :appinfo['icon'] ,
@@ -159,7 +164,7 @@ class ItemAddView(View):
                 if not hasfind:
                     DB.AppKeylists.insert({"appKey" : appkey,
                                 "bundleId" : bundleId,
-                                "trackName" : appinfo["trackName"],
+                                "trackName" : trackName,#appinfo["trackName"],
                                 "supportIpad" :appinfo['supportIpad'] ,
                                 "supportIphone" : appinfo['supportIphone'],
                                 "icon" :appinfo['icon'] ,
