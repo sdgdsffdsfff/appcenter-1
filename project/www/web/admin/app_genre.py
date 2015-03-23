@@ -9,7 +9,7 @@ import HTMLParser
 from __header__ import (AdminView, FlaskView, DB, route, request,
                         upload_hash_file, settings, redirect, url_for,
                         hash_to_path, create_pic_url_by_path)
-from www.controller.app.header import create_pic_url,artworkUrl512_to_114_icon
+from www.controller.app.header import create_pic_url,artworkUrl512_to_114_icon,file_size_format
 from flask.ext.login import login_required
 import pymongo
 import math
@@ -228,7 +228,7 @@ class DeleteView(View):
                 device_sign = request.args.get('device_sign','').split(':')
                 sort = request.args.get('sort','').split('*')
 
-                [DB.AppKeylists.remove({'appKey':re.compile('%s_%s_%s_%s'  % (d,l,genre_id,s))}) for d in device_sign for l in language for s in sort]
+                [DB.AppKeylists.remove({"bundleId":bundleId,'appKey':re.compile('%s_%s_%s_%s'  % (d,l,genre_id,s))}) for d in device_sign for l in language for s in sort]
                 status, message,data = 'success', '删除成功',{}
             else:
                 genre_apps = list(DB.AppKeylists.find({"bundleId":bundleId,'appKey':re.compile(genre_id)},{"appKey":1,"_id":0}))
