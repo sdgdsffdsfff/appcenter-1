@@ -119,7 +119,7 @@ class ItemAddView(View):
             genre_id = request.args.get("genre_id", 0)
             order = int(request.args.get('order', 0))
             appinfo_zh={}
-            if 'zh-Hans' in language:
+            if 'zh-Hans' in languages:
                 try:appinfo_zh = dict(DB.AppBase_CN.find_one({'bundleId':bundleId}))
                 except:appinfo_zh={}
 
