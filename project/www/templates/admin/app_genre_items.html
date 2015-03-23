@@ -179,6 +179,7 @@ function addToLeft(_id, itemId) {
 		//alert(url)
 		ajax.Get(url, function(res){
 			if(res.status == 'success'){
+                removeRecord()
 				loadRight();
 			}
 			else{
@@ -327,6 +328,11 @@ function deleteRight2(bundleId,genre_id){
 	});
 }
 
+function removeRecord() {
+    if ($("span").hasClass("checked")==true){
+		$("span").removeClass("checked")
+    }
+}
 
 function changeForm(){
 	loadRight()
