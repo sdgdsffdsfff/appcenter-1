@@ -1,4 +1,4 @@
-{% if layout == 'default' %}
+{% if layou == 'default' %}
     {% extends "admin/_layout.html" %}
 
     {% block head %}
@@ -61,6 +61,10 @@
 		<div class="form-actions">
 			<button type="submit" class="btn blue"><i class="icon-ok"></i> Save</button>
 		</div>
+        <div class="language-select"style="width:300px;position:absolute !important;left:435px;top:458px">
+                    <input type="radio" name='all' class='all-language'style="margin-left:0px;" onclick=ChageSelect() data-attr="language"/>全选
+                    <input type="radio" name='all' class='none-of-them'style="margin-left:0px;" onclick=ChageNoneof() data-attr="language"/>反选
+        </div>
 		{{ form.end_form() | safe }}
 	</div>
 </div>
@@ -87,6 +91,26 @@
 		var layout = getParameterByName("layout")
 		window.location.href = "{{url_for('admin_app_topic_list')}}?layout=" + layout
 	}
+
+    function ChageSelect(){
+                var name = $(".all-language").attr('data-attr');
+                $("input[name=" + name + "]").attr("checked", "checked")
+                $("input[name=" + name + "]").parent().addClass("checked")
+        }
+        function ChageNoneof(){
+                var name = $(".none-of-them").attr("data-attr");
+                var name_array = $("input[name=" + name + "]")
+                for(var i=0;i<name_array.length;i++){
+                        if($(name_array[i]).attr("checked") == "checked"){
+                                $(name_array[i]).removeAttr("checked")
+                                $(name_array[i]).parent().removeClass("checked")
+                        }else{
+                                $(name_array[i]).attr("checked", "checked")
+                                $(name_array[i]).parent().addClass("checked")
+                        }
+                var b= $('.modal-body').children("form").eq(0).attr('data-value')
+                }
+        }
 </script>
 {% endblock %}
 

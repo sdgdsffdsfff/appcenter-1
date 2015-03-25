@@ -64,7 +64,7 @@ class ListView(View):
 
 class AppTopicInfoBaseView(View):
     '''
-    专题信息添加修改基类
+    专题信息添加修改基类(页面展现的信息)
     '''
 
     def get_country_and_language_options(self):
@@ -73,6 +73,7 @@ class AppTopicInfoBaseView(View):
         langs = DB.client_support_language.find()
         for lang in langs:
             lang_options.append((lang['name'],lang['code']))
+            lang_options.append()
         #国家选项
         country_options = []
         countries = DB.country.find()
@@ -91,6 +92,7 @@ class AppTopicInfoBaseView(View):
         self._form.add_field('text', '专题名称', 'name', data={'attributes': {'class': 'm-wrap large'}})
         self._form.add_field('text', '排序', 'order', data={'attributes': {'class': 'm-wrap large'}})
         self._form.add_field('textarea', '描述', 'description', data={'attributes': {'class': 'm-wrap large'}})
+
         self._form.add_field('checkbox', '投放语言', 'language', data={'value': '', 'option': lang_options})
         self._form.add_field('checkbox', '投放国家', 'country', data={'value': '', 'option': country_options})
         self._form.add_field('file', '专题图标', 'pic', data={'attributes': {}})

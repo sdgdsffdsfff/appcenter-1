@@ -104,7 +104,6 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	$(".alllang").click(function(){
-		console.log($(".alllang"))
 		var name = $(this).attr('data-attr')
 		$("input[name=" + name + "]").attr("checked", "checked")
 		$("input[name=" + name + "]").parent().addClass("checked")
