@@ -61,7 +61,7 @@
 		<div class="form-actions">
 			<button type="submit" class="btn blue"><i class="icon-ok"></i> Save</button>
 		</div>
-        <div class="language-select"style="width:300px;position:absolute !important;left:435px;top:458px">
+        <div class="language-select" {% if icon %} style="width:300px;position:absolute !important;left:435px;top:635px"{% else %} style="width:300px;position:absolute !important;left:435px;top:536px" {% endif %}>
                     <input type="radio" name='all' class='all-language'style="margin-left:0px;" onclick=ChageSelect() data-attr="language"/>全选
                     <input type="radio" name='all' class='none-of-them'style="margin-left:0px;" onclick=ChageNoneof() data-attr="language"/>反选
         </div>
