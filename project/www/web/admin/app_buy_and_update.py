@@ -52,6 +52,13 @@ class ListView(View):
     def get(self):
         page = int(request.args.get('page', 1))
         page_size = int(request.args.get('page_size', 10))
+        cge = int(request.args.get('cge', 0))
+
+        if cge:
+            app_id = request.args.get('app_id', '')
+            new_version = request.args.get('new_version','')
+            apple_account = request.args.get('apple_account','')
+            DB.app_process.update({'_id': ObjectId(app_id)},{'$set': {'status': 'bought','apple_account':apple_account,'local_version':new_version}})
 
         res = DB.app_process.find(
             {'$or': [{'status': 'buy'}, {'status': 'buying'}],
