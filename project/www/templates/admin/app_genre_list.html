@@ -49,8 +49,12 @@
             <option value="1000" {% if get_genre == "1000" %} selected {% endif %}> 软件 </option>
 
             </select>
+            <div>{% if get_genre != "6021" %} <a class="btn green" href="{{ url_for('admin_genre_items', genre_id=get_genre) }}">管理</a>{% endif %}</div>
 
         </form>
+
+
+
 		<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
 			<thead>
 				<tr>
