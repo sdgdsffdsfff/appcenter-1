@@ -25,13 +25,36 @@
         <td><a href="{{ res.get('link_url', '') }}">苹果购买</a></td>
         <td width=140>
           {% if res.get('status', '') == 'update' %}
-          <span class="label label-info"><a href='javascript:void(0);' class='updatebtn' vale={{ res.get('track_id', '') }}>更新</a>
+          <span class="label label-info"><a href='javascript:void(0);' class='updatebtn' vale={{ res.get('track_id', '') }}>更新</a></span>
           {% elif res.get('status', '') == 'updating' %}
-          <span class="label label-success">正在入库
+          <span class="label label-success">正在入库</span>
+            <a data-toggle="modal" href="#update_updating_{{res['_id']}}" class="label label-info" title="手工修改">手工修改</a>
+
+            <div id="update_updating_{{res['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+            <form action="#"  id="{{res['_id']}}_form" name="{{res['_id']}}_form" class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label"><h3>手工修改</h3></label>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">apple_account</label>
+                    <div class="controls">
+                        <input id="id_{{res['_id']}}" type="text" name="apple_account" value="" style="width:280px;margin-top:10px;margin-left:10px;"/>
+                        <span class="help-inline"></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn" onclick="removeRecord('#id_{{res['_id']}}')">取消</button>
+                    <button type="button" data-dismiss="modal" class="btn red" onclick="changestatus('{{res['_id']}}','{{res['track_id']}}', '{{res['new_version']}}','#{{res['_id']}}_form', '{{page_info['page']}}')">修改</button>
+                </div>
+            </form>
+            </div>
+
+
           {% else %}
-          <span class="label">未知
+          <span class="label">未知</span>
           {% endif %}
-        </span></td>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -66,5 +89,28 @@
       });
     }
   });
+
+
+
+  function removeRecord(id) {
+    $(id).removeAttr("value");
+  }
+
+  function changestatus(app_id,track_id,newversion,formid,page){
+    var data = $(formid).serialize();
+    var url = '{{ url_for('app_update') }}?cge=1&app_id='+app_id +'&'+data +'&page='+page+'&new_version='+newversion+'&track_id='+track_id;
+
+    if(data=='apple_account='){
+		alert("请填写账号 ！！！")
+		return false
+    }
+    else{
+        ajax.Get(url, function(res){
+        });
+    }
+    window.location.reload();
+  }
+
+
 </script>
 {% endblock %}
