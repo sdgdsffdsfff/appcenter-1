@@ -37,7 +37,7 @@
         <span class="label label-info"><a href='javascript:void(0);' class='buybtn' vale={{res.get('track_id', '')}}>购买</a></span>
         {% elif res.get('status', '') == 'buying' %}
         <span class="label label-success">正在入库</span>
-        <a data-toggle="modal" href="#update_buying_{{res['_id']}}" class="label label-info" title="更新">更新</a>
+        <a data-toggle="modal" href="#update_buying_{{res['_id']}}" class="label label-info" title="手工修改">手工修改</a>
 
         <div id="update_buying_{{res['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
         <form action="#"  id="{{res['_id']}}_form" name="{{res['_id']}}_form" class="form-horizontal">
@@ -54,7 +54,7 @@
             <div class="control-group">
             <div class="modal-footer">
                 <button type="button" data-dismiss="modal" class="btn" onclick="removeRecord('#id_{{res['_id']}}')">取消</button>
-                <button type="button" data-dismiss="modal" class="btn red" onclick="changestatus('{{res['_id']}}', '{{res['new_version']}}','#{{res['_id']}}_form', '{{page_info['page']}}')">修改</button>
+                <button type="button" data-dismiss="modal" class="btn red" onclick="changestatus('{{res['_id']}}','{{res['track_id']}}', '{{res['new_version']}}','#{{res['_id']}}_form', '{{page_info['page']}}')">修改</button>
             </div>
         </form>
         </div>
@@ -91,9 +91,9 @@
     $(id).removeAttr("value");
   }
 
-  function changestatus(app_id,newversion,formid,page){
+  function changestatus(app_id,track_id,newversion,formid,page){
     var data = $(formid).serialize();
-    var url = '{{ url_for('app_buy') }}?cge=1&app_id='+app_id +'&'+data +'&page='+page+'&new_version='+newversion;
+    var url = '{{ url_for('app_buy') }}?cge=1&app_id='+app_id +'&'+data +'&page='+page+'&new_version='+newversion+'&track_id='+track_id;
 
     if(data=='apple_account='){
 		alert("请填写账号 ！！！")

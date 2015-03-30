@@ -58,7 +58,11 @@ class ListView(View):
             app_id = request.args.get('app_id', '')
             new_version = request.args.get('new_version','')
             apple_account = request.args.get('apple_account','')
+            track_id = int(request.args.get('track_id',0))
+            storage_time = datetime.now(pytz.timezone('Asia/Shanghai'))
+
             DB.app_process.update({'_id': ObjectId(app_id)},{'$set': {'status': 'bought','apple_account':apple_account,'local_version':new_version}})
+            DB.app_process_log.update({'track_id': track_id, 'new_version': new_version},{'$set': {'status': 'bought','apple_account':apple_account,'local_version':new_version,'storage_time':storage_time}})
 
         res = DB.app_process.find(
             {'$or': [{'status': 'buy'}, {'status': 'buying'}],
