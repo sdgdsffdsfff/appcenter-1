@@ -213,7 +213,7 @@ class ItemListView(View):
             item['trackId'] = list(DB.AppBase.find({'bundleId':item['bundleId']}))[0]['trackId']
 
         self._view.ajax_response('success', 'message')
-        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list,langs=langs,appkey=appkey,total_pagerig=total_page,countrig=count,prev_pagerig=prev_page,next_pagerig=next_page,genre_id=genre_id)   # P0ST
+        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list,langs=langs,appkey=appkey,total_pagerig=total_page,countrig=count,prev_pagerig=prev_page,next_pagerig=next_page,genre_id=genre_id,language=language,device=device,sort=sort)   # P0ST
         #return self._view.render('app_genre_ajaxright',item_list=item_list)  #  GET
 
 
