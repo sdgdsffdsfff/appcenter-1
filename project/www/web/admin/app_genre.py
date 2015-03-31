@@ -151,7 +151,7 @@ class ItemAddView(View):
             for appkey in appkeys:
                 if re.search('zh-Hans',appkey) and appinfo_zh:trackName = appinfo_zh["trackName"]
                 else:trackName = appinfo["trackName"]
-                hasfind = DB.AppKeylists.find({"appKey" : appkey,
+                hasfind = DB.AppKeylists.update({"appKey" : appkey,
                             "bundleId" : bundleId,
                             "trackName" : trackName,#appinfo["trackName"],
                             "supportIpad" :appinfo['supportIpad'] ,
@@ -160,8 +160,8 @@ class ItemAddView(View):
                             "averageUserRating" : appinfo["averageUserRating"],
                             "size" : appinfo["size"],
                             "ID":ID
-                        }).count()
-                if not hasfind:
+                        },{'$set':{'order':order}}, False, True)
+                if not hasfind['nModified']:
                     DB.AppKeylists.insert({"appKey" : appkey,
                                 "bundleId" : bundleId,
                                 "trackName" : trackName,#appinfo["trackName"],
@@ -173,6 +173,7 @@ class ItemAddView(View):
                                 "order" : order,
                                 "ID":ID
                             })
+
             status, message = 'success', ''
         except Exception, ex:
             status, message = 'error', str(ex)
