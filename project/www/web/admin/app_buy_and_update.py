@@ -53,6 +53,7 @@ class ListView(View):
         page = int(request.args.get('page', 1))
         page_size = int(request.args.get('page_size', 10))
         cge = int(request.args.get('cge', 0))
+        manually = int(request.args.get('manually', 0))
 
         if cge:
             app_id = request.args.get('app_id', '')
@@ -63,6 +64,39 @@ class ListView(View):
 
             DB.app_process.update({'_id': ObjectId(app_id)},{'$set': {'status': 'bought','apple_account':apple_account,'local_version':new_version}})
             DB.app_process_log.update({'track_id': track_id, 'new_version': new_version},{'$set': {'status': 'bought','apple_account':apple_account,'local_version':new_version,'storage_time':storage_time}})
+
+        if manually:
+            sets = {}
+            trackid = int(request.args.get('trackid',0))
+            trackname = request.args.get('trackname','')
+            version = request.args.get('version','')
+            price = int(request.args.get('price',0))
+            country = request.args.get('country','')
+            currency = request.args.get('currency','')
+            apple_account = request.args.get('apple_account','')
+            recieve_time = request.args.get('recieve_time','')
+            link_url = request.args.get('link_url','')
+            status = request.args.get('status','')
+
+            sets['status'] = status
+            sets['track_name'] = trackname
+            sets['recieve_time'] = datetime.strptime(recieve_time, "%Y-%m-%d %H:%M:%S")
+            sets['price'] = price
+            sets['country'] = country
+            sets['currency'] = currency
+            sets['link_url'] = link_url
+            sets['editor'] = current_user.username
+
+            if status == 'bought':
+                sets['apple_account'] = apple_account
+                sets['local_version'] = version
+            DB.app_process.update({'track_id':trackid,'new_version':version},{'$set':sets}, True, False)
+            print 'app_process ',sets
+
+            sets['buy_time'] = datetime.strptime(recieve_time, "%Y-%m-%d %H:%M:%S")
+            if status == 'bought':sets['storage_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
+            DB.app_process_log.update({'track_id':trackid,'new_version':version},{'$set':sets}, True, False)
+            print 'app_process_log ',sets
 
         res = DB.app_process.find(
             {'$or': [{'status': 'buy'}, {'status': 'buying'}],
