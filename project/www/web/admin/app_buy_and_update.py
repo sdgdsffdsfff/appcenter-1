@@ -74,13 +74,13 @@ class ListView(View):
             country = request.args.get('country','')
             currency = request.args.get('currency','')
             apple_account = request.args.get('apple_account','')
-            recieve_time = request.args.get('recieve_time','')
+            recieve_time = datetime.now()
             link_url = request.args.get('link_url','')
             status = request.args.get('status','')
 
             sets['status'] = status
             sets['track_name'] = trackname
-            sets['recieve_time'] = datetime.strptime(recieve_time, "%Y-%m-%d %H:%M:%S")
+            sets['recieve_time'] = recieve_time
             sets['price'] = price
             sets['country'] = country
             sets['currency'] = currency
@@ -91,12 +91,10 @@ class ListView(View):
                 sets['apple_account'] = apple_account
                 sets['local_version'] = version
             DB.app_process.update({'track_id':trackid,'new_version':version},{'$set':sets}, True, False)
-            print 'app_process ',sets
 
             sets['buy_time'] = datetime.strptime(recieve_time, "%Y-%m-%d %H:%M:%S")
             if status == 'bought':sets['storage_time'] = datetime.now(pytz.timezone('Asia/Shanghai'))
             DB.app_process_log.update({'track_id':trackid,'new_version':version},{'$set':sets}, True, False)
-            print 'app_process_log ',sets
 
         res = DB.app_process.find(
             {'$or': [{'status': 'buy'}, {'status': 'buying'}],

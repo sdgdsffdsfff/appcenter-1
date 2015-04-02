@@ -150,13 +150,6 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label"><b>入库时间</b></label>
-                            <div class="controls">
-                                <input type="text" id="record_manually" name="input_recieve_time" placeholder=" 2015-04-01 00:00:00" style="width:220px;"/>
-                                <span class="help-inline"></span>
-                            </div>
-                        </div>
-                        <div class="control-group">
                             <label class="control-label"><b>购买链接</b></label>
                             <div class="controls">
                                 <input type="text" id="record_manually" name="input_link_url" style="width:220px;"/>
@@ -204,11 +197,9 @@
         var country = $("input[name='input_country']").val();
         var currency = $("input[name='input_currency']").val();
         var apple_account = $("input[name='input_apple_account']").val();
-        var recieve_time = $("input[name='input_recieve_time']").val();
         var link_url = $("input[name='input_link_url']").val();
         var status = $("input[name='radio_status']:checked").val()
-        var url = "{{url_for('app_buy')}}?manually=1&trackid="+trackid+'&trackname='+trackname+'&version='+version+'&price='+price+'&country='+country+'&currency='+currency+'&apple_account='+apple_account+'&recieve_time='+recieve_time+'&link_url='+link_url+'&status='+status;
-        var r=recieve_time.match(/^(\d{1,4})\-(\d{1,2})\-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/);
+        var url = "{{url_for('app_buy')}}?manually=1&trackid="+trackid+'&trackname='+trackname+'&version='+version+'&price='+price+'&country='+country+'&currency='+currency+'&apple_account='+apple_account+'&link_url='+link_url+'&status='+status;
         if(trackid==''){
             alert("请填写苹果ID ！！！")
             return false
@@ -239,16 +230,8 @@
                 return false
             }
         }
-        else if(recieve_time==''){
-            alert("请填写入库时间 ！！！")
-            return false
-        }
         else if(link_url==''){
             alert("请填写购买链接 ！！！")
-            return false
-        }
-        else if(r==null){
-            alert("请填写正确的入库时间 ！！！")
             return false
         }
         ajax.Get(url, function(res){

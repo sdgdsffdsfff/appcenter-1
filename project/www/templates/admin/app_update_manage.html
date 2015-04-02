@@ -31,12 +31,12 @@
             <a data-toggle="modal" href="#update_updating_{{res['_id']}}" class="label label-info" title="手工修改">手工修改</a>
 
             <div id="update_updating_{{res['_id']}}" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
-            <form action="#"  id="{{res['_id']}}_form" name="{{res['_id']}}_form" class="form-horizontal">
+            <form action="#"  id="{{res['_id']}}_updatingform" name="{{res['_id']}}_form" class="form-horizontal">
                 <div class="control-group">
                     <label class="control-label"><h3>手工修改</h3></label>
                 </div>
                 <div class="control-group">
-                    <label class="control-label">apple_account</label>
+                    <label class="control-label">购买账号</label>
                     <div class="controls">
                         <input id="id_{{res['_id']}}" type="text" name="apple_account" value="" style="width:280px;margin-top:10px;margin-left:10px;"/>
                         <span class="help-inline"></span>
@@ -45,7 +45,7 @@
                 <div class="control-group">
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn" onclick="removeRecord('#id_{{res['_id']}}')">取消</button>
-                    <button type="button" data-dismiss="modal" class="btn red" onclick="changestatus('{{res['_id']}}','{{res['track_id']}}', '{{res['new_version']}}','#{{res['_id']}}_form', '{{page_info['page']}}')">修改</button>
+                    <button type="button" data-dismiss="modal" class="btn red" onclick="changestatus('{{res['_id']}}','{{res['track_id']}}', '{{res['new_version']}}','#{{res['_id']}}_updatingform', '{{page_info['page']}}')">修改</button>
                 </div>
             </form>
             </div>
