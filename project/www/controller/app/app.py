@@ -371,11 +371,12 @@ class AppController(ControllerBase):
             }
         }
 
-    def get_apps_cache_mg(self, device, sign, genre_id, page, sort):
+    def get_apps_cache_mg(self, device, sign, genre_id, page, sort,lan):
         """
         获取app列表展示  luoluo0
         """
-        language = self._language if self._language in ['zh-Hans','en', 'ar'] else 'en'
+        #language = self._language if self._language in ['zh-Hans','en', 'ar'] else 'en'
+        language = lan if lan in ['zh-Hans','en', 'ar'] else 'en'
         key = "%s_%s_%s_%s_%s" % (device, sign, language, genre_id, sort)
         count = mongo_db.AppKeylists.find({'appKey':key}).count()
 
@@ -395,7 +396,8 @@ class AppController(ControllerBase):
         ipaHashlist = [i[0] for i in ipaHashdic.values()]
 
         for i in lists1:
-            i['ID'] = str(i['ID'])
+            #i['ID'] = str(i['ID'])
+            i['ID'] = str(list(mongo_db.AppBase.find({'bundleId':i['bundleId']}))[0]['_id'])
             del i['_id']
             for x in ipaHashlist:
                 if i['bundleId'] == x['bundleId']:

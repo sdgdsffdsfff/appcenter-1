@@ -42,6 +42,9 @@ class ListView(View):
         device = request.args.get('device', "1")
         sort = request.args.get('sort', 'sort')
         page = request.args.get('page', 1)
+        jb = request.args.get('jb','0')
+        sign = '0' if jb =='1' else '1'
+        language = request.args.get('language','en')
         '''
         xsort = 'sort'
         if sort == 'new': xsort = '_id'
@@ -55,7 +58,8 @@ class ListView(View):
         if device == 'ipad' or device == "2": device = 'ipad'
         else: device = 'iphone'
         #data = self.app.get_apps_cache(device, self._view._sign, genre_id, int(page), xsort)
-        data = self.app.get_apps_cache_mg(device, self._view._sign, genre_id, int(page), sort)
+        #data = self.app.get_apps_cache_mg(device, self._view._sign, genre_id, int(page), sort)
+        data = self.app.get_apps_cache_mg(device, sign, genre_id, int(page), sort,language)
         return self._view.render(1000, data)
 
 
