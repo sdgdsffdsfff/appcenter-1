@@ -70,7 +70,7 @@ class ListView(View):
             trackid = int(request.args.get('trackid',0))
             trackname = request.args.get('trackname','')
             version = request.args.get('version','')
-            price = int(request.args.get('price',0))
+            price = float(request.args.get('price',0))
             country = request.args.get('country','')
             currency = request.args.get('currency','')
             apple_account = request.args.get('apple_account','')
