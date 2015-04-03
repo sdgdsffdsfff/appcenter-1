@@ -14,6 +14,8 @@ from www.controller.app.app_download import AppDownloadController
 from www.controller.app.app_download_netdisk import AppDownloadNetDiskController
 from conf.settings import settings
 from collections import defaultdict
+import requests
+import re
 
 class AppController(ControllerBase):
     """
@@ -199,6 +201,19 @@ class AppController(ControllerBase):
         """
         获取应用基本数据
         """
+        if 'trackName' in where.keys():
+            print str(where['trackName'])
+            try:
+                session = requests.Session()
+                response = session.get('http://search.vshare.com/api/app/search?q=%s' % where['trackName'])
+                data = json.loads(response.content)['data']['results']
+                if len(data)==0:
+                    where['trackName'] = re.compile(where['trackName'], re.IGNORECASE)
+                else:
+                    trackids = [i.get('trackId',0) for i in data]
+                    where = {'trackId':{'$in':trackids}}
+            except:pass
+
         m = mongo_db.AppBase.find(where).sort("sort", -1)
         count = m.count()
         total_page = int(math.ceil(count / float(page_size)))
@@ -207,6 +222,7 @@ class AppController(ControllerBase):
         next_page = (page + 1) if page + 1 < total_page else total_page
 
         res = m.skip(offset).limit(page_size)
+
         if sort is not None:
             res.sort(sort[0], sort[1])
         if res:

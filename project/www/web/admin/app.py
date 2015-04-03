@@ -55,8 +55,9 @@ class ListView(View):
             if sign == 1:
                 where = {'sign': 1, "review": 1}
         if track_name != '':
-            regex = re.compile(track_name, re.IGNORECASE)
-            where["trackName"] = regex
+            #regex = re.compile(track_name, re.IGNORECASE)
+            #where["trackName"] = regex
+            where["trackName"] = track_name
         if track_id != '':
             where['trackId'] = int(track_id)
         if bundle_id != '':
