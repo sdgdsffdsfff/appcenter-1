@@ -248,6 +248,7 @@ class DeleteView(View):
                 data['devices'] = devices
                 data['lans'] = lans
                 data['so'] = so
+                data['bundleid'] = bundleId
                 status, message = 'success', '删除成功'
         except Exception, ex:
             status, message = 'error', str(ex)

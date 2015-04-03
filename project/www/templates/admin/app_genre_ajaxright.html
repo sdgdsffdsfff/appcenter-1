@@ -113,28 +113,30 @@
                                                     </div>
                                                     <div class="modal-body form">
                                                             <form action="#"  id="{{item['_id']}}_formde" name="{{item['bundleId']}}_formde" class="form-horizontal" data-value="{{ item['bundleId'] }}">
+
                                                                 <div class="control-group">
-                                                                <div class="control-group">
-                                                                        <label class="control-label">语言:&nbsp;&nbsp;&nbsp;</label>
-                                                                        <div id="delete_lans" class="controls">
-                                                                        </div>
+                                                                    <label class="control-label">语言:&nbsp;&nbsp;&nbsp;</label>
+                                                                    <div id="delete_lans" class="controls">
                                                                     </div>
-                                                                    <div class ="control-group">
-                                                                        <label class="control-label">版本选择:&nbsp;&nbsp;&nbsp;</label>
-                                                                        <div id="delete_devices" class="controls">
-                                                                        </div>
+                                                                </div>
+                                                                <div class ="control-group">
+                                                                    <label class="control-label">版本选择:&nbsp;&nbsp;&nbsp;</label>
+                                                                    <div id="delete_devices" class="controls">
                                                                     </div>
-                                                                    <div class ="control-group">
-                                                                        <label class="control-label">选择栏目:&nbsp;&nbsp;&nbsp;</label>
-                                                                        <div id="delete_so" class="controls">
-                                                                        </div>
+                                                                </div>
+                                                                <div class ="control-group">
+                                                                    <label class="control-label">选择栏目:&nbsp;&nbsp;&nbsp;</label>
+                                                                    <div id="delete_so" class="controls">
                                                                     </div>
+                                                                </div>
+                                                                    <div id="delete_bundleid" class="controls">
                                                                     </div>
+
                                                             </form>
 													</div>
 													<div class="modal-footer">
 														<button type="button" data-dismiss="modal" class="btn">取消</button>
-														<button type="button" data-dismiss="modal" class="btn red" onclick="deleteRight('{{item['bundleId']}}', '{{genre_id}}','#{{item['_id']}}_formde')">确定</button>
+														<button type="button" data-dismiss="modal" class="btn red" onclick="deleteRight('{{genre_id}}','#{{item['_id']}}_formde')">确定</button>
 													</div>
                                                 </div>
 											</td>
