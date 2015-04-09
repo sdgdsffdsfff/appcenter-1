@@ -51,10 +51,12 @@ class ListView(View):
         elif sort == 'hot': xsort = 'downloadCount'
         '''
         # 手机api 热门与最新 对应所传过来的值颠倒了
+        ''' # by 2015.04.09 by luoluo0 手机端已更改回来
         if sort =='hot':
             sort ='new'
         elif sort =='new':
             sort ='hot'
+        '''
         if device == 'ipad' or device == "2": device = 'ipad'
         else: device = 'iphone'
         #data = self.app.get_apps_cache(device, self._view._sign, genre_id, int(page), xsort)
