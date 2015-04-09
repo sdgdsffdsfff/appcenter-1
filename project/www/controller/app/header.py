@@ -89,9 +89,10 @@ def create_pic_url(path):
 def create_pic_url_by_path(path):
     return '%s/%s' % (settings['pic_url_host'], path)
 
-def create_ipa_url(hash_str):
-
-    return build_download_url(settings['download_server_host'], hash_str, 'fuck2088y33oumei', 172800)
+def create_ipa_url(hash_str, sign=0):
+    if sign == 0: dhost = settings['download_server_host']
+    else: dhost = settings['download_server_host_sign']
+    return build_download_url(dhost, hash_str, 'fuck2088y33oumei', 172800)
 
 def build_download_url(host,  hash_str, secret, expire):
     '''
@@ -202,11 +203,11 @@ def convertAppIpaHashToIpaURL(app):
         app['ipaDownloadUrl'] = ipa
     else:
         try:
-            jb = create_ipa_url(app['ipaHash']['jb'])
+            jb = create_ipa_url(app['ipaHash']['jb'], 0)
         except:
             jb = None
         try:
-            signed = create_ipa_url(app['ipaHash']['signed'])
+            signed = create_ipa_url(app['ipaHash']['signed'], 1)
         except:
             signed = None
         app['ipaDownloadUrl'] = {
@@ -221,7 +222,7 @@ def convertAppIpaHashToIpaURL(app):
             for down in tmp:
                 ipa_hash = down.get('ipaHash', None)
                 if ipa_hash:
-                    down['ipaDownloadUrl'] = create_ipa_url(ipa_hash)
+                    down['ipaDownloadUrl'] = create_ipa_url(ipa_hash, 0)
                 items.append(down)
             app['ipaHistoryDownloads']['jb'][key] = items
     except:
@@ -234,7 +235,7 @@ def convertAppIpaHashToIpaURL(app):
             for down in tmp:
                 ipa_hash = down.get('ipaHash', None)
                 if ipa_hash:
-                    down['ipaDownloadUrl'] = create_ipa_url(ipa_hash)
+                    down['ipaDownloadUrl'] = create_ipa_url(ipa_hash, 1)
                 items.append(down)
             app['ipaHistoryDownloads']['signed'][key] = items
     except:

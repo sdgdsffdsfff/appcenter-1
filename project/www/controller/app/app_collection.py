@@ -59,8 +59,9 @@ class AppCollectionController(ControllerBase):
                 d_version = download_info.get("ipaVersion", "")
                 try:
                     download_info.pop("ipaHistoryDownloads")
-                except Exception, e: pass 
-                download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"])
+                except Exception, e: pass
+
+                download_info["ipaDownloadUrl"] = create_ipa_url(download_info["ipaHash"], sign)
 
                 superurl = item.get("superurl", "").strip()
                 superurl_sign = item.get("superurl_sign", "").strip()
