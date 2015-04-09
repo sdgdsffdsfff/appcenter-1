@@ -392,7 +392,7 @@ class AppController(ControllerBase):
 
         bundleIdlist = [i['bundleId'] for i in lists1 if 'bundleId' in i]
         download = AppDownloadController()
-        ipaHashdic = download.get_by_bundleids(bundleIdlist, sign)
+        ipaHashdic = download.get_by_bundleids(bundleIdlist, int(sign))
         ipaHashlist = [i[0] for i in ipaHashdic.values()]
 
         for i in lists1:
@@ -433,7 +433,7 @@ class AppController(ControllerBase):
             if version_compare(ipa_version, local_version) != 1: continue
             to_update_bundleids.append(bundle_id)
             results[bundle_id] = {
-                'ipaDownloadUrl': create_ipa_url(app_download["hash"], sign),
+                'ipaDownloadUrl': create_ipa_url(app_download["hash"], int(sign)),
                 'update': 1,
                 'bundleId': bundle_id,
                 'localVersion': local_version,
@@ -488,7 +488,7 @@ class AppController(ControllerBase):
                     'trackName': app['trackName'],
                     'icon': app['icon'],
                     'bundleId': bundle_id, 
-                    'ipaURL': create_ipa_url(ipa, sign), 
+                    'ipaURL': create_ipa_url(ipa, int(sign)), 
                     'version': ipa_version,
                     'localVersion': version,
                     'averageUserRating': app['averageUserRating'],
