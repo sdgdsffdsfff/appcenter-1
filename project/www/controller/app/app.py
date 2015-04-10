@@ -404,8 +404,10 @@ class AppController(ControllerBase):
                     i['ipaHash'] = str(x['hash'])
                     i['ipaVersion'] = x.get('version', '1.0')
         lists = [convertAppIpaHashToIpaURL(x) for x in lists1]
+        lists0 = [i for i in lists if not isinstance(i['ipaDownloadUrl'],dict)]
+
         return {
-            'results': lists,
+            'results': lists0,
             'pageInfo': {
                 'count': count, 'page': page, 'totalPage': total_page, 'prevPage': prev_page,
                 'nextPage': next_page
