@@ -240,8 +240,8 @@ function updateRight(_id, itemId) {
 function deleteRight(genre_id,formid){
     var data = $(formid).serialize();
     var bundleId = $("input[name='delete_bundleid']").val();
-    var lang0 = data.split('delete_bundleid='+bundleId+'&');
-    var lang1 = lang0[1].replace(new RegExp('&language=','g'),',');
+    var lang0 = data.split('&delete_bundleid='+bundleId);
+    var lang1 = lang0[0].replace(new RegExp('&language=','g'),',');
 	var lang3 = lang1.replace(new RegExp('&device_sign=','g'),':');
 	var lang4 = lang3.replace(':','&device_sign=');
 	var lang5 = lang4.replace(new RegExp('&sort=','g'),'*');

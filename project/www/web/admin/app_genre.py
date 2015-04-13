@@ -195,6 +195,11 @@ class ItemListView(View):
         page= int(request.args.get("pagerig",1))
         langs = list(DB.client_support_language.find())  # by 0317 17:32
 
+        for genreid in request.form.keys():
+            if '_' in genreid:
+                DB.AppKeylists.update({'_id':ObjectId(genreid.split('_')[-1])},{'$set':{'order':int(request.form[genreid])}}, False, True)
+
+
         #appkey = re.compile(r'^%s.*%s_%s_%s$' % (device, language,genre_id, sort))
         if not appkey:
             appkey = '%s_%s_%s_%s' % (device, language,genre_id, sort)
@@ -214,7 +219,7 @@ class ItemListView(View):
             item['trackId'] = list(DB.AppBase.find({'bundleId':item['bundleId']}))[0]['trackId']
 
         self._view.ajax_response('success', 'message')
-        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list,langs=langs,appkey=appkey,total_pagerig=total_page,countrig=count,prev_pagerig=prev_page,next_pagerig=next_page,genre_id=genre_id,language=language,device=device,sort=sort)   # P0ST
+        return self._view.ajax_render('app_genre_ajaxright',item_list=item_list,langs=langs,appkey=appkey,total_pagerig=total_page,countrig=count,prev_pagerig=prev_page,next_pagerig=next_page,genre_id=genre_id,language=language,device=device,sort=sort,page_r=page)   # P0ST
         #return self._view.render('app_genre_ajaxright',item_list=item_list)  #  GET
 
 
